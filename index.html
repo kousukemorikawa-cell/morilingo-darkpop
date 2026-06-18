@@ -285,9 +285,11 @@ function startOriginal(){
  startGame();
 }
 function setupWorld(cls,sun,label,image){
- $("world").className="world "+cls;
- $("sun").textContent=sun;
- $("stageCap").textContent=label;
+ $("world").className="world "+(cls||"");
+ $("sun").textContent=sun||"☀️";
+ $("stageCap").textContent=label||"ステージ";
+ $("world").style.backgroundImage=image?`url('${image}')`:"";
+}
 
  if(image){
    $("world").style.backgroundImage=`url('${image}')`;
