@@ -47,7 +47,14 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 }
 .world.tropical{background:linear-gradient(#8ce9ff 0 40%,#b9f271 40% 72%,#54c96d 72%)}.world.snow{background:linear-gradient(#cfeeff 0 42%,#fbfeff 42% 74%,#e3f4ff 74%)}.world.volcano{background:linear-gradient(#5b5465 0 42%,#8b5d43 42% 74%,#3d3037 74%)}.world.mars{background:linear-gradient(#f6a56d 0 42%,#d76b45 42% 76%,#b94835 76%)}.world.school{background:linear-gradient(#bcecff 0 42%,#99d874 42% 66%,#c4834c 66% 100%)}
 .stageCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.sun{position:absolute;right:24px;top:18px;font-size:42px}.cloud{position:absolute;font-size:36px;top:20px;left:12%;animation:float 8s infinite ease-in-out}.cloud.c2{left:70%;top:38px;animation-delay:-3s}.track{display:none;position:absolute;left:0;right:0;bottom:0;height:92px;background:repeating-linear-gradient(0deg,#bf6e44 0 18px,#c9784b 18px 22px)}.world.school .track{display:block}
-.treeArea{position:absolute;left:20px;right:20px;bottom:48px;display:flex;gap:14px;align-items:flex-end;min-height:205px;overflow:hidden}.obj{position:relative;width:140px;height:210px;flex:0 0 auto}.sapling{position:absolute;left:40px;bottom:0;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}
+.treeArea{position:absolute;left:20px;right:20px;bottom:48px;display:flex;gap:14px;align-items:flex-end;min-height:205px;overflow:hidden}.obj{position:relative;width:140px;height:210px;flex:0 0 auto}.sapling{position:absolute;left:40px;bottom:0;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.treeImg{
+ position:absolute;
+ left:0;
+ bottom:0;
+ width:140px;
+ height:210px;
+ object-fit:contain;
+}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}
 .snowBase,.snowHead{position:absolute;left:50%;transform:translateX(-50%);background:#fff;border:4px solid #dbeefd;border-radius:50%;box-shadow:inset -10px -10px #aadaf047,0 8px 0 #0001}.snowBase{bottom:0;width:92px;height:92px}.snowHead{bottom:75px;width:62px;height:62px}.snowArm{position:absolute;width:52px;height:8px;background:#8b552d;border-radius:999px;bottom:91px}.snowArm.r{left:96px;transform:rotate(-25deg)}.snowArm.l{left:5px;transform:rotate(25deg)}.snowFace{position:absolute;left:50%;bottom:103px;transform:translateX(-50%);font-size:20px;font-weight:900;letter-spacing:5px}.snowNose{position:absolute;left:78px;bottom:102px;font-size:21px}.snowStick{position:absolute;left:122px;bottom:80px;font-size:45px;transform:rotate(18deg)}
 .char{position:absolute;font-size:56px;bottom:78px;left:-90px;z-index:8;display:none;filter:drop-shadow(0 8px 4px #0003)}.ninjaRun{display:block;animation:ninja 4.2s ease-in-out forwards}.dragonFly{display:block;font-size:76px;bottom:165px;animation:dragon 5.2s ease-in-out forwards}
 .fireOverlay{display:none;position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(circle at 25% 80%,#ffe65add 0 8%,#ff5f24cc 16%,transparent 32%),radial-gradient(circle at 62% 74%,#fff678dd 0 9%,#ff5220c7 18%,transparent 35%),linear-gradient(0deg,#ff4d28aa,#ff4d2820 58%,transparent);animation:burn 1.05s infinite}.fireOverlay.on{display:block}.world.shake{animation:shake .38s linear 6}
@@ -353,7 +360,10 @@ function renderObjects(){ $("treeArea").innerHTML=game.objects.map((n,idx)=>rend
 function renderObject(n,idx){
  if(n===0 && idx===game.objects.length-1){
   if(game.unit==="snowman")return `<div class="obj"><div class="sapling">❄️</div></div>`;
-  return `<div class="obj ${game.unit==="banana"?"banana":""}"><div class="sapling">🌱</div></div>`;
+  return `<div class="obj">
+<img src="tree.png" class="treeImg">
+${fruits}
+</div>`;
  }
  if(game.unit==="snowman")return renderSnowman(n);
  const fruits=POS7.slice(0,n).map(([x,y])=>`<span class="fruit" style="left:${x}%;top:${y}%">${FRUITS[game.plant]||"🍎"}</span>`).join("");
