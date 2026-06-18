@@ -17,7 +17,16 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 .hero{text-align:center;padding:28px 10px}.big{font-size:72px}h1,h2,h3{margin:.35em 0}.muted{color:#667085;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}.stageIcon{font-size:38px;text-align:center}.locked{filter:grayscale(1);opacity:.55}
 .badges{display:flex;gap:8px;flex-wrap:wrap}.badge{background:#fff;border:2px solid #ecf1ee;border-radius:16px;padding:10px 12px;font-weight:900}
-.world{position:relative;height:310px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:linear-gradient(#9ee8ff 0 45%,#bdf2a1 45% 76%,#85d069 76%)}
+.world{
+  position:relative;
+  height:66vh;
+  border-radius:28px;
+  overflow:hidden;
+
+  background-size:cover;
+  background-position:center bottom;
+  background-repeat:no-repeat;
+}
 .world.tropical{background:linear-gradient(#8ce9ff 0 40%,#b9f271 40% 72%,#54c96d 72%)}.world.snow{background:linear-gradient(#cfeeff 0 42%,#fbfeff 42% 74%,#e3f4ff 74%)}.world.volcano{background:linear-gradient(#5b5465 0 42%,#8b5d43 42% 74%,#3d3037 74%)}.world.mars{background:linear-gradient(#f6a56d 0 42%,#d76b45 42% 76%,#b94835 76%)}.world.school{background:linear-gradient(#bcecff 0 42%,#99d874 42% 66%,#c4834c 66% 100%)}
 .stageCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.sun{position:absolute;right:24px;top:18px;font-size:42px}.cloud{position:absolute;font-size:36px;top:20px;left:12%;animation:float 8s infinite ease-in-out}.cloud.c2{left:70%;top:38px;animation-delay:-3s}.track{display:none;position:absolute;left:0;right:0;bottom:0;height:92px;background:repeating-linear-gradient(0deg,#bf6e44 0 18px,#c9784b 18px 22px)}.world.school .track{display:block}
 .treeArea{position:absolute;left:20px;right:20px;bottom:48px;display:flex;gap:14px;align-items:flex-end;min-height:205px;overflow:hidden}.obj{position:relative;width:140px;height:210px;flex:0 0 auto}.sapling{position:absolute;left:40px;bottom:0;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}
@@ -59,7 +68,7 @@ unit は tree / banana / snowman。
 ============================================================
 */
 const STAGES=[
-{id:'field',name:'ステージ1「田園」',icon:'🌾',image:'field2.png',cls:'',sun:'☀️',clear:7,plant:'apple',growName:'リンゴ',unit:'tree'},
+{id:'field',name:'ステージ1「田園」',icon:'🌾',image:'field_darkpop.png',cls:'',sun:'☀️',clear:7,plant:'apple',growName:'リンゴ',unit:'tree'},
  {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',cls:'tropical',sun:'🌞',clear:7,plant:'banana',growName:'バナナ',unit:'banana'},
  {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',cls:'snow',sun:'❄️',clear:7,plant:'snowman',growName:'雪だるま',unit:'snowman'},
  {id:'volcano',name:'ステージ4「火山」',icon:'🌋',cls:'volcano',sun:'🌋',clear:7,plant:'gem',growName:'火の実',unit:'tree'},
