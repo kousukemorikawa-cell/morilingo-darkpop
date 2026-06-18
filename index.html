@@ -318,8 +318,18 @@ function renderObjects(){ $("treeArea").innerHTML=game.objects.map((n,idx)=>rend
 function renderObject(n,idx){
  if(n===0 && idx===game.objects.length-1){
   if(game.unit==="snowman")return `<div class="obj"><div class="sapling">❄️</div></div>`;
- return `<div class="obj">
-  <img src="sapling.png" class="saplingImg">
+return `
+<div class="obj">
+  <img
+    src="sapling.png"
+    style="
+      width:150px;
+      border:3px solid red;
+      position:absolute;
+      left:0;
+      bottom:0;
+    "
+  >
 </div>`;
  }
  if(game.unit==="snowman")return renderSnowman(n);
