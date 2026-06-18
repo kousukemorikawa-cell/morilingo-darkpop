@@ -269,6 +269,12 @@ function renderStages(){
  }).join("");
 }
 
+function shuffle(a){
+ return a.map(v=>[Math.random(),v])
+  .sort((x,y)=>x[0]-y[0])
+  .map(x=>x[1]);
+}
+
 function startChallenge(i){
  const s=STAGES[i];
  game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
@@ -291,10 +297,6 @@ function setupWorld(cls,sun,label,image){
  $("world").style.backgroundImage=image?`url('${image}')`:"";
 }
 
- if(image){
-   $("world").style.backgroundImage=`url('${image}')`;
- }
-}
 function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
 function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);show("menu");}
 
@@ -372,10 +374,7 @@ function renderObject(n,idx){
   ${fruits}
  </div>`;
 }
- if(game.unit==="snowman")return renderSnowman(n);
- const fruits=POS7.slice(0,n).map(([x,y])=>`<span class="fruit" style="left:${x}%;top:${y}%">${FRUITS[game.plant]||"🍎"}</span>`).join("");
- return `<div class="obj ${game.unit==="banana"?"banana":""}"><div class="crown">${fruits}</div><div class="trunk"></div></div>`;
-}
+
 function renderSnowman(n){
  let parts="";
  if(n>=1)parts+=`<div class="snowBase"></div>`;
