@@ -15,7 +15,25 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
 .screen{display:none}.screen.active{display:block}
 button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;font-weight:1000;font-size:16px;background:#fff;box-shadow:0 6px 0 #0002,0 12px 22px #0001;cursor:pointer}.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #0002}.primary{background:linear-gradient(#8df08f,#32b85c);color:#fff}.secondary{background:linear-gradient(#ffe78f,#ffbd45);color:#553700}.ghost{background:#ffffffaa}
 .hero{text-align:center;padding:28px 10px}.big{font-size:72px}h1,h2,h3{margin:.35em 0}.muted{color:#667085;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}.stageIcon{font-size:38px;text-align:center}.locked{filter:grayscale(1);opacity:.55}
+.stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}.stageIcon{font-size:38px;text-align:center}.stageImage{
+ width:100%;
+ height:120px;
+ border-radius:18px;
+ background-size:cover;
+ background-position:center;
+ background-repeat:no-repeat;
+ border:2px solid #fff;
+ box-shadow:inset 0 -10px 0 #0001;
+}
+
+.stageCard{
+ display:grid;
+ gap:10px;
+ background:#ffffffc9;
+ border:2px solid #fff;
+ border-radius:22px;
+ padding:12px;
+}.locked{filter:grayscale(1);opacity:.55}
 .badges{display:flex;gap:8px;flex-wrap:wrap}.badge{background:#fff;border:2px solid #ecf1ee;border-radius:16px;padding:10px 12px;font-weight:900}
 .world{
   position:relative;
