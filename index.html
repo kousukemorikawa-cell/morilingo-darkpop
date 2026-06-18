@@ -244,10 +244,23 @@ function openChallenge(){renderStages();show("challenge");}
 function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
-  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：${s.clear}問正解</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
+  const image=s.image||"";
+  return `
+   <div class="stageCard ${open?"":"locked"}">
+    ${image
+      ? `<div class="stageImage" style="background-image:url('${image}')"></div>`
+      : `<div class="stageIcon">${open?s.icon:"🔒"}</div>`
+    }
+    <div>
+     <h3>${open?s.name:"未開放ステージ"}</h3>
+     <div class="muted">クリア条件：${s.clear}問正解</div>
+    </div>
+    <button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>
+     ${open?"挑戦":"未開放"}
+    </button>
+   </div>`;
  }).join("");
 }
-function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
 
 function startChallenge(i){
  const s=STAGES[i];
