@@ -152,6 +152,107 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .question{font-size:15px;line-height:1.3}
  body.gameMode .ans{min-height:46px;font-size:14px;padding:7px}
 }
+
+/* PC版ゲーム画面：問題文とメニューへボタンをスクロールなしで見せる最終調整 */
+@media(min-width:561px){
+ body.gameMode .app{
+  padding-top:8px;
+  padding-bottom:158px;
+ }
+ body.gameMode .header{
+  margin-bottom:6px;
+ }
+ body.gameMode .card{
+  padding:10px 12px;
+  border-radius:22px;
+ }
+ body.gameMode #modeTitle{
+  font-size:21px;
+  margin:0 0 4px;
+ }
+ body.gameMode .status{
+  gap:6px;
+  margin:6px 0;
+ }
+ body.gameMode .stat{
+  padding:6px;
+  border-radius:12px;
+ }
+ body.gameMode .timer{
+  padding:7px 10px;
+  border-radius:14px;
+ }
+ body.gameMode .timerTop{
+  margin-bottom:4px;
+ }
+ body.gameMode .trackbar{
+  height:12px;
+ }
+ body.gameMode .world{
+  height:clamp(175px,26vh,230px);
+  min-height:175px;
+  max-height:230px;
+  margin:7px 0;
+ }
+ body.gameMode .treeArea{
+  bottom:36px;
+  min-height:145px;
+ }
+ body.gameMode .obj{
+  width:138px;
+  height:165px;
+ }
+ body.gameMode .treeImg{
+  width:150px;
+  bottom:-4px;
+ }
+ body.gameMode .saplingImg{
+  width:88px;
+  bottom:8px;
+ }
+ body.gameMode .fruitImg{
+  width:34px;
+  height:34px;
+ }
+ body.gameMode .fruitEmoji{
+  font-size:24px;
+ }
+ body.gameMode #game .toolbar{
+  position:absolute;
+  top:8px;
+  right:10px;
+  margin:0;
+  z-index:60;
+ }
+ body.gameMode #game .toolbar .btn{
+  padding:8px 12px;
+  font-size:13px;
+  border-radius:14px;
+ }
+ body.gameMode .question{
+  font-size:19px;
+  line-height:1.32;
+  padding:10px 12px;
+  margin-top:6px;
+ }
+ body.gameMode .feedback{
+  min-height:28px;
+  padding:5px 9px;
+  margin-top:5px;
+  font-size:14px;
+ }
+ body.gameMode .answerPanel{
+  padding:8px 14px calc(10px + env(safe-area-inset-bottom));
+ }
+ body.gameMode .answers{
+  gap:8px;
+ }
+ body.gameMode .ans{
+  min-height:56px;
+  padding:9px 12px;
+  font-size:16px;
+ }
+}
 .rankingBox{
  margin-top:14px;
  background:#fffdf4;
