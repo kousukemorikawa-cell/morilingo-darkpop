@@ -68,7 +68,29 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
 .logo{font-size:24px;font-weight:1000;color:var(--green);text-shadow:0 2px 0 #fff}.pill{background:#fff;border-radius:999px;padding:8px 12px;font-weight:900;box-shadow:0 4px 14px #0001}
 .card{background:var(--card);border:2px solid #fff;border-radius:24px;padding:16px;box-shadow:0 16px 38px #24553625}
 .screen{display:none}.screen.active{display:block}
-button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;font-weight:1000;font-size:16px;background:#fff;box-shadow:0 6px 0 #0002,0 12px 22px #0001;cursor:pointer}.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #0002}.primary{background:linear-gradient(#8df08f,#32b85c);color:#fff}.secondary{background:linear-gradient(#ffe78f,#ffbd45);color:#553700}.ghost{background:#ffffffaa}
+button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;font-weight:1000;font-size:16px;background:#fff;box-shadow:0 6px 0 #0002,0 12px 22px #0001;cursor:pointer}.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #0002}..primary{
+ background:linear-gradient(#8df08f,#32b85c);
+ color:#fff;
+}
+
+.secondary{
+ background:linear-gradient(#ffe78f,#ffbd45);
+ color:#553700;
+}
+
+.info{
+ background:linear-gradient(#8fd6ff,#3a9cff);
+ color:#fff;
+}
+
+.danger{
+ background:linear-gradient(#ff9a9a,#e53935);
+ color:#fff;
+}
+
+.ghost{
+ background:#ffffffaa;
+}
 .hero{text-align:center;padding:28px 10px}.big{font-size:72px}h1,h2,h3{margin:.35em 0}.muted{color:#667085;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}.stageIcon{font-size:38px;text-align:center}.locked{filter:grayscale(1);opacity:.55}
 .badges{display:flex;gap:8px;flex-wrap:wrap}.badge{background:#fff;border:2px solid #ecf1ee;border-radius:16px;padding:10px 12px;font-weight:900}
@@ -319,7 +341,21 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  </div>
 </section>
   <section id="profile" class="screen"><div class="card"><h2>プレイヤー登録</h2><p class="muted">結果をスプレッドシートに記録するために入力します。端末に保存されます。</p><div class="form"><input id="playerName" placeholder="名前（例：森川太郎）"><input id="playerClass" placeholder="クラス（例：1-3）"><input id="playerNumber" placeholder="出席番号（例：12）" inputmode="numeric"></div><div class="toolbar"><button class="btn primary" onclick="saveProfileAndMenu()">保存して進む</button><button class="btn ghost" onclick="show('home')">戻る</button></div></div></section>
-  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button><button class="btn secondary" onclick="showTitles()">称号を見る</button><button class="btn ghost" onclick="loadRanking('weekly')">今週ランキング</button></div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"><div class="grid2">
+  <button class="btn primary" onclick="openChallenge()">チャレンジ</button>
+
+  <button class="btn secondary" onclick="show('original')">
+    オリジナル
+  </button>
+
+  <button class="btn info" onclick="showTitles()">
+    称号を見る
+  </button>
+
+  <button class="btn danger" onclick="loadRanking('weekly')">
+    今週ランキング
+  </button>
+</div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
   <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">素晴らしい称号を思いついたらぜひ教えてください</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
