@@ -465,11 +465,21 @@ function loadRanking(period=currentRankingPeriod){
  };
  document.body.appendChild(script);
 }
-function renderRanking(ranking){
+function renderRanking(data){
  const p=state.player||{};
  const myName=p.name||"";
- const list=Array.isArray(ranking)?ranking:[];
- const me=list.find(x=>x.name===myName);
+ const myNumber=String(p.number||"");
+
+ const list=Array.isArray(data.ranking)
+   ? data.ranking
+   : [];
+
+ const me=list.find(x=>{
+  const sameName=x.name===myName;
+  const sameNumber=!myNumber || !x.number || String(x.number||"")===myNumber;
+  return sameName && sameNumber;
+ });
+
  if(me){
   $("myBestScore").textContent=`${me.score} PT`;
   $("myRank").textContent=`${me.rank} 位`;
@@ -477,16 +487,28 @@ function renderRanking(ranking){
   $("myBestScore").textContent="-- PT";
   $("myRank").textContent="-- 位";
  }
+
  if(!list.length){
   $("rankingList").className="rankingEmpty";
   $("rankingList").textContent="まだランキングがありません";
   return;
  }
+
  $("rankingList").className="";
+
  $("rankingList").innerHTML=list.slice(0,10).map(item=>{
-  const medal=item.rank===1?"🥇":item.rank===2?"🥈":item.rank===3?"🥉":`${item.rank}位`;
-  const meClass=item.name===myName?" me":"";
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const medal=
+   item.rank===1?"🥇":
+   item.rank===2?"🥈":
+   item.rank===3?"🥉":
+   `${item.rank}位`;
+
+  const sameName=item.name===myName;
+  const sameNumber=!myNumber || !item.number || String(item.number||"")===myNumber;
+  const meClass=(sameName && sameNumber)?" me":"";
+  const numberText=item.number?`${item.number}番 `:"";
+
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${numberText}${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
