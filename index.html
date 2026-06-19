@@ -423,10 +423,10 @@ function growMessage(){
  return `正解！ ${game.stage.growName||"実"}がなった！`;
 }
 function stealMessage(){
- if(!hasAnyObject())return "忍者は取るものがなく、悲しそうに帰っていった……";
- if(game.unit==="snowman")return "忍者が雪だるまのパーツを1つ盗んだ！";
- if(game.unit==="banana")return "忍者がバナナを1本盗んだ！";
- return `忍者が${game.stage.growName||"実"}を1つ盗んだ！`;
+ if(!hasAnyObject())return "ゴブリンは取るものがなく、悲しそうに帰っていった……";
+ if(game.unit==="snowman")return "ゴブリンが雪だるまのパーツを1つ盗んだ！";
+ if(game.unit==="banana")return "ゴブリンがバナナを1本盗んだ！";
+ return `ゴブリンが${game.stage.growName||"実"}を1つ盗んだ！`;
 }
 function dragonMessage(){
  if(game.unit==="snowman")return "ドラゴン襲来！熱風で雪だるまが溶けた！";
