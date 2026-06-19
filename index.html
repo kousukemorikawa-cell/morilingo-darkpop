@@ -31,7 +31,13 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
  width:110px;
  height:110px;
  object-fit:contain;
-}.ninjaRun,.gobelynRun{display:block;animation:ninja 4.2s ease-in-out forwards}.dragonFly{display:block;font-size:76px;bottom:165px;animation:dragon 5.2s ease-in-out forwards}
+}.ninjaRun,.gobelynRun{display:block;animation:ninja 4.2s ease-in-out forwards}.dragonFly{
+  display:block;
+  width:180px;
+  height:auto;
+  bottom:165px;
+  animation:dragon 5.2s ease-in-out forwards;
+}
 .fireOverlay{display:none;position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(circle at 25% 80%,#ffe65add 0 8%,#ff5f24cc 16%,transparent 32%),radial-gradient(circle at 62% 74%,#fff678dd 0 9%,#ff5220c7 18%,transparent 35%),linear-gradient(0deg,#ff4d28aa,#ff4d2820 58%,transparent);animation:burn 1.05s infinite}.fireOverlay.on{display:block}.world.shake{animation:shake .38s linear 6}
 .status{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.stat{text-align:center;background:#ffffffb8;border-radius:16px;padding:9px;font-weight:1000}.timer{grid-column:1/-1;background:#ffffffb8;border-radius:18px;padding:10px 12px;font-weight:1000}.timerTop{display:flex;justify-content:space-between;margin-bottom:7px}.trackbar{height:16px;background:#edf2f0;border-radius:999px;overflow:hidden;border:2px solid #fff}.fill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);transition:width .25s linear}
 .question{background:#fff;border:3px solid #e9f4ee;border-radius:20px;padding:14px 16px;margin-top:12px;box-shadow:0 7px 0 #2f7d4b14;font-size:21px;font-weight:1000;line-height:1.5}.feedback{background:#ffffffaa;border-radius:16px;padding:8px 12px;margin-top:8px;min-height:38px;font-weight:1000}
@@ -90,7 +96,7 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
 書くの未然形は？,書か,書き,書く,書け,1
 けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea><input type="file" id="csvFile" accept=".csv,text/csv"></div><div class="toolbar"><button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button><button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button><button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button><button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button><button class="btn ghost" onclick="show('original')">戻る</button></div></div></section>
-  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="time">20</span>秒</span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="gobelyn.png"><div id="dragon" class="char">🐉</div><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
+  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="time">20</span>秒</span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="gobelyn.png"><<img id="dragon" src="dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
 </div>
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <script>
