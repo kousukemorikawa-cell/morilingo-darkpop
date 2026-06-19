@@ -547,13 +547,27 @@ function stageQuestionsFallback(stageIndex){
 }
 
 const FRUITS={apple:"🍎",banana:"🍌",gem:"🔴",star:"⭐"};
-const POS6 = [
- [50,33],
+// リンゴの位置：PC版とスマホ版を分ける
+// ※Yの数字は小さいほど上、大きいほど下
+const POS6_DESKTOP = [
+ [50,31],
 
- [39,48],[61,48],
+ [39,46],[61,46],
 
- [30,64],[50,64],[70,64]
+ [30,62],[50,62],[70,62]
 ];
+
+const POS6_MOBILE = [
+ [50,38],
+
+ [39,54],[61,54],
+
+ [30,71],[50,71],[70,71]
+];
+
+function fruitPositions(){
+ return window.matchMedia("(max-width:560px)").matches ? POS6_MOBILE : POS6_DESKTOP;
+}
 let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
 state.selectedMenuTitles??=[];
@@ -959,7 +973,7 @@ function renderObject(n,idx){
  }
  if(game.unit==="snowman")return renderSnowman(n);
 
- const fruits=POS6.slice(0,Math.min(n,6)).map(([x,y])=>{
+ const fruits=fruitPositions().slice(0,Math.min(n,6)).map(([x,y])=>{
   if(game.plant==="apple"){
    return `<img src="apple.png" class="fruitImg" style="left:${x}%;top:${y}%" alt="リンゴ">`;
   }
