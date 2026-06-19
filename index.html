@@ -100,6 +100,75 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;padding:12px;font-size:16px;background:#fff;font-family:inherit}textarea{min-height:92px}.form{display:grid;gap:10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 @keyframes float{50%{transform:translateY(12px)}}@keyframes pop{from{transform:translate(-50%,-50%) scale(.1)}to{transform:translate(-50%,-50%) scale(1)}}@keyframes ninja{0%{left:-90px}45%{left:76px}58%{left:76px;transform:rotate(-8deg)}100%{left:105%}}@keyframes dragon{0%{left:105%;transform:scaleX(1)}40%{left:62%;transform:scaleX(1) translateY(18px)}58%{left:62%;transform:scaleX(1) translateY(18px)}100%{left:-130px;transform:scaleX(1) translateY(-20px)}}@keyframes burn{50%{opacity:.75;filter:saturate(1.3)}}@keyframes shake{25%{transform:translate(4px,-2px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,2px)}}@media(max-width:560px){.app{padding:10px 10px 156px}.world{height:66vh;min-height:340px}.treeArea{bottom:90px;min-height:220px}.logo{font-size:20px}.question{font-size:18px}.stage{grid-template-columns:52px 1fr}.stage .btn{grid-column:1/-1}.status{grid-template-columns:repeat(3,1fr)}.obj{width:150px;height:220px}.treeImg{width:170px}.saplingImg{width:100px}.fruitImg{width:30px;height:30px}.fruitEmoji{font-size:26px}.crown{width:112px;height:112px}.ans{font-size:16px;min-height:66px;padding:10px}}
 
+.rankingBox{
+ margin-top:14px;
+ background:#fffdf4;
+ border:3px solid #fff;
+ border-radius:22px;
+ padding:14px;
+ box-shadow:0 10px 24px #0001;
+}
+.rankingHead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ margin-bottom:10px;
+}
+.rankingHead h3{margin:0}
+.rankingMini{
+ font-size:12px;
+ font-weight:1000;
+ background:#e8f7ee;
+ color:#217246;
+ border-radius:999px;
+ padding:6px 10px;
+}
+.rankingSummary{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+ margin-bottom:10px;
+}
+.rankingCard{
+ background:#fff;
+ border:2px solid #f1ead2;
+ border-radius:16px;
+ padding:10px;
+ text-align:center;
+ font-weight:1000;
+}
+.rankingCard .label{font-size:12px;color:#667085}
+.rankingCard .value{font-size:22px;color:#2f8f57;margin-top:2px}
+.rankingItem{
+ display:grid;
+ grid-template-columns:48px 1fr auto;
+ gap:8px;
+ align-items:center;
+ padding:9px 6px;
+ border-bottom:1px dashed #d9d0ad;
+ font-weight:900;
+}
+.rankingItem:last-child{border-bottom:0}
+.rankingItem.me{
+ background:#e9fff0;
+ border-radius:14px;
+ border-bottom:0;
+}
+.rankNo{font-weight:1000}
+.rankScore{font-weight:1000;color:#d68b00}
+.rankingEmpty{
+ background:#fff;
+ border-radius:16px;
+ padding:12px;
+ font-weight:900;
+ color:#667085;
+}
+@media(max-width:560px){
+ .rankingSummary{grid-template-columns:1fr 1fr}
+ .rankingItem{grid-template-columns:42px 1fr auto;font-size:14px}
+}
+
 .homeHero{
  position:relative;
  min-height:80vh;
@@ -149,7 +218,7 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  </div>
 </section>
   <section id="profile" class="screen"><div class="card"><h2>プレイヤー登録</h2><p class="muted">結果をスプレッドシートに記録するために入力します。端末に保存されます。</p><div class="form"><input id="playerName" placeholder="名前（例：森川太郎）"><input id="playerClass" placeholder="クラス（例：1-3）"><input id="playerNumber" placeholder="出席番号（例：12）" inputmode="numeric"></div><div class="toolbar"><button class="btn primary" onclick="saveProfileAndMenu()">保存して進む</button><button class="btn ghost" onclick="show('home')">戻る</button></div></div></section>
-  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button></div><div class="rankingBox"><div class="rankingHead"><h3>クラスランキング</h3><span class="rankingMini" id="rankingClass">クラス未入力</span></div><div class="rankingSummary"><div class="rankingCard"><div class="label">自己ベスト</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label">クラス順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
@@ -274,7 +343,7 @@ let nextId=null;
 let canAnswer=false;
 
 function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");$("answerPanel").style.display=id==="game"?"block":"none";renderBadges();updatePlayerDisplay();}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");$("answerPanel").style.display=id==="game"?"block":"none";renderBadges();updatePlayerDisplay();if(id==="menu")loadRanking();}
 
 function showProfile(){
  $("playerName").value=state.player.name||"";
@@ -329,6 +398,55 @@ function submitResult(reason="clear"){
   reason
  });
  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
+}
+
+function loadRanking(){
+ if(!$("rankingList"))return;
+ const p=state.player||{};
+ $("rankingClass").textContent=p.className?`${p.className} ランキング`:"クラス未入力";
+ $("myBestScore").textContent="-- PT";
+ $("myRank").textContent="-- 位";
+ if(!GAS_URL){$("rankingList").textContent="GAS_URLが未設定です";return;}
+ if(!p.className){$("rankingList").textContent="クラスを登録するとランキングが出ます";return;}
+ $("rankingList").className="rankingEmpty";
+ $("rankingList").textContent="ランキング読み込み中...";
+ const callback="morilingoRankingCallback_"+Date.now();
+ window[callback]=data=>{
+  try{renderRanking(data&&data.ranking?data.ranking:[]);}
+  finally{delete window[callback];script.remove();}
+ };
+ const script=document.createElement("script");
+ script.src=GAS_URL+`?action=ranking&className=${encodeURIComponent(p.className)}&callback=${callback}&v=${Date.now()}`;
+ script.onerror=()=>{
+  $("rankingList").className="rankingEmpty";
+  $("rankingList").textContent="ランキング読込失敗。GAS側に action=ranking があるか確認してください。";
+  delete window[callback];script.remove();
+ };
+ document.body.appendChild(script);
+}
+function renderRanking(ranking){
+ const p=state.player||{};
+ const myName=p.name||"";
+ const list=Array.isArray(ranking)?ranking:[];
+ const me=list.find(x=>x.name===myName);
+ if(me){
+  $("myBestScore").textContent=`${me.score} PT`;
+  $("myRank").textContent=`${me.rank} 位`;
+ }else{
+  $("myBestScore").textContent="-- PT";
+  $("myRank").textContent="-- 位";
+ }
+ if(!list.length){
+  $("rankingList").className="rankingEmpty";
+  $("rankingList").textContent="まだランキングがありません";
+  return;
+ }
+ $("rankingList").className="";
+ $("rankingList").innerHTML=list.slice(0,10).map(item=>{
+  const medal=item.rank===1?"🥇":item.rank===2?"🥈":item.rank===3?"🥉":`${item.rank}位`;
+  const meClass=item.name===myName?" me":"";
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
+ }).join("");
 }
 
 function renderBadges(){const names=[["first","はじめの一歩"],["field","田園の守り人"],["subtropical","亜熱帯探検家"],["snow","雪だるま職人"],["volcano","火山突破者"],["mars","火星の古典王"]];$("badges").innerHTML=names.map(([id,n])=>`<div class="badge">${state.badges.includes(id)?"🏅":"🔒"} ${n}</div>`).join("");}
