@@ -257,31 +257,32 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzxAYalATgi7KBl-hHsPzXypm
 /*
 ============================================================
 【開発者用：ステージ設定】
-clear はクリアに必要な正解数。
+clearTrees はクリアに必要な完成数。
+例：1ならリンゴ6個の木を1本、2なら完成した木を2本。
 unit は tree / banana / snowman。
 ============================================================
 */
 const STAGES=[
-{id:'field',name:'ステージ1「田園」',icon:'🌾',image:'field_darkpop.png',cls:'',sun:'☀️',clear:7,plant:'apple',growName:'リンゴ',unit:'tree'},
- {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',cls:'tropical',sun:'🌞',clear:7,plant:'banana',growName:'バナナ',unit:'banana'},
- {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',cls:'snow',sun:'❄️',clear:7,plant:'snowman',growName:'雪だるま',unit:'snowman'},
- {id:'volcano',name:'ステージ4「火山」',icon:'🌋',cls:'volcano',sun:'🌋',clear:7,plant:'gem',growName:'火の実',unit:'tree'},
- {id:'mars',name:'ステージ5「火星」',icon:'🪐',cls:'mars',sun:'🛸',clear:7,plant:'star',growName:'星の実',unit:'tree'},
- {id:'forest',name:'ステージ6「深い森」',icon:'🌲',cls:'',sun:'🌤️',clear:7,plant:'apple',growName:'森の実',unit:'tree'},
- {id:'river',name:'ステージ7「川辺」',icon:'🏞️',cls:'',sun:'💧',clear:7,plant:'apple',growName:'水の実',unit:'tree'},
- {id:'desert',name:'ステージ8「砂漠」',icon:'🏜️',cls:'mars',sun:'☀️',clear:7,plant:'star',growName:'サボテンの実',unit:'tree'},
- {id:'castle',name:'ステージ9「古城」',icon:'🏰',cls:'volcano',sun:'🌙',clear:7,plant:'gem',growName:'宝石',unit:'tree'},
- {id:'sky',name:'ステージ10「空島」',icon:'☁️',cls:'snow',sun:'🌈',clear:7,plant:'star',growName:'雲の実',unit:'tree'},
- {id:'bamboo',name:'ステージ11「竹林」',icon:'🎋',cls:'tropical',sun:'🎋',clear:7,plant:'banana',growName:'竹の実',unit:'banana'},
- {id:'moon',name:'ステージ12「月面」',icon:'🌕',cls:'mars',sun:'🌕',clear:7,plant:'star',growName:'月の石',unit:'tree'},
- {id:'sea',name:'ステージ13「海辺」',icon:'🏖️',cls:'tropical',sun:'🌊',clear:7,plant:'banana',growName:'南国の実',unit:'banana'},
- {id:'cave',name:'ステージ14「洞窟」',icon:'🕳️',cls:'volcano',sun:'💎',clear:7,plant:'gem',growName:'鉱石',unit:'tree'},
- {id:'library',name:'ステージ15「図書館」',icon:'📚',cls:'school',sun:'📖',clear:7,plant:'apple',growName:'知恵の実',unit:'tree'},
- {id:'dojo',name:'ステージ16「道場」',icon:'🥋',cls:'school',sun:'🥷',clear:7,plant:'apple',growName:'修行の実',unit:'tree'},
- {id:'aurora',name:'ステージ17「オーロラ」',icon:'🌌',cls:'snow',sun:'🌌',clear:7,plant:'snowman',growName:'氷像',unit:'snowman'},
- {id:'factory',name:'ステージ18「からくり工場」',icon:'⚙️',cls:'volcano',sun:'⚙️',clear:7,plant:'gem',growName:'歯車の実',unit:'tree'},
- {id:'temple',name:'ステージ19「古文神殿」',icon:'⛩️',cls:'',sun:'⛩️',clear:7,plant:'apple',growName:'神木の実',unit:'tree'},
- {id:'galaxy',name:'ステージ20「銀河」',icon:'🌌',cls:'mars',sun:'🛸',clear:7,plant:'star',growName:'銀河の星',unit:'tree'}
+{id:'field',name:'ステージ1「田園」',icon:'🌾',image:'field_darkpop.png',cls:'',sun:'☀️',clearTrees:1,plant:'apple',growName:'リンゴ',unit:'tree'},
+ {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',cls:'tropical',sun:'🌞',clearTrees:2,plant:'banana',growName:'バナナ',unit:'banana'},
+ {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',cls:'snow',sun:'❄️',clearTrees:3,plant:'snowman',growName:'雪だるま',unit:'snowman'},
+ {id:'volcano',name:'ステージ4「火山」',icon:'🌋',cls:'volcano',sun:'🌋',clearTrees:4,plant:'gem',growName:'火の実',unit:'tree'},
+ {id:'mars',name:'ステージ5「火星」',icon:'🪐',cls:'mars',sun:'🛸',clearTrees:5,plant:'star',growName:'星の実',unit:'tree'},
+ {id:'forest',name:'ステージ6「深い森」',icon:'🌲',cls:'',sun:'🌤️',clearTrees:6,plant:'apple',growName:'森の実',unit:'tree'},
+ {id:'river',name:'ステージ7「川辺」',icon:'🏞️',cls:'',sun:'💧',clearTrees:7,plant:'apple',growName:'水の実',unit:'tree'},
+ {id:'desert',name:'ステージ8「砂漠」',icon:'🏜️',cls:'mars',sun:'☀️',clearTrees:8,plant:'star',growName:'サボテンの実',unit:'tree'},
+ {id:'castle',name:'ステージ9「古城」',icon:'🏰',cls:'volcano',sun:'🌙',clearTrees:9,plant:'gem',growName:'宝石',unit:'tree'},
+ {id:'sky',name:'ステージ10「空島」',icon:'☁️',cls:'snow',sun:'🌈',clearTrees:10,plant:'star',growName:'雲の実',unit:'tree'},
+ {id:'bamboo',name:'ステージ11「竹林」',icon:'🎋',cls:'tropical',sun:'🎋',clearTrees:11,plant:'banana',growName:'竹の実',unit:'banana'},
+ {id:'moon',name:'ステージ12「月面」',icon:'🌕',cls:'mars',sun:'🌕',clearTrees:12,plant:'star',growName:'月の石',unit:'tree'},
+ {id:'sea',name:'ステージ13「海辺」',icon:'🏖️',cls:'tropical',sun:'🌊',clearTrees:13,plant:'banana',growName:'南国の実',unit:'banana'},
+ {id:'cave',name:'ステージ14「洞窟」',icon:'🕳️',cls:'volcano',sun:'💎',clearTrees:14,plant:'gem',growName:'鉱石',unit:'tree'},
+ {id:'library',name:'ステージ15「図書館」',icon:'📚',cls:'school',sun:'📖',clearTrees:15,plant:'apple',growName:'知恵の実',unit:'tree'},
+ {id:'dojo',name:'ステージ16「道場」',icon:'🥋',cls:'school',sun:'🥷',clearTrees:16,plant:'apple',growName:'修行の実',unit:'tree'},
+ {id:'aurora',name:'ステージ17「オーロラ」',icon:'🌌',cls:'snow',sun:'🌌',clearTrees:17,plant:'snowman',growName:'氷像',unit:'snowman'},
+ {id:'factory',name:'ステージ18「からくり工場」',icon:'⚙️',cls:'volcano',sun:'⚙️',clearTrees:18,plant:'gem',growName:'歯車の実',unit:'tree'},
+ {id:'temple',name:'ステージ19「古文神殿」',icon:'⛩️',cls:'',sun:'⛩️',clearTrees:19,plant:'apple',growName:'神木の実',unit:'tree'},
+ {id:'galaxy',name:'ステージ20「銀河」',icon:'🌌',cls:'mars',sun:'🛸',clearTrees:20,plant:'star',growName:'銀河の星',unit:'tree'}
 ];
 
 /*
@@ -518,7 +519,7 @@ function openChallenge(){renderStages();show("challenge");}
 function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
-  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：${s.clear}問正解</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
+  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：完成${s.clearTrees}個</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
  }).join("");
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
@@ -532,7 +533,7 @@ function startChallenge(i){
 }
 function startOriginal(){
  const qs=state.original.length?state.original:QUESTION_BANK.basic.slice(0,4);
- const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"tree",plant:"apple",growName:"リンゴ",clear:999,id:"original"};
+ const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"tree",plant:"apple",growName:"リンゴ",clearTrees:999,id:"original"};
  game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(qs)};
  setupWorld(s.cls,s.sun,"オリジナル");
  $("modeTitle").textContent=s.name;
@@ -609,7 +610,10 @@ function answer(i){
 }
 function checkClear(){
  if(game.mode!=="challenge")return false;
- if(game.correctCount<game.stage.clear)return false;
+
+ const completedObjects=game.objects.filter(n=>n>=6).length;
+ if(completedObjects<game.stage.clearTrees)return false;
+
  addBadge(game.stage.id);
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
  save();
