@@ -193,9 +193,11 @@ function stageQuestionsFallback(stageIndex){
 
 const FRUITS={apple:"🍎",banana:"🍌",gem:"🔴",star:"⭐"};
 const POS6 = [
- [50,18],
- [38,35],[62,35],
- [30,55],[50,55],[70,55]
+ [50,25],
+
+ [38,42],[62,42],
+
+ [30,62],[50,62],[70,62]
 ];
 let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
