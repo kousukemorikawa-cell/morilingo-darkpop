@@ -292,6 +292,60 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  font-weight:900;
  color:#6b5a18;
 }
+.titleActions{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap;
+ margin-top:9px;
+}
+.titleSelectBtn{
+ border:0;
+ border-radius:999px;
+ padding:8px 10px;
+ font-size:12px;
+ font-weight:1000;
+ background:#f3f5f6;
+ color:#667085;
+ cursor:pointer;
+ box-shadow:0 3px 0 #0001;
+}
+.titleSelectBtn.on.menuPick{
+ background:linear-gradient(#8fd6ff,#3a9cff);
+ color:#fff;
+}
+.titleSelectBtn.on.rankPick{
+ background:linear-gradient(#ff9a9a,#e53935);
+ color:#fff;
+}
+.titleSelectBtn:disabled{
+ opacity:.45;
+ cursor:not-allowed;
+}
+.rankNameLine{
+ display:flex;
+ align-items:center;
+ gap:6px;
+ flex-wrap:wrap;
+}
+.rankTitleChip{
+ display:inline-block;
+ border-radius:999px;
+ padding:3px 7px;
+ font-size:11px;
+ font-weight:1000;
+ background:#fff4d8;
+ color:#7a5100;
+ border:1px solid #f0d58b;
+}
+.badges.empty{
+ background:#fff;
+ border:2px dashed #dce6e1;
+ border-radius:16px;
+ padding:12px;
+ color:#667085;
+ font-weight:900;
+}
+
 
 .homeHero{
  position:relative;
@@ -356,8 +410,8 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
   <button class="btn danger" onclick="loadRanking('weekly')">
     今週ランキング
   </button>
-</div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
-  <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">素晴らしい称号を思いついたらぜひ教えてください</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
+</div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>表示中の称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
@@ -476,6 +530,8 @@ const POS6 = [
 ];
 let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
+state.selectedMenuTitles??=[];
+state.selectedRankingTitles??=[];
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -488,6 +544,7 @@ const TITLE_MASTER=[
  {id:"correct_10",name:"次期エース",desc:"累計10問正解",badgeId:"correct_10"},
  {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"}
 ];
+function titleById(id){return TITLE_MASTER.find(t=>t.id===id);}
 function earnedTitleIds(){
  const earned=[];
  if(state.badges.includes("field"))earned.push("stage1_clear");
@@ -495,12 +552,44 @@ function earnedTitleIds(){
  if(state.badges.includes("weekly_king"))earned.push("weekly_king");
  return earned;
 }
+function cleanSelectedTitles(){
+ const earned=earnedTitleIds();
+ state.selectedMenuTitles=(state.selectedMenuTitles||[]).filter(id=>earned.includes(id)).slice(0,3);
+ state.selectedRankingTitles=(state.selectedRankingTitles||[]).filter(id=>earned.includes(id)).slice(0,2);
+}
+function titleChipHtml(id){
+ const t=titleById(id);
+ return t?`<span class="rankTitleChip">🏅 ${t.name}</span>`:"";
+}
 function showTitles(){
  renderTitles();
  show("titles");
 }
+function toggleMenuTitle(id){
+ cleanSelectedTitles();
+ const arr=state.selectedMenuTitles;
+ if(arr.includes(id)){
+  state.selectedMenuTitles=arr.filter(x=>x!==id);
+ }else{
+  if(arr.length>=3){alert("メニューに表示できる称号は3つまでです");return;}
+  state.selectedMenuTitles=[...arr,id];
+ }
+ save();renderTitles();renderBadges();
+}
+function toggleRankingTitle(id){
+ cleanSelectedTitles();
+ const arr=state.selectedRankingTitles;
+ if(arr.includes(id)){
+  state.selectedRankingTitles=arr.filter(x=>x!==id);
+ }else{
+  if(arr.length>=2){alert("ランキング名の横に表示できる称号は2つまでです");return;}
+  state.selectedRankingTitles=[...arr,id];
+ }
+ save();renderTitles();loadRanking(currentRankingPeriod);
+}
 function renderTitles(){
  if(!$("titleList"))return;
+ cleanSelectedTitles();
  const earned=earnedTitleIds();
  const total=TITLE_MASTER.length;
  const count=earned.length;
@@ -510,11 +599,19 @@ function renderTitles(){
  $("titleBarFill").style.width=`${percent}%`;
  $("titleList").innerHTML=TITLE_MASTER.map(t=>{
   const unlocked=earned.includes(t.id);
+  const menuOn=state.selectedMenuTitles.includes(t.id);
+  const rankOn=state.selectedRankingTitles.includes(t.id);
+  const menuText=menuOn?"メニュー表示中":"メニューに表示";
+  const rankText=rankOn?"ランキング表示中":"ランキングに表示";
   return `<div class="titleCard ${unlocked?"unlocked":"locked"}">
    <div class="titleIcon">${unlocked?"🏅":"🔒"}</div>
    <div>
     <div class="titleName">${unlocked?t.name:"？？？？？"}</div>
     <div class="titleDesc">${unlocked?t.desc:"未獲得"}</div>
+    <div class="titleActions">
+      <button class="titleSelectBtn menuPick ${menuOn?"on":""}" ${unlocked?`onclick="toggleMenuTitle('${t.id}')"`:"disabled"}>${menuText}</button>
+      <button class="titleSelectBtn rankPick ${rankOn?"on":""}" ${unlocked?`onclick="toggleRankingTitle('${t.id}')"`:"disabled"}>${rankText}</button>
+    </div>
    </div>
   </div>`;
  }).join("");
@@ -666,11 +763,28 @@ function renderRanking(data){
   const meClass=(sameName && sameNumber)?" me":"";
   const numberText=item.number?`${item.number}番 `:"";
 
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${numberText}${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const titleHtml=(sameName && sameNumber)
+   ? (state.selectedRankingTitles||[]).map(titleChipHtml).join("")
+   : "";
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
-function renderBadges(){const names=[["first","はじめの一歩"],["field","田園の守り人"],["subtropical","亜熱帯探検家"],["snow","雪だるま職人"],["volcano","火山突破者"],["mars","火星の古典王"]];$("badges").innerHTML=names.map(([id,n])=>`<div class="badge">${state.badges.includes(id)?"🏅":"🔒"} ${n}</div>`).join("");}
+function renderBadges(){
+ if(!$("badges"))return;
+ cleanSelectedTitles();
+ const selected=state.selectedMenuTitles||[];
+ if(!selected.length){
+  $("badges").className="badges empty";
+  $("badges").textContent="表示する称号が選ばれていません。『称号を見る』から3つまで選べます。";
+  return;
+ }
+ $("badges").className="badges";
+ $("badges").innerHTML=selected.map(id=>{
+  const t=titleById(id);
+  return t?`<div class="badge">🏅 ${t.name}</div>`:"";
+ }).join("");
+}
 function addBadge(id){if(!state.badges.includes(id)){state.badges.push(id);save();}}
 function openChallenge(){renderStages();show("challenge");}
 function clearTargetName(s){
