@@ -124,6 +124,26 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  border-radius:999px;
  padding:6px 10px;
 }
+
+.rankingTabs{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:8px;
+ margin:10px 0;
+}
+.rankingTab{
+ border:0;
+ border-radius:14px;
+ padding:10px 8px;
+ font-weight:1000;
+ background:#fff;
+ box-shadow:0 4px 0 #0001;
+ cursor:pointer;
+}
+.rankingTab.active{
+ background:linear-gradient(#8df08f,#32b85c);
+ color:#fff;
+}
 .rankingSummary{
  display:grid;
  grid-template-columns:1fr 1fr;
@@ -218,7 +238,7 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  </div>
 </section>
   <section id="profile" class="screen"><div class="card"><h2>プレイヤー登録</h2><p class="muted">結果をスプレッドシートに記録するために入力します。端末に保存されます。</p><div class="form"><input id="playerName" placeholder="名前（例：森川太郎）"><input id="playerClass" placeholder="クラス（例：1-3）"><input id="playerNumber" placeholder="出席番号（例：12）" inputmode="numeric"></div><div class="toolbar"><button class="btn primary" onclick="saveProfileAndMenu()">保存して進む</button><button class="btn ghost" onclick="show('home')">戻る</button></div></div></section>
-  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button></div><div class="rankingBox"><div class="rankingHead"><h3>クラスランキング</h3><span class="rankingMini" id="rankingClass">クラス未入力</span></div><div class="rankingSummary"><div class="rankingCard"><div class="label">自己ベスト</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label">クラス順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button></div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
@@ -233,7 +253,7 @@ const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbyDOQfQQcUWikFCE769mzexDKXzL79oZHQbr5CbK99qR2gzOh0zhYlTeqVAUoy2-e57UA/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbyo3CcgkXjyhUzmkyLoszfQhwKBueaIXVJZvhB4wIfPa6EXDry8te5syd4YWdVbiV_XPg/exec";
 /*
 ============================================================
 【開発者用：ステージ設定】
@@ -341,6 +361,7 @@ let game=null;
 let timerId=null;
 let nextId=null;
 let canAnswer=false;
+let currentRankingPeriod="total";
 
 function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");$("answerPanel").style.display=id==="game"?"block":"none";renderBadges();updatePlayerDisplay();if(id==="menu")loadRanking();}
@@ -400,14 +421,25 @@ function submitResult(reason="clear"){
  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
 }
 
-function loadRanking(){
+function loadRanking(period=currentRankingPeriod){
  if(!$("rankingList"))return;
+ currentRankingPeriod=period||"total";
  const p=state.player||{};
- $("rankingClass").textContent=p.className?`${p.className} ランキング`:"クラス未入力";
+ const labels={total:"総合ランキング",daily:"今日ランキング",weekly:"今週ランキング",monthly:"今月ランキング"};
+ const mini={total:"総合",daily:"今日",weekly:"今週",monthly:"今月"};
+ if($("rankingTitle"))$("rankingTitle").textContent=labels[currentRankingPeriod]||"ランキング";
+ if($("rankingClass"))$("rankingClass").textContent=mini[currentRankingPeriod]||"総合";
+ ["Total","Daily","Weekly","Monthly"].forEach(key=>{
+  const el=$("rankTab"+key);
+  if(el)el.classList.remove("active");
+ });
+ const activeKey={total:"Total",daily:"Daily",weekly:"Weekly",monthly:"Monthly"}[currentRankingPeriod]||"Total";
+ if($("rankTab"+activeKey))$("rankTab"+activeKey).classList.add("active");
+ if($("myBestLabel"))$("myBestLabel").textContent=currentRankingPeriod==="total"?"総合PT":"期間PT";
+ if($("myRankLabel"))$("myRankLabel").textContent="あなたの順位";
  $("myBestScore").textContent="-- PT";
  $("myRank").textContent="-- 位";
  if(!GAS_URL){$("rankingList").textContent="GAS_URLが未設定です";return;}
- if(!p.className){$("rankingList").textContent="クラスを登録するとランキングが出ます";return;}
  $("rankingList").className="rankingEmpty";
  $("rankingList").textContent="ランキング読み込み中...";
  const callback="morilingoRankingCallback_"+Date.now();
@@ -418,6 +450,7 @@ function loadRanking(){
  const script=document.createElement("script");
  const params=new URLSearchParams({
   action:"ranking",
+  period:currentRankingPeriod,
   className:p.className||"",
   name:p.name||"",
   number:p.number||"",
@@ -432,16 +465,18 @@ function loadRanking(){
  };
  document.body.appendChild(script);
 }
-function renderRanking(data){
+function renderRanking(ranking){
  const p=state.player||{};
  const myName=p.name||"";
- const myNumber=p.number||"";
- const list=Array.isArray(data.ranking)?data.ranking:[];
- const me=list.find(x=>x.name===myName && (!myNumber || String(x.number||"")===String(myNumber)));
- const best=data.myBest || (me?me.score:0);
- const rank=data.myRank || (me?me.rank:null);
- $("myBestScore").textContent=best?`${best} PT`:"-- PT";
- $("myRank").textContent=rank?`${rank} 位`:"-- 位";
+ const list=Array.isArray(ranking)?ranking:[];
+ const me=list.find(x=>x.name===myName);
+ if(me){
+  $("myBestScore").textContent=`${me.score} PT`;
+  $("myRank").textContent=`${me.rank} 位`;
+ }else{
+  $("myBestScore").textContent="-- PT";
+  $("myRank").textContent="-- 位";
+ }
  if(!list.length){
   $("rankingList").className="rankingEmpty";
   $("rankingList").textContent="まだランキングがありません";
@@ -450,8 +485,8 @@ function renderRanking(data){
  $("rankingList").className="";
  $("rankingList").innerHTML=list.slice(0,10).map(item=>{
   const medal=item.rank===1?"🥇":item.rank===2?"🥈":item.rank===3?"🥉":`${item.rank}位`;
-  const meClass=(item.name===myName && (!myNumber || String(item.number||"")===String(myNumber)))?" me":"";
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.number?item.number+"番 ":""}${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const meClass=item.name===myName?" me":"";
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
