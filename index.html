@@ -257,8 +257,8 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzxAYalATgi7KBl-hHsPzXypm
 /*
 ============================================================
 【開発者用：ステージ設定】
-clearTrees はクリアに必要な完成数。
-例：1ならリンゴ6個の木を1本、2なら完成した木を2本。
+clearTrees はクリアに必要な「完成した育成物」の数。
+完成＝リンゴ・バナナ・雪だるまなどが6個分そろった状態。
 unit は tree / banana / snowman。
 ============================================================
 */
@@ -516,10 +516,19 @@ function renderRanking(data){
 function renderBadges(){const names=[["first","はじめの一歩"],["field","田園の守り人"],["subtropical","亜熱帯探検家"],["snow","雪だるま職人"],["volcano","火山突破者"],["mars","火星の古典王"]];$("badges").innerHTML=names.map(([id,n])=>`<div class="badge">${state.badges.includes(id)?"🏅":"🔒"} ${n}</div>`).join("");}
 function addBadge(id){if(!state.badges.includes(id)){state.badges.push(id);save();}}
 function openChallenge(){renderStages();show("challenge");}
+function clearTargetName(s){
+ if(s.unit==="snowman")return "雪だるま";
+ if(s.unit==="banana")return "バナナの木";
+ return "木";
+}
+function completedObjectCount(){
+ if(!game||!Array.isArray(game.objects))return 0;
+ return game.objects.filter(n=>n>=6).length;
+}
 function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
-  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：完成${s.clearTrees}個</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
+  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
  }).join("");
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
@@ -533,7 +542,7 @@ function startChallenge(i){
 }
 function startOriginal(){
  const qs=state.original.length?state.original:QUESTION_BANK.basic.slice(0,4);
- const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"tree",plant:"apple",growName:"リンゴ",clearTrees:999,id:"original"};
+ const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"tree",plant:"apple",growName:"リンゴ",clear:999,id:"original"};
  game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(qs)};
  setupWorld(s.cls,s.sun,"オリジナル");
  $("modeTitle").textContent=s.name;
@@ -611,8 +620,8 @@ function answer(i){
 function checkClear(){
  if(game.mode!=="challenge")return false;
 
- const completedObjects=game.objects.filter(n=>n>=6).length;
- if(completedObjects<game.stage.clearTrees)return false;
+ const completed=completedObjectCount();
+ if(completed<game.stage.clearTrees)return false;
 
  addBadge(game.stage.id);
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
