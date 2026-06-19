@@ -125,12 +125,15 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
 
 /* ゲーム中だけ、スマホ・PCともに1画面へ収まりやすくする */
 body.gameMode .app{padding-bottom:122px}
-body.gameMode .card{padding:12px}
+body.gameMode .card{padding:12px;position:relative}
 body.gameMode #modeTitle{font-size:22px;margin:.1em 0}
-body.gameMode .world{height:clamp(260px,42vh,360px);min-height:260px}
-body.gameMode .treeArea{bottom:58px;min-height:190px}
+body.gameMode .world{height:clamp(235px,36vh,320px);min-height:235px}
+body.gameMode .treeArea{bottom:52px;min-height:180px}
 body.gameMode .toolbar{margin-top:6px}
-body.gameMode .question{margin-top:8px}
+body.gameMode #game .toolbar{position:absolute;top:10px;right:12px;margin:0;z-index:40}
+body.gameMode #game .toolbar .btn{padding:8px 12px;font-size:13px;border-radius:14px}
+body.gameMode .question{margin-top:7px;font-size:20px;line-height:1.38;padding:12px 14px}
+body.gameMode .feedback{min-height:32px;padding:6px 10px;margin-top:6px}
 body.gameMode .answerPanel{padding-top:9px}
 
 @media(max-width:560px){
