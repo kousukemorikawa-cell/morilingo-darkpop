@@ -412,30 +412,36 @@ function loadRanking(){
  $("rankingList").textContent="ランキング読み込み中...";
  const callback="morilingoRankingCallback_"+Date.now();
  window[callback]=data=>{
-  try{renderRanking(data&&data.ranking?data.ranking:[]);}
+  try{renderRanking(data||{});}
   finally{delete window[callback];script.remove();}
  };
  const script=document.createElement("script");
- script.src=GAS_URL+`?action=ranking&className=${encodeURIComponent(p.className)}&callback=${callback}&v=${Date.now()}`;
+ const params=new URLSearchParams({
+  action:"ranking",
+  className:p.className||"",
+  name:p.name||"",
+  number:p.number||"",
+  callback,
+  v:String(Date.now())
+ });
+ script.src=GAS_URL+"?"+params.toString();
  script.onerror=()=>{
   $("rankingList").className="rankingEmpty";
-  $("rankingList").textContent="ランキング読込失敗。GAS側に action=ranking があるか確認してください。";
+  $("rankingList").textContent="ランキング読込失敗。GASを保存→新しいバージョンで再デプロイしてください。";
   delete window[callback];script.remove();
  };
  document.body.appendChild(script);
 }
-function renderRanking(ranking){
+function renderRanking(data){
  const p=state.player||{};
  const myName=p.name||"";
- const list=Array.isArray(ranking)?ranking:[];
- const me=list.find(x=>x.name===myName);
- if(me){
-  $("myBestScore").textContent=`${me.score} PT`;
-  $("myRank").textContent=`${me.rank} 位`;
- }else{
-  $("myBestScore").textContent="-- PT";
-  $("myRank").textContent="-- 位";
- }
+ const myNumber=p.number||"";
+ const list=Array.isArray(data.ranking)?data.ranking:[];
+ const me=list.find(x=>x.name===myName && (!myNumber || String(x.number||"")===String(myNumber)));
+ const best=data.myBest || (me?me.score:0);
+ const rank=data.myRank || (me?me.rank:null);
+ $("myBestScore").textContent=best?`${best} PT`:"-- PT";
+ $("myRank").textContent=rank?`${rank} 位`:"-- 位";
  if(!list.length){
   $("rankingList").className="rankingEmpty";
   $("rankingList").textContent="まだランキングがありません";
@@ -444,8 +450,8 @@ function renderRanking(ranking){
  $("rankingList").className="";
  $("rankingList").innerHTML=list.slice(0,10).map(item=>{
   const medal=item.rank===1?"🥇":item.rank===2?"🥈":item.rank===3?"🥉":`${item.rank}位`;
-  const meClass=item.name===myName?" me":"";
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const meClass=(item.name===myName && (!myNumber || String(item.number||"")===String(myNumber)))?" me":"";
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span>${item.number?item.number+"番 ":""}${item.name}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
