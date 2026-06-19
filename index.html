@@ -8,7 +8,62 @@
 :root{--green:#2f8f57;--ink:#263238;--card:rgba(255,255,255,.92)}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;background:linear-gradient(160deg,#dff7ff,#fff3c9);color:var(--ink)}
-.app{max-width:880px;margin:0 auto;min-height:100vh;padding:12px 12px 155px}
+
+#scoreHud{
+ position:fixed;
+ top:12px;
+ right:12px;
+ z-index:99999;
+ background:#111;
+ color:#fff;
+ font-weight:1000;
+ padding:8px 16px 10px;
+ border-radius:18px;
+ border:4px solid #fff;
+ box-shadow:0 0 0 4px #111,0 6px 0 rgba(0,0,0,.35);
+ text-align:center;
+ line-height:1.05;
+ min-width:118px;
+}
+
+.scoreLabel{
+ font-size:11px;
+ letter-spacing:.12em;
+ color:#ff3b30;
+ margin-bottom:4px;
+}
+
+.scoreMain{
+ display:flex;
+ align-items:baseline;
+ justify-content:center;
+ gap:5px;
+}
+
+#scoreHudValue{
+ font-size:30px;
+ color:#fff;
+ text-shadow:2px 2px 0 #000;
+}
+
+.scoreUnit{
+ font-size:16px;
+ color:#fff;
+}
+
+@media(max-width:560px){
+ #scoreHud{
+  top:8px;
+  right:8px;
+  padding:7px 12px 8px;
+  border-width:3px;
+  min-width:104px;
+ }
+ .scoreLabel{font-size:10px}
+ #scoreHudValue{font-size:25px}
+ .scoreUnit{font-size:13px}
+}
+ .app{max-width:880px;margin:0 auto;min-height:100vh;padding:12px 12px 155px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .logo{font-size:24px;font-weight:1000;color:var(--green);text-shadow:0 2px 0 #fff}.pill{background:#fff;border-radius:999px;padding:8px 12px;font-weight:900;box-shadow:0 4px 14px #0001}
 .card{background:var(--card);border:2px solid #fff;border-radius:24px;padding:16px;box-shadow:0 16px 38px #24553625}
@@ -77,6 +132,10 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
 </style>
 </head>
 <body>
+<div id="scoreHud">
+  <div class="scoreLabel">TODAY SCORE</div>
+  <div class="scoreMain"><span id="scoreHudValue">0</span><span class="scoreUnit">PT</span></div>
+</div>
 <div class="app">
   <div class="header"><div class="logo">🌳 モリリンゴ</div><div class="pill" id="savePill">保存済み</div></div>
  <section id="home" class="screen active">
@@ -369,6 +428,7 @@ function checkClear(){
 }
 function updateStats(){
  $("score").textContent=game?game.score:0;
+ if($("scoreHudValue")) $("scoreHudValue").textContent=game?game.score:0;
  $("streak").textContent=game?game.streak:0;
  $("miss").textContent=game?game.miss:0;
  $("time").textContent=game?game.time:20;
