@@ -189,6 +189,87 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  .rankingItem{grid-template-columns:42px 1fr auto;font-size:14px}
 }
 
+.titleBox{
+ margin-top:14px;
+ background:#f7fff9;
+ border:3px solid #fff;
+ border-radius:22px;
+ padding:14px;
+ box-shadow:0 10px 24px #0001;
+}
+.titleProgress{
+ background:#fff;
+ border:2px solid #e6f2eb;
+ border-radius:18px;
+ padding:12px;
+ margin:10px 0 12px;
+}
+.titleProgressTop{
+ display:flex;
+ justify-content:space-between;
+ font-weight:1000;
+ margin-bottom:8px;
+}
+.titleBar{
+ height:18px;
+ background:#edf2f0;
+ border-radius:999px;
+ overflow:hidden;
+ border:2px solid #fff;
+}
+.titleBarFill{
+ height:100%;
+ width:0%;
+ background:linear-gradient(90deg,#8df08f,#32b85c);
+ transition:width .3s;
+}
+.titleList{
+ display:grid;
+ gap:10px;
+}
+.titleCard{
+ display:grid;
+ grid-template-columns:50px 1fr;
+ gap:10px;
+ align-items:center;
+ background:#fff;
+ border:2px solid #eef3ef;
+ border-radius:18px;
+ padding:12px;
+ font-weight:900;
+}
+.titleCard.unlocked{
+ border-color:#b9efc8;
+ background:#f0fff4;
+}
+.titleCard.locked{
+ opacity:.62;
+ filter:grayscale(1);
+}
+.titleIcon{
+ font-size:32px;
+ text-align:center;
+}
+.titleName{
+ font-size:17px;
+ font-weight:1000;
+}
+.titleDesc{
+ font-size:13px;
+ color:#667085;
+ margin-top:3px;
+}
+.titleHint{
+ margin-top:10px;
+ background:#fffdf4;
+ border:2px dashed #eadb96;
+ border-radius:16px;
+ padding:10px;
+ font-size:13px;
+ font-weight:900;
+ color:#6b5a18;
+}
+
 .homeHero{
  position:relative;
  min-height:80vh;
@@ -238,7 +319,8 @@ input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;pad
  </div>
 </section>
   <section id="profile" class="screen"><div class="card"><h2>プレイヤー登録</h2><p class="muted">結果をスプレッドシートに記録するために入力します。端末に保存されます。</p><div class="form"><input id="playerName" placeholder="名前（例：森川太郎）"><input id="playerClass" placeholder="クラス（例：1-3）"><input id="playerNumber" placeholder="出席番号（例：12）" inputmode="numeric"></div><div class="toolbar"><button class="btn primary" onclick="saveProfileAndMenu()">保存して進む</button><button class="btn ghost" onclick="show('home')">戻る</button></div></div></section>
-  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button></div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="menu" class="screen"><div class="card"><h2>メニュー</h2><p class="muted" id="playerDisplay"></p><div class="grid2"><button class="btn primary" onclick="openChallenge()">チャレンジ</button><button class="btn secondary" onclick="show('original')">オリジナル</button><button class="btn secondary" onclick="showTitles()">称号を見る</button><button class="btn ghost" onclick="loadRanking('weekly')">今週ランキング</button></div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+  <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">獲得した称号を確認できます。今は画面だけ先に作っています。</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">※今後はスプレッドシートのPlayers/Titlesと連携して、同じ名前・クラス・出席番号なら称号を引き継げるようにします。</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
@@ -364,8 +446,46 @@ let nextId=null;
 let canAnswer=false;
 let currentRankingPeriod="total";
 
+const TITLE_MASTER=[
+ {id:"stage1_clear",name:"はじまりの勇者",desc:"ステージ1をクリア",badgeId:"field"},
+ {id:"correct_10",name:"次期エース",desc:"累計10問正解",badgeId:"correct_10"},
+ {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"}
+];
+function earnedTitleIds(){
+ const earned=[];
+ if(state.badges.includes("field"))earned.push("stage1_clear");
+ if(state.badges.includes("correct_10"))earned.push("correct_10");
+ if(state.badges.includes("weekly_king"))earned.push("weekly_king");
+ return earned;
+}
+function showTitles(){
+ renderTitles();
+ show("titles");
+}
+function renderTitles(){
+ if(!$("titleList"))return;
+ const earned=earnedTitleIds();
+ const total=TITLE_MASTER.length;
+ const count=earned.length;
+ const percent=total?Math.round(count/total*100):0;
+ $("titleCountMini").textContent=`${count} / ${total}`;
+ $("titleProgressText").textContent=`${percent}%`;
+ $("titleBarFill").style.width=`${percent}%`;
+ $("titleList").innerHTML=TITLE_MASTER.map(t=>{
+  const unlocked=earned.includes(t.id);
+  return `<div class="titleCard ${unlocked?"unlocked":"locked"}">
+   <div class="titleIcon">${unlocked?"🏅":"🔒"}</div>
+   <div>
+    <div class="titleName">${unlocked?t.name:"？？？？？"}</div>
+    <div class="titleDesc">${unlocked?t.desc:"未獲得"}</div>
+   </div>
+  </div>`;
+ }).join("");
+}
+
+
 function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");$("answerPanel").style.display=id==="game"?"block":"none";renderBadges();updatePlayerDisplay();if(id==="menu")loadRanking();}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");$("answerPanel").style.display=id==="game"?"block":"none";renderBadges();renderTitles();updatePlayerDisplay();if(id==="menu")loadRanking();}
 
 function showProfile(){
  $("playerName").value=state.player.name||"";
@@ -601,6 +721,7 @@ function answer(i){
   game.score+=game.time>=15?15:10;
   game.streak++;
   game.correctCount++;
+  if(game.correctCount>=10)addBadge("correct_10");
   game.miss=0;
   $("feedback").textContent=growMessage();
   growObject();
