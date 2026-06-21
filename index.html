@@ -976,7 +976,7 @@ function clearTargetName(s){
 }
 function clearConditionText(s){
  if(isTreeStage(s))return `クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個`;
- return `クリア条件：宝箱から${clearTargetName(s)}を ${s.clearTrees}個ドロップ`;
+ return `クリア条件：宝箱 ${s.clearTrees}個開封`;
 }
 function completedObjectCount(){
  if(!game||!Array.isArray(game.objects))return 0;
@@ -1154,11 +1154,12 @@ function renderChestObject(n,idx){
  const progress=Math.min(n,6);
  const label=opened ? `${itemName}ゲット！` : `${progress}/6`;
  const drop=opened ? assetImg(itemImage,"dropItemImg",itemName) : "";
+ const itemLabel=opened ? `<div class="chestLabel">${itemName}</div>` : "";
  return `
  <div class="obj chestObj">
    ${assetImg(chestImage,"chestImg",opened?"開いた宝箱":"閉じた宝箱")}
    ${drop}
-   <div class="chestLabel">${itemName}</div>
+   ${itemLabel}
    <div class="chestProgress">${label}</div>
  </div>`;
 }
