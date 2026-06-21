@@ -98,7 +98,7 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 .world{position:relative;height:66vh;min-height:360px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:linear-gradient(#9ee8ff 0 45%,#bdf2a1 45% 76%,#85d069 76%);background-size:cover;background-position:center bottom;background-repeat:no-repeat}
 .world.tropical{background:linear-gradient(#8ce9ff 0 40%,#b9f271 40% 72%,#54c96d 72%)}.world.snow{background:linear-gradient(#cfeeff 0 42%,#fbfeff 42% 74%,#e3f4ff 74%)}.world.volcano{background:linear-gradient(#5b5465 0 42%,#8b5d43 42% 74%,#3d3037 74%)}.world.mars{background:linear-gradient(#f6a56d 0 42%,#d76b45 42% 76%,#b94835 76%)}.world.school{background:linear-gradient(#bcecff 0 42%,#99d874 42% 66%,#c4834c 66% 100%)}
 .stageCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.sun{position:absolute;right:24px;top:18px;font-size:42px}.cloud{position:absolute;font-size:36px;top:20px;left:12%;animation:float 8s infinite ease-in-out}.cloud.c2{left:70%;top:38px;animation-delay:-3s}.track{display:none;position:absolute;left:0;right:0;bottom:0;height:92px;background:repeating-linear-gradient(0deg,#bf6e44 0 18px,#c9784b 18px 22px)}.world.school .track{display:block}
-.treeArea{position:absolute;left:20px;right:20px;bottom:80px;display:flex;gap:14px;align-items:flex-end;min-height:230px;overflow:hidden}.obj{position:relative;width:160px;height:230px;flex:0 0 auto}.sapling{position:absolute;left:40px;bottom:90px;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}.saplingImg{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:110px;z-index:5}.treeImg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:190px;z-index:1}.fruitImg{position:absolute;width:45px;height:45px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0003);animation:pop .25s;z-index:3}.fruitEmoji{position:absolute;font-size:28px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s;z-index:3}
+.treeArea{position:absolute;left:20px;right:20px;bottom:80px;display:flex;gap:14px;align-items:flex-end;min-height:230px;overflow:hidden}.obj{position:relative;width:160px;height:230px;flex:0 0 auto}.chestObj{height:190px}.chestImg{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:160px;z-index:2}.dropItemImg{position:absolute;left:50%;bottom:105px;transform:translateX(-50%);width:72px;height:72px;object-fit:contain;z-index:3;filter:drop-shadow(0 5px 2px #0003);animation:itemDropPop .45s ease-out}.chestProgress{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);background:#111;color:#fff;border:3px solid #fff;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:1000;z-index:5;white-space:nowrap}.chestLabel{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#fff9;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:1000;z-index:4;white-space:nowrap}@keyframes itemDropPop{from{transform:translateX(-50%) translateY(28px) scale(.35);opacity:0}to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}.sapling{position:absolute;left:40px;bottom:90px;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}.saplingImg{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:110px;z-index:5}.treeImg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:190px;z-index:1}.fruitImg{position:absolute;width:45px;height:45px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0003);animation:pop .25s;z-index:3}.fruitEmoji{position:absolute;font-size:28px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s;z-index:3}
 .snowBase,.snowHead{position:absolute;left:50%;transform:translateX(-50%);background:#fff;border:4px solid #dbeefd;border-radius:50%;box-shadow:inset -10px -10px #aadaf047,0 8px 0 #0001}.snowBase{bottom:0;width:92px;height:92px}.snowHead{bottom:75px;width:62px;height:62px}.snowArm{position:absolute;width:52px;height:8px;background:#8b552d;border-radius:999px;bottom:91px}.snowArm.r{left:96px;transform:rotate(-25deg)}.snowArm.l{left:5px;transform:rotate(25deg)}.snowFace{position:absolute;left:50%;bottom:103px;transform:translateX(-50%);font-size:20px;font-weight:900;letter-spacing:5px}.snowNose{position:absolute;left:78px;bottom:102px;font-size:21px}.snowStick{position:absolute;left:122px;bottom:80px;font-size:45px;transform:rotate(18deg)}
 .char{
  position:absolute;
@@ -121,7 +121,7 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 .question{background:#fff;border:3px solid #e9f4ee;border-radius:20px;padding:14px 16px;margin-top:12px;box-shadow:0 7px 0 #2f7d4b14;font-size:21px;font-weight:1000;line-height:1.5}.feedback{background:#ffffffaa;border-radius:16px;padding:8px 12px;margin-top:8px;min-height:38px;font-weight:1000}
 .answerPanel{position:fixed;left:0;right:0;bottom:0;background:#fffffff0;backdrop-filter:blur(10px);padding:12px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px #0002;z-index:30}.answers{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}.ans{position:relative;min-height:64px;text-align:left;border:4px solid transparent;overflow:hidden}.ans:before{content:attr(data-label);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:999px;margin-right:8px;color:#fff}.ans.answered{pointer-events:none}.ans.correctChoice:after{content:"〇";position:absolute;inset:0;z-index:3;display:grid;place-items:center;font-weight:1000;line-height:1;pointer-events:none;font-size:58px;color:#19a64a;text-shadow:0 3px 0 #fff,3px 0 0 #fff,0 -3px 0 #fff,-3px 0 0 #fff,0 6px 10px #0003}.ans.wrongChoice:after,.ans.wrongChoice .xLine{content:"";position:absolute;left:8%;right:8%;top:50%;height:9px;z-index:3;background:#e53935;border-radius:999px;box-shadow:0 0 0 4px #fff,0 7px 12px #0003;pointer-events:none;transform-origin:center}.ans.wrongChoice:after{transform:translateY(-50%) rotate(24deg)}.ans.wrongChoice .xLine{transform:translateY(-50%) rotate(-24deg)}.ans.wrongChoice:before,.ans.correctChoice:before{opacity:.35}.red{border-color:#ef5350}.red:before{background:#ef5350}.blue{border-color:#42a5f5}.blue:before{background:#42a5f5}.green{border-color:#66bb6a}.green:before{background:#66bb6a}.yellow{border-color:#f6c945}.yellow:before{background:#f6c945;color:#5d4300}
 input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;padding:12px;font-size:16px;background:#fff;font-family:inherit}textarea{min-height:92px}.form{display:grid;gap:10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-@keyframes float{50%{transform:translateY(12px)}}@keyframes pop{from{transform:translate(-50%,-50%) scale(.1)}to{transform:translate(-50%,-50%) scale(1)}}@keyframes ninja{0%{left:-90px}45%{left:76px}58%{left:76px;transform:rotate(-8deg)}100%{left:105%}}@keyframes dragon{0%{left:105%;transform:scaleX(1)}40%{left:62%;transform:scaleX(1) translateY(18px)}58%{left:62%;transform:scaleX(1) translateY(18px)}100%{left:-130px;transform:scaleX(1) translateY(-20px)}}@keyframes burn{50%{opacity:.75;filter:saturate(1.3)}}@keyframes shake{25%{transform:translate(4px,-2px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,2px)}}@media(max-width:560px){.app{padding:8px 8px 118px}.world{height:42vh;min-height:240px;max-height:310px;margin:6px 0}.treeArea{left:10px;right:10px;bottom:44px;min-height:170px;gap:8px}.logo{font-size:19px}.header{margin-bottom:6px}.card{padding:10px;border-radius:20px}.question{font-size:16px;line-height:1.35;padding:9px 11px;margin-top:8px}.feedback{font-size:13px;min-height:30px;padding:6px 9px;margin-top:6px}.stage{grid-template-columns:52px 1fr}.stage .btn{grid-column:1/-1}.status{grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.stat{padding:6px 4px;font-size:13px;border-radius:12px}.timer{padding:6px 8px;border-radius:12px;font-size:13px}.timerTop{margin-bottom:4px}.trackbar{height:12px}.obj{width:150px;height:185px}.treeImg{width:150px;bottom:-12px}.saplingImg{width:82px;bottom:0}.fruitImg{width:28px;height:28px}.fruitEmoji{font-size:23px}.crown{width:112px;height:112px}.stageCap{left:8px;top:8px;padding:5px 9px;font-size:12px}.char{bottom:44px;width:88px;height:88px}.dragonFly{width:138px;bottom:108px}.answerPanel{padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.answers{gap:7px}.ans{font-size:15px;min-height:50px;padding:8px;border-width:3px;border-radius:14px}.ans:before{width:24px;height:24px;margin-right:6px}.ans.correctChoice:after{font-size:44px}.ans.wrongChoice:after,.ans.wrongChoice .xLine{height:7px}}
+@keyframes float{50%{transform:translateY(12px)}}@keyframes pop{from{transform:translate(-50%,-50%) scale(.1)}to{transform:translate(-50%,-50%) scale(1)}}@keyframes ninja{0%{left:-90px}45%{left:76px}58%{left:76px;transform:rotate(-8deg)}100%{left:105%}}@keyframes dragon{0%{left:105%;transform:scaleX(1)}40%{left:62%;transform:scaleX(1) translateY(18px)}58%{left:62%;transform:scaleX(1) translateY(18px)}100%{left:-130px;transform:scaleX(1) translateY(-20px)}}@keyframes burn{50%{opacity:.75;filter:saturate(1.3)}}@keyframes shake{25%{transform:translate(4px,-2px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,2px)}}@media(max-width:560px){.app{padding:8px 8px 118px}.world{height:42vh;min-height:240px;max-height:310px;margin:6px 0}.treeArea{left:10px;right:10px;bottom:44px;min-height:170px;gap:8px}.logo{font-size:19px}.header{margin-bottom:6px}.card{padding:10px;border-radius:20px}.question{font-size:16px;line-height:1.35;padding:9px 11px;margin-top:8px}.feedback{font-size:13px;min-height:30px;padding:6px 9px;margin-top:6px}.stage{grid-template-columns:52px 1fr}.stage .btn{grid-column:1/-1}.status{grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.stat{padding:6px 4px;font-size:13px;border-radius:12px}.timer{padding:6px 8px;border-radius:12px;font-size:13px}.timerTop{margin-bottom:4px}.trackbar{height:12px}.obj{width:150px;height:185px}.treeImg{width:150px;bottom:-12px}.saplingImg{width:82px;bottom:0}.fruitImg{width:28px;height:28px}.fruitEmoji{font-size:23px}.chestObj{height:150px}.chestImg{width:125px}.dropItemImg{width:56px;height:56px;bottom:82px}.chestProgress{bottom:-22px;font-size:11px;padding:3px 8px}.chestLabel{bottom:62px;font-size:10px}.crown{width:112px;height:112px}.stageCap{left:8px;top:8px;padding:5px 9px;font-size:12px}.char{bottom:44px;width:88px;height:88px}.dragonFly{width:138px;bottom:108px}.answerPanel{padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.answers{gap:7px}.ans{font-size:15px;min-height:50px;padding:8px;border-width:3px;border-radius:14px}.ans:before{width:24px;height:24px;margin-right:6px}.ans.correctChoice:after{font-size:44px}.ans.wrongChoice:after,.ans.wrongChoice .xLine{height:7px}}
 
 /* ゲーム中だけ、スマホ・PCともに1画面へ収まりやすくする */
 body.gameMode .app{padding-bottom:122px}
@@ -147,6 +147,10 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .saplingImg{width:74px;bottom:-4px}
  body.gameMode .fruitImg{width:25px;height:25px}
  body.gameMode .fruitEmoji{font-size:21px}
+ body.gameMode .chestObj{height:135px}
+ body.gameMode .chestImg{width:116px}
+ body.gameMode .dropItemImg{width:50px;height:50px;bottom:76px}
+ body.gameMode .chestProgress{bottom:-20px;font-size:10px}
  body.gameMode .char{bottom:34px}
  body.gameMode .dragonFly{bottom:102px}
  body.gameMode .question{font-size:15px;line-height:1.3}
@@ -216,6 +220,21 @@ body.gameMode .answerPanel{padding-top:9px}
  }
  body.gameMode .fruitEmoji{
   font-size:24px;
+ }
+ body.gameMode .chestObj{
+  height:138px;
+ }
+ body.gameMode .chestImg{
+  width:126px;
+ }
+ body.gameMode .dropItemImg{
+  width:54px;
+  height:54px;
+  bottom:80px;
+ }
+ body.gameMode .chestProgress{
+  bottom:-21px;
+  font-size:11px;
  }
  body.gameMode #game .toolbar{
   position:absolute;
@@ -588,6 +607,18 @@ const STAGES=[
  {id:'worldtree',name:'ステージ20「世界樹」',icon:'🌳',image:'assets/backgrounds/20_worldtree.png',enemyImage:'assets/enemies/20_worldtree_enemy.png',enemyName:'黄金竜アルボル',saplingImage:'assets/items/20_worldtree_sapling.png',grownImage:'assets/items/20_worldtree_grown.png',itemImage:'assets/items/20_worldtree_item.png',cls:'',sun:'',clearTrees:20,plant:'goldapple',growName:'黄金のリンゴ',unit:'stageItem'}
 ];
 
+// 従来どおり「木になる」ステージ。これ以外は宝箱ドロップ式。
+const TREE_STAGE_IDS=["field","subtropical","volcano","jungle","worldtree"];
+const CHEST_CLOSED_IMAGE="assets/items/chest_closed.png";
+const CHEST_OPEN_IMAGE="assets/items/chest_open.png";
+function isTreeStage(stage){
+ const id=typeof stage==="string" ? stage : stage?.id;
+ return TREE_STAGE_IDS.includes(id);
+}
+function stageSystemName(stage){
+ return isTreeStage(stage) ? "tree" : "chest";
+}
+
 /*
 ============================================================
 【開発者用：問題を増やす場所】
@@ -943,6 +974,10 @@ function openChallenge(){renderStages();show("challenge");}
 function clearTargetName(s){
  return s.growName || "育成物";
 }
+function clearConditionText(s){
+ if(isTreeStage(s))return `クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個`;
+ return `クリア条件：宝箱から${clearTargetName(s)}を ${s.clearTrees}個ドロップ`;
+}
 function completedObjectCount(){
  if(!game||!Array.isArray(game.objects))return 0;
  return game.objects.filter(n=>n>=6).length;
@@ -950,7 +985,7 @@ function completedObjectCount(){
 function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
-  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
+  return `<div class="stage ${open?"":"locked"}"><div class="stageIcon">${open?s.icon:"🔒"}</div><div><h3>${s.name}</h3><div class="muted">${clearConditionText(s)}</div></div><button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>${open?"挑戦":"未開放"}</button></div>`;
  }).join("");
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
@@ -1037,8 +1072,8 @@ function answer(i){
   game.correctCount++;
   if(game.correctCount>=10)addBadge("correct_10");
   game.miss=0;
-  $("feedback").textContent=growMessage();
-  growObject();
+  const resultMessage=growObject();
+  $("feedback").textContent=resultMessage;
   updateStats();
   if(checkClear())return;
   scheduleNext(850);
@@ -1084,6 +1119,8 @@ function assetImg(src, className, alt, extra=""){
 
 function renderObject(n,idx){
  const stage=game.stage||{};
+ if(!isTreeStage(stage))return renderChestObject(n,idx);
+
  const saplingImage=stage.saplingImage || "assets/items/sapling.png";
  const grownImage=stage.grownImage || "assets/items/tree.png";
  const itemImage=stage.itemImage || "assets/items/apple.png";
@@ -1108,6 +1145,23 @@ function renderObject(n,idx){
    ${items}
  </div>`;
 }
+function renderChestObject(n,idx){
+ const stage=game.stage||{};
+ const itemImage=stage.itemImage || "assets/items/01_field_item.png";
+ const itemName=stage.growName || "アイテム";
+ const opened=n>=6;
+ const chestImage=opened ? CHEST_OPEN_IMAGE : CHEST_CLOSED_IMAGE;
+ const progress=Math.min(n,6);
+ const label=opened ? `${itemName}ゲット！` : `${progress}/6`;
+ const drop=opened ? assetImg(itemImage,"dropItemImg",itemName) : "";
+ return `
+ <div class="obj chestObj">
+   ${assetImg(chestImage,"chestImg",opened?"開いた宝箱":"閉じた宝箱")}
+   ${drop}
+   <div class="chestLabel">${itemName}</div>
+   <div class="chestProgress">${label}</div>
+ </div>`;
+}
 function renderSnowman(n){
  let parts="";
  if(n>=1)parts+=`<div class="snowBase"></div>`;
@@ -1121,9 +1175,23 @@ function renderSnowman(n){
 }
 function growObject(){
  let last=game.objects.length-1;
- if(game.objects[last]<6)game.objects[last]++;
- else game.objects.push(1);
+ const stage=game.stage||{};
+ if(game.objects[last]<6){
+  game.objects[last]++;
+ }else{
+  game.objects.push(1);
+  last=game.objects.length-1;
+ }
+ const now=game.objects[last];
  renderObjects();
+ if(isTreeStage(stage)){
+  return now>=6
+   ? `正解！ ${stage.growName||"アイテム"}が完成した！`
+   : `正解！ ${stage.growName||"アイテム"}が出現した！`;
+ }
+ return now>=6
+  ? `正解！ 宝箱が開いた！ ${stage.growName||"アイテム"}を手に入れた！`
+  : `正解！ 宝箱に力がたまった！（${now}/6）`;
 }
 function hasAnyObject(){return game.objects.some(n=>n>0);}
 function stealObject(){
@@ -1133,7 +1201,8 @@ function stealObject(){
 }
 function clearObjects(){game.objects=[0];renderObjects();}
 function growMessage(){
- return `正解！ ${game.stage.growName||"アイテム"}が出現した！`;
+ if(isTreeStage(game?.stage))return `正解！ ${game.stage.growName||"アイテム"}が出現した！`;
+ return `正解！ 宝箱に力がたまった！`;
 }
 function enemyName(){
  return (game && game.stage && game.stage.enemyName) ? game.stage.enemyName : "ゴブリン";
@@ -1141,10 +1210,14 @@ function enemyName(){
 function stealMessage(){
  const enemy=enemyName();
  if(!hasAnyObject())return `${enemy}は取るものがなく、悲しそうに帰っていった……`;
- return `${enemy}が${game.stage.growName||"アイテム"}を1つ奪っていった！`;
+ return isTreeStage(game.stage)
+  ? `${enemy}が${game.stage.growName||"アイテム"}を1つ奪っていった！`
+  : `${enemy}が宝箱の力を1つ奪っていった！`;
 }
 function dragonMessage(){
- return `ドラゴン襲来！${game.stage.growName||"アイテム"}が全没収！`;
+ return isTreeStage(game.stage)
+  ? `ドラゴン襲来！${game.stage.growName||"アイテム"}が全没収！`
+  : `ドラゴン襲来！宝箱とドロップが全没収！`;
 }
 function ninjaEvent(){
  const has=hasAnyObject();
