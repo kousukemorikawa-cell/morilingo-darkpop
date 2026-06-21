@@ -547,8 +547,8 @@ body.gameMode .answerPanel{padding-top:9px}
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
 書くの未然形は？,書か,書き,書く,書け,1
 けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea><input type="file" id="csvFile" accept=".csv,text/csv"></div><div class="toolbar"><button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button><button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button><button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button><button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button><button class="btn ghost" onclick="show('original')">戻る</button></div></div></section>
-  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="time">20</span>秒</span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="gobelyn.png">
-<img id="dragon" class="char" src="dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
+  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="time">20</span>秒</span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="assets/enemies/01_field_enemy.png" onerror="this.onerror=null;this.src='assets/enemies/gobelyn.png';">
+<img id="dragon" class="char" src="assets/enemies/dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
 </div>
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <script>
@@ -566,26 +566,26 @@ unit は tree / banana / snowman。
 ============================================================
 */
 const STAGES=[
-{id:'field',name:'ステージ1「田園」',icon:'🌾',image:'field_darkpop.png',cls:'',sun:'☀️',clearTrees:1,plant:'apple',growName:'リンゴ',unit:'tree'},
- {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',cls:'tropical',sun:'🌞',clearTrees:2,plant:'banana',growName:'バナナ',unit:'banana'},
- {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',cls:'snow',sun:'❄️',clearTrees:3,plant:'snowman',growName:'雪だるま',unit:'snowman'},
- {id:'volcano',name:'ステージ4「火山」',icon:'🌋',cls:'volcano',sun:'🌋',clearTrees:4,plant:'gem',growName:'火の実',unit:'tree'},
- {id:'mars',name:'ステージ5「火星」',icon:'🪐',cls:'mars',sun:'🛸',clearTrees:5,plant:'star',growName:'星の実',unit:'tree'},
- {id:'forest',name:'ステージ6「深い森」',icon:'🌲',cls:'',sun:'🌤️',clearTrees:6,plant:'apple',growName:'森の実',unit:'tree'},
- {id:'river',name:'ステージ7「川辺」',icon:'🏞️',cls:'',sun:'💧',clearTrees:7,plant:'apple',growName:'水の実',unit:'tree'},
- {id:'desert',name:'ステージ8「砂漠」',icon:'🏜️',cls:'mars',sun:'☀️',clearTrees:8,plant:'star',growName:'サボテンの実',unit:'tree'},
- {id:'castle',name:'ステージ9「古城」',icon:'🏰',cls:'volcano',sun:'🌙',clearTrees:9,plant:'gem',growName:'宝石',unit:'tree'},
- {id:'sky',name:'ステージ10「空島」',icon:'☁️',cls:'snow',sun:'🌈',clearTrees:10,plant:'star',growName:'雲の実',unit:'tree'},
- {id:'bamboo',name:'ステージ11「竹林」',icon:'🎋',cls:'tropical',sun:'🎋',clearTrees:11,plant:'banana',growName:'竹の実',unit:'banana'},
- {id:'moon',name:'ステージ12「月面」',icon:'🌕',cls:'mars',sun:'🌕',clearTrees:12,plant:'star',growName:'月の石',unit:'tree'},
- {id:'sea',name:'ステージ13「海辺」',icon:'🏖️',cls:'tropical',sun:'🌊',clearTrees:13,plant:'banana',growName:'南国の実',unit:'banana'},
- {id:'cave',name:'ステージ14「洞窟」',icon:'🕳️',cls:'volcano',sun:'💎',clearTrees:14,plant:'gem',growName:'鉱石',unit:'tree'},
- {id:'library',name:'ステージ15「図書館」',icon:'📚',cls:'school',sun:'📖',clearTrees:15,plant:'apple',growName:'知恵の実',unit:'tree'},
- {id:'dojo',name:'ステージ16「道場」',icon:'🥋',cls:'school',sun:'🥷',clearTrees:16,plant:'apple',growName:'修行の実',unit:'tree'},
- {id:'aurora',name:'ステージ17「オーロラ」',icon:'🌌',cls:'snow',sun:'🌌',clearTrees:17,plant:'snowman',growName:'氷像',unit:'snowman'},
- {id:'factory',name:'ステージ18「からくり工場」',icon:'⚙️',cls:'volcano',sun:'⚙️',clearTrees:18,plant:'gem',growName:'歯車の実',unit:'tree'},
- {id:'temple',name:'ステージ19「古文神殿」',icon:'⛩️',cls:'',sun:'⛩️',clearTrees:19,plant:'apple',growName:'神木の実',unit:'tree'},
- {id:'galaxy',name:'ステージ20「銀河」',icon:'🌌',cls:'mars',sun:'🛸',clearTrees:20,plant:'star',growName:'銀河の星',unit:'tree'}
+ {id:'field',name:'ステージ1「田園」',icon:'🌾',image:'assets/backgrounds/01_field.png',enemyImage:'assets/enemies/01_field_enemy.png',cls:'',sun:'',clearTrees:1,plant:'apple',growName:'リンゴ',unit:'tree'},
+ {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',image:'assets/backgrounds/02_subtropical.png',enemyImage:'assets/enemies/02_subtropical_enemy.png',cls:'',sun:'',clearTrees:2,plant:'banana',growName:'バナナ',unit:'banana'},
+ {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',image:'assets/backgrounds/03_snow.png',enemyImage:'assets/enemies/03_snow_enemy.png',cls:'',sun:'',clearTrees:3,plant:'snow',growName:'雪の結晶',unit:'tree'},
+ {id:'volcano',name:'ステージ4「火山」',icon:'🌋',image:'assets/backgrounds/04_volcano.png',enemyImage:'assets/enemies/04_volcano_enemy.png',cls:'',sun:'',clearTrees:4,plant:'volcano',growName:'火山石',unit:'tree'},
+ {id:'desert',name:'ステージ5「砂漠」',icon:'🏜️',image:'assets/backgrounds/05_desert.png',enemyImage:'assets/enemies/05_desert_enemy.png',cls:'',sun:'',clearTrees:5,plant:'cactus',growName:'サボテン',unit:'tree'},
+ {id:'cave',name:'ステージ6「洞窟」',icon:'💎',image:'assets/backgrounds/06_cave.png',enemyImage:'assets/enemies/06_cave_enemy.png',cls:'',sun:'',clearTrees:6,plant:'crystal',growName:'水晶',unit:'tree'},
+ {id:'deepsea',name:'ステージ7「深海」',icon:'🦪',image:'assets/backgrounds/07_deepsea.png',enemyImage:'assets/enemies/07_deepsea_enemy.png',cls:'',sun:'',clearTrees:7,plant:'pearl',growName:'真珠',unit:'tree'},
+ {id:'jungle',name:'ステージ8「ジャングル」',icon:'🥭',image:'assets/backgrounds/08_jungle.png',enemyImage:'assets/enemies/08_jungle_enemy.png',cls:'',sun:'',clearTrees:8,plant:'mango',growName:'マンゴー',unit:'tree'},
+ {id:'ruins',name:'ステージ9「遺跡」',icon:'🏛️',image:'assets/backgrounds/09_ruins.png',enemyImage:'assets/enemies/09_ruins_enemy.png',cls:'',sun:'',clearTrees:9,plant:'relic',growName:'古代の遺物',unit:'tree'},
+ {id:'magicforest',name:'ステージ10「魔法の森」',icon:'🪄',image:'assets/backgrounds/10_magicforest.png',enemyImage:'assets/enemies/10_magicforest_enemy.png',cls:'',sun:'',clearTrees:10,plant:'magic',growName:'魔法の実',unit:'tree'},
+ {id:'skyisland',name:'ステージ11「天空島」',icon:'☁️',image:'assets/backgrounds/11_skyisland.png',enemyImage:'assets/enemies/11_skyisland_enemy.png',cls:'',sun:'',clearTrees:11,plant:'sky',growName:'空のかけら',unit:'tree'},
+ {id:'thunder',name:'ステージ12「雷雲地帯」',icon:'⚡',image:'assets/backgrounds/12_thunder.png',enemyImage:'assets/enemies/12_thunder_enemy.png',cls:'',sun:'',clearTrees:12,plant:'thunder',growName:'雷の石',unit:'tree'},
+ {id:'glacier',name:'ステージ13「氷河」',icon:'🧊',image:'assets/backgrounds/13_glacier.png',enemyImage:'assets/enemies/13_glacier_enemy.png',cls:'',sun:'',clearTrees:13,plant:'ice',growName:'氷晶',unit:'tree'},
+ {id:'machinecity',name:'ステージ14「機械都市」',icon:'⚙️',image:'assets/backgrounds/14_machinecity.png',enemyImage:'assets/enemies/14_machinecity_enemy.png',cls:'',sun:'',clearTrees:14,plant:'gear',growName:'歯車',unit:'tree'},
+ {id:'haunted',name:'ステージ15「幽霊屋敷」',icon:'👻',image:'assets/backgrounds/15_haunted.png',enemyImage:'assets/enemies/15_haunted_enemy.png',cls:'',sun:'',clearTrees:15,plant:'ghost',growName:'霊魂の灯',unit:'tree'},
+ {id:'dragonvalley',name:'ステージ16「竜の谷」',icon:'🐉',image:'assets/backgrounds/16_dragonvalley.png',enemyImage:'assets/enemies/16_dragonvalley_enemy.png',cls:'',sun:'',clearTrees:16,plant:'dragon',growName:'竜の鱗',unit:'tree'},
+ {id:'moon',name:'ステージ17「月面」',icon:'🌕',image:'assets/backgrounds/17_moon.png',enemyImage:'assets/enemies/17_moon_enemy.png',cls:'',sun:'',clearTrees:17,plant:'moon',growName:'月の石',unit:'tree'},
+ {id:'starsea',name:'ステージ18「星の海」',icon:'🌌',image:'assets/backgrounds/18_starsea.png',enemyImage:'assets/enemies/18_starsea_enemy.png',cls:'',sun:'',clearTrees:18,plant:'star',growName:'星のかけら',unit:'tree'},
+ {id:'timedimension',name:'ステージ19「時空のはざま」',icon:'🌀',image:'assets/backgrounds/19_timedimension.png',enemyImage:'assets/enemies/19_timedimension_enemy.png',cls:'',sun:'',clearTrees:19,plant:'time',growName:'時空の結晶',unit:'tree'},
+ {id:'worldtree',name:'ステージ20「世界樹」',icon:'🌳',image:'assets/backgrounds/20_worldtree.png',enemyImage:'assets/enemies/20_worldtree_enemy.png',cls:'',sun:'',clearTrees:20,plant:'goldapple',growName:'黄金のリンゴ',unit:'tree'}
 ];
 
 /*
@@ -960,7 +960,7 @@ function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).ma
 function startChallenge(i){
  const s=STAGES[i];
  game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
- setupWorld(s.cls,s.sun,s.name,s.image);
+ setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name;
  startGame();
 }
@@ -972,7 +972,7 @@ function startOriginal(){
  $("modeTitle").textContent=s.name;
  startGame();
 }
-function setupWorld(cls,sun,label,image){
+function setupWorld(cls,sun,label,image,enemyImage){
  $("world").className="world "+cls;
  if($("sun")) $("sun").textContent=sun;
  $("stageCap").textContent=label;
@@ -984,6 +984,18 @@ function setupWorld(cls,sun,label,image){
    $("world").style.backgroundRepeat = "no-repeat";
  }else{
    $("world").style.backgroundImage = "";
+ }
+
+ // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
+ if($("ninja")){
+   $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
+   $("ninja").onerror = function(){
+     this.onerror = null;
+     this.src = "assets/enemies/gobelyn.png";
+   };
+ }
+ if($("dragon")){
+   $("dragon").src = "assets/enemies/dragon.png";
  }
 }
 function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
