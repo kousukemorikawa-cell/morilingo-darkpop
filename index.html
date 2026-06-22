@@ -84,6 +84,11 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
  color:#fff;
 }
 
+.storyBtn{
+ background:linear-gradient(#c58cff,#8d4cff);
+ color:#fff;
+}
+
 .danger{
  background:linear-gradient(#ff9a9a,#e53935);
  color:#fff;
@@ -525,6 +530,65 @@ body.gameMode .answerPanel{padding-top:9px}
 .homeOverlay p{
  color:#fff;
 }
+
+.storyBox{
+ display:grid;
+ gap:14px;
+ margin-top:12px;
+}
+.storyPage{
+ background:#fff;
+ border:3px solid #fff;
+ border-radius:24px;
+ overflow:hidden;
+ box-shadow:0 10px 24px #0001;
+}
+.storyImage{
+ width:100%;
+ display:block;
+ aspect-ratio:16/9;
+ object-fit:cover;
+ background:#edf2f0;
+}
+.storyText{
+ padding:14px 16px 16px;
+}
+.storyNo{
+ display:inline-block;
+ background:#111;
+ color:#fff;
+ border-radius:999px;
+ padding:4px 10px;
+ font-size:12px;
+ font-weight:1000;
+ margin-bottom:8px;
+}
+.storyText h3{
+ margin:.1em 0 .35em;
+ font-size:20px;
+ color:#2f8f57;
+}
+.storyText p{
+ margin:.35em 0;
+ font-weight:900;
+ line-height:1.65;
+}
+.storyNote{
+ margin-top:10px;
+ background:#fffdf4;
+ border:2px dashed #eadb96;
+ border-radius:16px;
+ padding:10px;
+ font-size:13px;
+ font-weight:900;
+ color:#6b5a18;
+}
+@media(max-width:560px){
+ .storyText{padding:11px 12px 13px}
+ .storyText h3{font-size:17px}
+ .storyText p{font-size:14px;line-height:1.55}
+}
+
 </style>
 </head>
 <body>
@@ -552,6 +616,10 @@ body.gameMode .answerPanel{padding-top:9px}
     オリジナル
   </button>
 
+  <button class="btn storyBtn" onclick="showStory()">
+    📖 ストーリーを見る
+  </button>
+
   <button class="btn info" onclick="showTitles()">
     称号を見る
   </button>
@@ -560,6 +628,52 @@ body.gameMode .answerPanel{padding-top:9px}
     今週ランキング
   </button>
 </div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>表示中の称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+
+  <section id="story" class="screen">
+    <div class="card">
+      <h2>📖 ストーリー</h2>
+      <p class="muted">失われた世界を取り戻す、育樹師の物語</p>
+
+      <div class="storyBox">
+        <div class="storyPage">
+          <img class="storyImage" src="assets/story/01_story.png" alt="かつて栄えていた世界樹の世界">
+          <div class="storyText">
+            <span class="storyNo">1</span>
+            <h3>豊かな世界</h3>
+            <p>かつて世界は「世界樹」の力によって、豊かな実りと文明を築いていた。</p>
+          </div>
+        </div>
+
+        <div class="storyPage">
+          <img class="storyImage" src="assets/story/02_story.png" alt="災厄によって世界樹が枯れた世界">
+          <div class="storyText">
+            <span class="storyNo">2</span>
+            <h3>世界樹の枯死</h3>
+            <p>しかし、ある災厄によって世界樹は枯れ、人類の文明は滅びる。</p>
+            <p>大地は荒廃し、各地の恵みや資源も失われてしまった。</p>
+          </div>
+        </div>
+
+        <div class="storyPage">
+          <img class="storyImage" src="assets/story/03_story.png" alt="最後の育樹師が世界樹の復活を目指す場面">
+          <div class="storyText">
+            <span class="storyNo">3</span>
+            <h3>最後の育樹師</h3>
+            <p>プレイヤーは最後の「育樹師」。</p>
+            <p>知識の力、つまり問題を解く力を使い、各地を浄化しながら失われた実りや資源を取り戻し、世界樹の復活を目指す。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="storyNote">画像ファイル：<b>01_story.png</b>・<b>02_story.png</b>・<b>03_story.png</b>（assets/story フォルダ）</div>
+
+      <div class="toolbar">
+        <button class="btn primary" onclick="openChallenge()">冒険へ進む</button>
+        <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
+      </div>
+    </div>
+  </section>
+
   <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
@@ -740,6 +854,11 @@ function showTitles(){
  renderTitles();
  show("titles");
 }
+
+function showStory(){
+ show("story");
+}
+
 function toggleMenuTitle(id){
  cleanSelectedTitles();
  const arr=state.selectedMenuTitles;
@@ -992,7 +1111,7 @@ function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).ma
 
 function startChallenge(i){
  const s=STAGES[i];
- game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:stageSystemName(s),plant:s.plant,questions:shuffle(stageQuestions(i))};
+ game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name;
  startGame();
@@ -1000,7 +1119,7 @@ function startChallenge(i){
 function startOriginal(){
  const qs=state.original.length?state.original:QUESTION_BANK.basic.slice(0,4);
  const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"stageItem",plant:"apple",growName:"リンゴ",saplingImage:"assets/items/01_field_sapling.png",grownImage:"assets/items/01_field_grown.png",itemImage:"assets/items/01_field_item.png",clear:999,id:"original"};
- game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:stageSystemName(s),plant:s.plant,questions:shuffle(qs)};
+ game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(qs)};
  setupWorld(s.cls,s.sun,"オリジナル");
  $("modeTitle").textContent=s.name;
  startGame();
@@ -1112,13 +1231,9 @@ function updateStats(){
 }
 
 function renderObjects(){ $("treeArea").innerHTML=game.objects.map((n,idx)=>renderObject(n,idx)).join(""); }
-function assetImg(src, className, alt, extra="", fallback=""){
+function assetImg(src, className, alt, extra=""){
  const safeAlt=String(alt||"").replace(/"/g,"&quot;");
- const safeFallback=String(fallback||"").replace(/"/g,"&quot;");
- const onerror=safeFallback
-  ? `if(this.dataset.fallbackDone){this.style.display='none';}else{this.dataset.fallbackDone='1';this.src='${safeFallback}';}`
-  : `this.style.display='none'`;
- return `<img src="${src}" class="${className}" alt="${safeAlt}" ${extra} onerror="${onerror}">`;
+ return `<img src="${src}" class="${className}" alt="${safeAlt}" ${extra} onerror="this.style.display='none'">`;
 }
 
 function renderObject(n,idx){
@@ -1134,7 +1249,7 @@ function renderObject(n,idx){
  if(n===0 && idx===game.objects.length-1){
   return `
   <div class="obj">
-    ${assetImg(saplingImage,"saplingImg",`${itemName}の初期状態`,"","assets/items/01_field_sapling.png")}
+    ${assetImg(saplingImage,"saplingImg",`${itemName}の初期状態`)}
   </div>`;
  }
 
@@ -1145,7 +1260,7 @@ function renderObject(n,idx){
 
  return `
  <div class="obj">
-   ${assetImg(grownImage,"treeImg",`${itemName}の育成物`,"","assets/items/01_field_grown.png")}
+   ${assetImg(grownImage,"treeImg",`${itemName}の育成物`)}
    ${items}
  </div>`;
 }
