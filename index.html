@@ -1018,9 +1018,16 @@ const $=id=>document.getElementById(id);
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
 const GAS_URL="https://script.google.com/macros/s/AKfycbw-7RODPiL6VMdwd8q3-bRHBSVtPJ83AGqiZXEyiVXO90xh50T-QoMX3UmwLA2BzTW_sw/exec";
 const ADMIN_NAMES=["Kosuke","kosuke","森林太郎"];
+if(new URLSearchParams(location.search).get("dev")==="1"){
+ localStorage.setItem("morilingoDevMode","1");
+}
 function isAdmin(){
  const name=(state?.player?.name||"").trim();
- return ADMIN_NAMES.includes(name);
+ return localStorage.getItem("morilingoDevMode")==="1" || ADMIN_NAMES.includes(name);
+}
+function updateDevAdminButton(){
+ const btn=$("devAdminBtn");
+ if(btn)btn.style.display=isAdmin()?"":"none";
 }
 
 /*
@@ -1950,7 +1957,7 @@ function clearOriginalQuestions(){
  }
 }
 function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
-renderBadges();updatePlayerDisplay();loadRemoteQuestions();save();
+renderBadges();updatePlayerDisplay();updateDevAdminButton();loadRemoteQuestions();save();
 </script>
 </body>
 </html>
