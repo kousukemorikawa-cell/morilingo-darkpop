@@ -1152,7 +1152,7 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .treeArea{
   left:0 !important;
   right:0 !important;
-  bottom:8px !important;
+  bottom:30px !important;
   min-height:178px !important;
   overflow:visible !important;
  }
@@ -1775,6 +1775,7 @@ function setupWorld(cls,sun,label,image,enemyImage){
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
    $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
+   $("ninja").style.bottom = String(label).includes("田園") ? "35px" : "-24px";
    $("ninja").onerror = function(){
      this.onerror = null;
      this.src = "assets/enemies/gobelyn.png";
