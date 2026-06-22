@@ -1021,6 +1021,8 @@ body.gameMode .answerPanel{padding-top:9px}
 
       <div class="toolbar">
         <button class="btn primary" onclick="debugUnlockAllStages()">全ステージ解放</button>
+        <button class="btn questBtn" onclick="debugUnlockAllQuests()">全クエスト開放</button>
+        <button class="btn itemMenuBtn" onclick="debugGiveAllItems()">全アイテム入手</button>
         <button class="btn secondary" onclick="debugUnlockAllTitles()">全称号解放</button>
         <button class="btn info" onclick="debugGiveScore()">テストPT加算</button>
         <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
@@ -1240,6 +1242,7 @@ state.selectedRankingTitles??=[];
 state.challengeClears??={};
 state.items??={};
 state.questClears??={};
+state.questUnlocked??={};
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -1364,6 +1367,28 @@ function debugUnlockAllStages(){
  save();
  alert("全ステージを解放しました");
  renderStages();
+}
+function debugUnlockAllQuests(){
+ if(!isAdmin())return;
+ state.unlocked=STAGES.length;
+ state.challengeClears??={};
+ STAGES.forEach(s=>{
+  state.challengeClears[s.id]=Math.max(3,state.challengeClears[s.id]||0);
+ });
+ save();
+ alert("全クエストを開放しました");
+ renderStages();
+}
+function debugGiveAllItems(){
+ if(!isAdmin())return;
+ state.items??={};
+ STAGES.forEach(s=>{
+  const key=itemKey(s);
+  state.items[key]=Math.max(99,state.items[key]||0);
+ });
+ save();
+ alert("全アイテムを99個ずつ入手しました");
+ renderItems();
 }
 function debugUnlockAllTitles(){
  if(!isAdmin())return;
@@ -1642,7 +1667,7 @@ function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
   const clears=state.challengeClears?.[s.id]||0;
-  const questOpen=open && clears>=3;
+  const questOpen=open && (clears>=3 || state.questUnlocked?.[s.id]);
   return `<div class="stage ${open?"":"locked"}">
    <div class="stageIcon">${open?s.icon:"🔒"}</div>
    <div><h3>${s.name}</h3><div class="muted">${clearConditionText(s)}<br>挑戦クリア：${clears}/3　${questOpen?"⚔️ クエスト解放":"クエスト未解放"}</div></div>
@@ -1706,7 +1731,7 @@ function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
 function scheduleNext(ms=850){clearTimeout(nextId);nextId=setTimeout(nextQuestion,ms);}
 function nextQuestion(){
  stopTimer();clearTimeout(nextId);canAnswer=true;
- game.time=20;
+ game.time=game.timeLimit || 20;
  const q=game.questions[game.qIndex % game.questions.length];
  game.qIndex++;
  game.current=q;
@@ -1756,19 +1781,30 @@ function answer(i){
  }
 }
 function checkClear(){
- if(game.mode!=="challenge")return false;
+ if(game.mode!=="challenge" && game.mode!=="timeAttack")return false;
 
  const completed=completedObjectCount();
  if(completed<game.stage.clearTrees)return false;
 
+ stopTimer();
+ canAnswer=false;
+
+ if(game.mode==="timeAttack"){
+  submitResult("timeAttackClear");
+  $("feedback").textContent=`⏱️ タイムアタッククリア！ 正解数：${game.correctCount}　スコア：${game.score}PT`;
+  setTimeout(openChallenge,1800);
+  return true;
+ }
+
  addBadge(game.stage.id);
  giveStageClearReward(game.stage);
  state.challengeClears[game.stage.id]=(state.challengeClears[game.stage.id]||0)+1;
+ if(state.challengeClears[game.stage.id]>=3)state.questUnlocked[game.stage.id]=true;
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
  save();
  submitResult("clear");
- $("feedback").textContent=`${game.stage.name}クリア！ ${game.stage.growName||"アイテム"}を1つ獲得！`;
- stopTimer();canAnswer=false;
+ const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
+ $("feedback").textContent=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}`;
  setTimeout(openChallenge,1500);
  return true;
 }
@@ -1777,8 +1813,9 @@ function updateStats(){
  if($("scoreHudValue")) $("scoreHudValue").textContent=game?game.score:0;
  $("streak").textContent=game?game.streak:0;
  $("miss").textContent=game?game.miss:0;
- $("time").textContent=game?game.time:20;
- $("timeFill").style.width=(game?Math.max(0,game.time/20*100):100)+"%";
+ const maxTime=game?.timeLimit || 20;
+ $("time").textContent=game?game.time:maxTime;
+ $("timeFill").style.width=(game?Math.max(0,game.time/maxTime*100):100)+"%";
 }
 
 function objectSlotClass(idx){
@@ -1976,35 +2013,76 @@ function dragonEvent(){
    アイテム・クエスト追加機能
 ========================================================== */
 const ITEM_TYPES={
- heal:{label:"回復",desc:"HPを1回復"},
- time:{label:"時間停止",desc:"タイマーを5秒止める"},
- attack:{label:"攻撃強化",desc:"次の攻撃を+1"},
- equip:{label:"装備強化",desc:"今後の装備作成素材"},
+ heal:{label:"回復系",desc:"HPを回復する"},
+ attack:{label:"攻撃系",desc:"敵へのダメージを増やす"},
+ equip:{label:"装備系",desc:"持っているだけで永続強化"},
+ time:{label:"時間操作系",desc:"タイマーを止める"},
+ summon:{label:"召喚系",desc:"特別な助けを呼ぶ"},
  material:{label:"素材",desc:"今後の強化素材"}
 };
-const ITEM_EFFECT_BY_STAGE={
- field:"heal",subtropical:"heal",volcano:"attack",jungle:"heal",
- snow:"time",glacier:"time",machinecity:"time",
- magicforest:"attack",cave:"equip",deepsea:"equip"
+const ITEM_MASTER={
+ field:{name:"リンゴ",icon:"🍎",type:"heal",effect:"HPを1回復",heal:1},
+ subtropical:{name:"バナナ",icon:"🍌",type:"heal",effect:"HPを1回復",heal:1},
+ volcano:{name:"ブルーベリー",icon:"🫐",type:"heal",effect:"HPを1回復",heal:1},
+ jungle:{name:"マンゴー",icon:"🥭",type:"heal",effect:"HPを2回復",heal:2},
+ worldtree:{name:"黄金のリンゴ",icon:"🍏",type:"heal",effect:"HPを全回復",heal:99},
+ desert:{name:"サボテン",icon:"🌵",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
+ magicforest:{name:"魔法の葉",icon:"🍃",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
+ thunder:{name:"雷の欠片",icon:"⚡",type:"attack",effect:"次の攻撃ダメージ+2",attack:2},
+ haunted:{name:"魂火",icon:"🔥",type:"attack",effect:"次の攻撃ダメージ+2",attack:2},
+ cave:{name:"水晶",icon:"💎",type:"equip",effect:"永続強化：タイマー+1秒",timerBonus:1},
+ deepsea:{name:"真珠",icon:"🦪",type:"equip",effect:"永続強化：アイテム獲得率UP（表示用）",itemRateBonus:1},
+ skyisland:{name:"天空の羽根",icon:"🪶",type:"equip",effect:"永続強化：タイマー+1秒",timerBonus:1},
+ glacier:{name:"氷晶",icon:"💠",type:"equip",effect:"永続強化：攻撃力+1",attackPassive:1},
+ snow:{name:"雪の結晶",icon:"❄️",type:"time",effect:"タイマーを5秒止める",freeze:5},
+ machinecity:{name:"歯車",icon:"⚙️",type:"time",effect:"タイマーを8秒止める",freeze:8},
+ timedimension:{name:"時の結晶",icon:"⏳",type:"time",effect:"タイマーを10秒止める",freeze:10},
+ ruins:{name:"石板の欠片",icon:"🪨",type:"summon",effect:"ファラオ召喚：選択肢を1つ消す",removeChoices:1,summonName:"ファラオ"},
+ dragonvalley:{name:"ドラゴンエッグ",icon:"🥚",type:"summon",effect:"ドラゴン召喚：選択肢を2つ消す",removeChoices:2,summonName:"ドラゴン"},
+ moon:{name:"月の欠片",icon:"🌙",type:"summon",effect:"月の精霊召喚：時間を5秒止める",freeze:5,summonName:"月の精霊"},
+ starsea:{name:"星の欠片",icon:"⭐",type:"summon",effect:"星の精霊召喚：1問だけミス無効",missGuard:true,summonName:"星の精霊"}
 };
-function itemKey(stage){return stage?.plant || stage?.id || "item";}
-function itemType(stage){return ITEM_EFFECT_BY_STAGE[stage?.id]||"material";}
+function itemInfo(stage){return ITEM_MASTER[stage?.id]||{name:stage?.growName||"アイテム",icon:stage?.icon||"🎒",type:"material",effect:"今後の強化素材"};}
+function itemKey(stage){return stage?.id || stage?.plant || "item";}
+function itemType(stage){return itemInfo(stage).type||"material";}
+function itemDisplayName(stage){return itemInfo(stage).name||stage?.growName||"アイテム";}
 function giveStageClearReward(stage){
  const key=itemKey(stage);
  state.items??={};
  state.items[key]=(state.items[key]||0)+1;
 }
+function questPassiveStats(){
+ const stats={timerBonus:0,attackPassive:0,itemRateBonus:0};
+ STAGES.forEach(s=>{
+  const count=state.items?.[itemKey(s)]||0;
+  if(count<=0)return;
+  const info=itemInfo(s);
+  stats.timerBonus+=Math.min(5,count*(info.timerBonus||0));
+  stats.attackPassive+=Math.min(5,count*(info.attackPassive||0));
+  stats.itemRateBonus+=Math.min(5,count*(info.itemRateBonus||0));
+ });
+ return stats;
+}
 function showItems(){renderItems();show("items");}
 function renderItems(){
  const box=$("itemList"); if(!box)return;
  box.innerHTML=STAGES.map(s=>{
-  const key=itemKey(s), count=state.items?.[key]||0, type=ITEM_TYPES[itemType(s)]||ITEM_TYPES.material;
-  return `<div class="itemCard"><div class="itemIcon">${s.icon}</div><div><div class="itemName">${s.growName}</div><div class="itemType">${type.label}：${type.desc}</div></div><div class="itemCount">×${count}</div></div>`;
+  const key=itemKey(s), count=state.items?.[key]||0, info=itemInfo(s), type=ITEM_TYPES[info.type]||ITEM_TYPES.material;
+  const owned=count>0;
+  const name=owned?info.name:"？？？？？";
+  const effect=owned?info.effect:"未入手：効果は入手すると見られます";
+  const icon=owned?info.icon:"🔒";
+  return `<div class="itemCard ${owned?"":"locked"}"><div class="itemIcon">${icon}</div><div><div class="itemName">${name}</div><div class="itemType">${type.label}：${effect}</div></div><div class="itemCount">×${count}</div></div>`;
  }).join("");
 }
 function startTimeAttack(i){
- startChallenge(i);
- if(game){game.mode="timeAttack";game.time=10;$("modeTitle").textContent=game.stage.name+" タイムアタック";$("feedback").textContent="⏱️ タイムアタック！今後ランキング対応予定";}
+ const s=STAGES[i];
+ game={mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:10,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
+ setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
+ $("modeTitle").textContent=s.name+" タイムアタック";
+ show("game");addBadge("first");renderObjects();updateStats();
+ $("feedback").textContent="⏱️ タイムアタック！クリア条件は通常の挑戦と同じです。";
+ nextQuestion();
 }
 
 const QUEST_MAX_TIME=20;
@@ -2018,9 +2096,11 @@ let questUsedQueue=[];
 function startQuest(i){
  const s=STAGES[i];
  const clears=state.challengeClears?.[s.id]||0;
- if(clears<3){alert("このステージの挑戦を3回クリアするとクエストが解放される！");return;}
+ if(clears<3 && !state.questUnlocked?.[s.id]){alert("このステージの挑戦を3回クリアするとクエストが解放される！");return;}
  const qs=shuffle(stageQuestions(i));
- quest={stageIndex:i,stage:s,questions:qs,qIndex:0,current:null,area:1,progress:0,phase:"walk",enemyHp:0,enemyMax:0,playerHp:QUEST_PLAYER_MAX_HP,score:0,attackBoost:1,time:QUEST_MAX_TIME};
+ const passive=questPassiveStats();
+ const maxTime=QUEST_MAX_TIME+passive.timerBonus;
+ quest={stageIndex:i,stage:s,questions:qs,qIndex:0,current:null,area:1,progress:0,phase:"walk",enemyHp:0,enemyMax:0,playerHp:QUEST_PLAYER_MAX_HP,score:0,attackBoost:1,baseAttack:1+passive.attackPassive,maxTime,time:maxTime,timeFrozen:0,missGuard:false,passive};
  setupQuestWorld();
  show("questGame");
  document.body.classList.add("gameMode");
@@ -2044,8 +2124,12 @@ function questMoveBg(rate){
 function quitQuest(){questStopTimer();quest=null;show("challenge");renderStages();}
 function questStopTimer(){if(questTimerId){clearInterval(questTimerId);questTimerId=null;}}
 function questStartTimer(){
- questStopTimer();quest.time=QUEST_MAX_TIME;questUpdateUI();
- questTimerId=setInterval(()=>{if(questPaused)return;quest.time--;questUpdateUI();if(quest.time<=0)questAnswer(-1);},1000);
+ questStopTimer();quest.time=quest.maxTime||QUEST_MAX_TIME;questUpdateUI();
+ questTimerId=setInterval(()=>{
+  if(questPaused)return;
+  if((quest.timeFrozen||0)>0){quest.timeFrozen--;questUpdateUI();return;}
+  quest.time--;questUpdateUI();if(quest.time<=0)questAnswer(-1);
+ },1000);
 }
 function questGetQuestion(){
  if(!quest.questions.length)quest.questions=shuffle(stageQuestions(quest.stageIndex));
@@ -2069,7 +2153,14 @@ function questAnswer(i){
  if(!questCanAnswer||!quest||quest.phase==="finish"||quest.phase==="gameover")return;
  questCanAnswer=false;questStopTimer();questMarkAnswer(i);
  const ok=i===quest.current.c;
- if(!ok){questTakeDamage(quest.phase==="battle", i<0?"⏰ 時間切れ！HPが1減った！":null);return;}
+ if(!ok){
+  if(quest.missGuard){
+   quest.missGuard=false;
+   $("questFeedback").textContent="✨ 星の精霊がミスを無効にした！";
+   questShowNext("次へ");questUpdateUI();return;
+  }
+  questTakeDamage(quest.phase==="battle", i<0?"⏰ 時間切れ！HPが1減った！":null);return;
+ }
  quest.score+=10;
  if(quest.phase==="walk"){
   quest.progress++;questMoveBg(((quest.area-1)*3+quest.progress)/9);
@@ -2080,7 +2171,7 @@ function questAnswer(i){
  }
  if(quest.phase==="battle"){
   questPlayMagic();setTimeout(()=>{
-   const damage=quest.attackBoost||1;quest.attackBoost=1;quest.enemyHp=Math.max(0,quest.enemyHp-damage);
+   const damage=(quest.baseAttack||1)+(quest.attackBoost||1)-1;quest.attackBoost=1;quest.enemyHp=Math.max(0,quest.enemyHp-damage);
    $("questEnemy").classList.remove("hit");void $("questEnemy").offsetWidth;$("questEnemy").classList.add("hit");
    $("questFeedback").textContent=`✨ 攻撃！敵に${damage}ダメージ！`;
    if(quest.enemyHp<=0){$("questFeedback").textContent="🎉 敵を撃破！";questShowNext(quest.area<3?"次のエリアへ":"宝箱へ");questUpdateUI();return;}
@@ -2126,12 +2217,14 @@ function questUpdateUI(){
  $("questPlayerText").textContent=`自分HP ${Math.max(0,quest.playerHp)}/${QUEST_PLAYER_MAX_HP}`;
  $("questHeroHpText").textContent=`HP ${Math.max(0,quest.playerHp)}/${QUEST_PLAYER_MAX_HP}`;
  $("questHeroHpFill").style.width=(Math.max(0,quest.playerHp)/QUEST_PLAYER_MAX_HP*100)+"%";
- $("questTime").textContent=Math.max(0,quest.time||0);$("questTimeFill").style.width=(Math.max(0,quest.time||0)/QUEST_MAX_TIME*100)+"%";
+ const maxT=quest.maxTime||QUEST_MAX_TIME;
+ $("questTime").textContent=(quest.timeFrozen||0)>0?`停止${quest.timeFrozen}`:Math.max(0,quest.time||0);
+ $("questTimeFill").style.width=(Math.max(0,quest.time||0)/maxT*100)+"%";
  if(quest.phase==="battle"){$("questEnemyText").textContent=`敵HP ${quest.enemyHp}/${quest.enemyMax}`;$("questEnemyHpText").textContent=`HP ${quest.enemyHp}/${quest.enemyMax}`;$("questEnemyHpFill").style.width=(quest.enemyHp/Math.max(1,quest.enemyMax)*100)+"%";}else{$("questEnemyText").textContent="敵なし";$("questEnemyHpText").textContent="HP --";$("questEnemyHpFill").style.width="100%";}
  if(quest.phase==="finish"){$("questAreaText").textContent="クリア";$("questPhaseText").textContent="終了";$("questProgressText").textContent="冒険成功";return;}
  if(quest.phase==="gameover"){$("questAreaText").textContent="敗北";$("questPhaseText").textContent="終了";$("questProgressText").textContent="HP0";return;}
  $("questAreaText").textContent=`第${quest.area}エリア`;$("questPhaseText").textContent=quest.phase==="walk"?"前進":"戦闘";$("questProgressText").textContent=`進行 ${quest.progress}/3`;
- $("questItemText").textContent="アイテム使用可";
+ $("questItemText").textContent=`アイテム使用可 攻撃${quest.baseAttack||1}`;
 }
 function openQuestItemModal(){
  if(!quest||quest.phase==="finish"||quest.phase==="gameover")return;
@@ -2141,19 +2234,30 @@ function closeQuestItemModal(){questPaused=false;$("questCard").classList.remove
 function renderQuestModalItems(){
  const box=$("questModalItems");
  box.innerHTML=STAGES.map(s=>{
-  const key=itemKey(s), count=state.items?.[key]||0, typeKey=itemType(s), type=ITEM_TYPES[typeKey]||ITEM_TYPES.material;
-  const usable= count>0 && typeKey!=="equip" && typeKey!=="material";
-  return `<div class="questUseRow"><div class="itemIcon">${s.icon}</div><div><b>${s.growName} ×${count}</b><div class="itemType">${type.label}：${type.desc}</div></div><button class="questUseBtn" ${usable?`onclick="useQuestItem('${s.id}')"`:"disabled"}>使用</button></div>`;
+  const key=itemKey(s), count=state.items?.[key]||0, info=itemInfo(s), type=ITEM_TYPES[info.type]||ITEM_TYPES.material;
+  const usable=count>0 && info.type!=="equip" && info.type!=="material";
+  const name=count>0?info.name:"？？？？？";
+  const effect=count>0?info.effect:"未入手：効果は入手すると見られます";
+  const icon=count>0?info.icon:"🔒";
+  return `<div class="questUseRow"><div class="itemIcon">${icon}</div><div><b>${name} ×${count}</b><div class="itemType">${type.label}：${effect}</div></div><button class="questUseBtn" ${usable?`onclick="useQuestItem('${s.id}')"`:"disabled"}>使用</button></div>`;
  }).join("");
+}
+function removeWrongQuestChoices(num){
+ const buttons=[...document.querySelectorAll("#questAnswers .ans")];
+ const wrong=buttons.map((btn,idx)=>({btn,idx})).filter(x=>x.idx!==quest.current.c && x.btn.style.visibility!=="hidden");
+ shuffle(wrong).slice(0,num).forEach(x=>{x.btn.style.visibility="hidden";x.btn.disabled=true;});
 }
 function useQuestItem(stageId){
  const s=STAGES.find(x=>x.id===stageId);if(!s)return;
- const key=itemKey(s), typeKey=itemType(s);if((state.items[key]||0)<=0)return;
+ const key=itemKey(s), info=itemInfo(s);if((state.items[key]||0)<=0)return;
+ if(info.type==="equip"||info.type==="material"){alert("このアイテムは持っているだけで効果があります");return;}
  state.items[key]--;let text="";
- if(typeKey==="heal"){quest.playerHp=Math.min(QUEST_PLAYER_MAX_HP,quest.playerHp+1);text=`${s.growName}を使った！HPが1回復！`;}
- else if(typeKey==="time"){quest.time=Math.min(QUEST_MAX_TIME,quest.time+5);text=`${s.growName}を使った！残り時間が5秒増えた！`;}
- else if(typeKey==="attack"){quest.attackBoost=(quest.attackBoost||1)+1;text=`${s.growName}を使った！次の攻撃が強くなる！`;}
- else {state.items[key]++;alert("このアイテムは今後の装備強化素材です");return;}
+ if(info.heal){quest.playerHp=Math.min(QUEST_PLAYER_MAX_HP,quest.playerHp+info.heal);text=`${info.icon} ${info.name}を使った！HPが回復！`;}
+ else if(info.attack){quest.attackBoost=(quest.attackBoost||1)+info.attack;text=`${info.icon} ${info.name}を使った！次の攻撃が強くなる！`;}
+ else if(info.freeze){quest.timeFrozen=Math.max(quest.timeFrozen||0,info.freeze);text=`${info.icon} ${info.name}を使った！時間が${info.freeze}秒止まる！`;}
+ else if(info.removeChoices){removeWrongQuestChoices(info.removeChoices);text=`${info.icon} ${info.summonName}召喚！選択肢を${info.removeChoices}つ消した！`;}
+ else if(info.missGuard){quest.missGuard=true;text=`${info.icon} ${info.summonName}召喚！次のミスを1回無効にする！`;}
+ else {state.items[key]++;alert("このアイテムはまだ使用効果がありません");return;}
  save();closeQuestItemModal();$("questFeedback").textContent=text;questUpdateUI();
 }
 function parseCSV(text){
