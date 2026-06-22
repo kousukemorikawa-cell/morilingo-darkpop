@@ -133,7 +133,7 @@ body.gameMode .app{padding-bottom:122px}
 body.gameMode .card{padding:12px;position:relative}
 body.gameMode #modeTitle{font-size:22px;margin:.1em 0}
 body.gameMode .world{height:clamp(235px,36vh,320px);min-height:235px}
-body.gameMode .treeArea{bottom:25px;min-height:180px}
+body.gameMode .treeArea{bottom:52px;min-height:180px}
 body.gameMode .toolbar{margin-top:6px}
 body.gameMode #game .toolbar{position:absolute;top:10px;right:12px;margin:0;z-index:40}
 body.gameMode #game .toolbar .btn{padding:8px 12px;font-size:13px;border-radius:14px}
@@ -146,7 +146,7 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode #scoreHud{transform:scale(.86);transform-origin:top right}
  body.gameMode #modeTitle{font-size:18px}
  body.gameMode .world{height:34vh;min-height:215px;max-height:250px}
- body.gameMode .treeArea{bottom:25px;min-height:150px}
+ body.gameMode .treeArea{bottom:32px;min-height:150px}
  body.gameMode .obj{width:132px;height:162px}
  body.gameMode .treeImg{width:132px;bottom:-14px}
  body.gameMode .saplingImg{width:74px;bottom:-4px}
@@ -750,7 +750,7 @@ body.gameMode .answerPanel{padding-top:9px}
 /* 追加微調整：PC敵は少し上へ、PCの木・宝箱とスマホ宝箱は低くする */
 @media(min-width:561px){
  body.gameMode .treeArea{
-  bottom:30px !important;
+  bottom:22px !important;
   min-height:225px !important;
  }
  body.gameMode .objSlot{
@@ -1152,7 +1152,7 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .treeArea{
   left:0 !important;
   right:0 !important;
-  bottom:30px !important;
+  bottom:8px !important;
   min-height:178px !important;
   overflow:visible !important;
  }
@@ -1210,25 +1210,6 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .chestLabel{
   bottom:36px !important;
   font-size:10px !important;
- }
-}
-
-
-/* ==========================================================
-   2026-06-22 再修正
-   PC版：木画像が下で見切れる問題だけを修正
-   スマホ版：ステージ1のゴブリンだけ上げる
-   ※PC版のworld/treeArea/chest/dragon位置は変更しない
-========================================================== */
-@media(min-width:561px){
- body.gameMode .treeImg{
-  bottom:18px !important;
- }
-}
-
-@media(max-width:560px){
- body.gameMode .char.fieldEnemy{
-  bottom:34px !important;
  }
 }
 
@@ -1794,7 +1775,6 @@ function setupWorld(cls,sun,label,image,enemyImage){
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
    $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
-   $("ninja").dataset.fieldEnemy = String(label).includes("田園") ? "1" : "0";
    $("ninja").onerror = function(){
      this.onerror = null;
      this.src = "assets/enemies/gobelyn.png";
@@ -2059,8 +2039,7 @@ function dragonMessage(){
 }
 function ninjaEvent(){
  const has=hasAnyObject();
- const fieldEnemyClass = $("ninja").dataset.fieldEnemy === "1" ? " fieldEnemy" : "";
- $("ninja").className="char gobelynRun" + fieldEnemyClass;
+ $("ninja").className="char gobelynRun";
  $("feedback").textContent=stealMessage();
  if(has)setTimeout(stealObject,2350);
  setTimeout(()=>{$("ninja").className="char";scheduleNext(0);},4300);
