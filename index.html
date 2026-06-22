@@ -1179,7 +1179,7 @@ body.gameMode .answerPanel{padding-top:9px}
   left:50% !important;
   transform:translateX(-50%) !important;
   width:118px !important;
-  bottom:12px !important;
+  bottom:-8px !important;
  }
  body.gameMode .saplingImg{
   left:50% !important;
@@ -1214,7 +1214,18 @@ body.gameMode .answerPanel{padding-top:9px}
 }
 
 
-/* 2026-06-22 修正：スマホ版だけ、ステージ1のゴブリンを上げる。PC版には影響させない */
+/* ==========================================================
+   2026-06-22 再修正
+   PC版：木画像が下で見切れる問題だけを修正
+   スマホ版：ステージ1のゴブリンだけ上げる
+   ※PC版のworld/treeArea/chest/dragon位置は変更しない
+========================================================== */
+@media(min-width:561px){
+ body.gameMode .treeImg{
+  bottom:18px !important;
+ }
+}
+
 @media(max-width:560px){
  body.gameMode .char.fieldEnemy{
   bottom:34px !important;
@@ -1783,7 +1794,6 @@ function setupWorld(cls,sun,label,image,enemyImage){
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
    $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
-   $("ninja").className = "char";
    $("ninja").dataset.fieldEnemy = String(label).includes("田園") ? "1" : "0";
    $("ninja").onerror = function(){
      this.onerror = null;
@@ -2049,8 +2059,8 @@ function dragonMessage(){
 }
 function ninjaEvent(){
  const has=hasAnyObject();
- const fieldEnemy = $("ninja").dataset.fieldEnemy === "1" ? " fieldEnemy" : "";
- $("ninja").className="char gobelynRun" + fieldEnemy;
+ const fieldEnemyClass = $("ninja").dataset.fieldEnemy === "1" ? " fieldEnemy" : "";
+ $("ninja").className="char gobelynRun" + fieldEnemyClass;
  $("feedback").textContent=stealMessage();
  if(has)setTimeout(stealObject,2350);
  setTimeout(()=>{$("ninja").className="char";scheduleNext(0);},4300);
