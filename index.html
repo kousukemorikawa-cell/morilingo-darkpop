@@ -107,7 +107,7 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 .snowBase,.snowHead{position:absolute;left:50%;transform:translateX(-50%);background:#fff;border:4px solid #dbeefd;border-radius:50%;box-shadow:inset -10px -10px #aadaf047,0 8px 0 #0001}.snowBase{bottom:0;width:92px;height:92px}.snowHead{bottom:75px;width:62px;height:62px}.snowArm{position:absolute;width:52px;height:8px;background:#8b552d;border-radius:999px;bottom:91px}.snowArm.r{left:96px;transform:rotate(-25deg)}.snowArm.l{left:5px;transform:rotate(25deg)}.snowFace{position:absolute;left:50%;bottom:103px;transform:translateX(-50%);font-size:20px;font-weight:900;letter-spacing:5px}.snowNose{position:absolute;left:78px;bottom:102px;font-size:21px}.snowStick{position:absolute;left:122px;bottom:80px;font-size:45px;transform:rotate(18deg)}
 .char{
  position:absolute;
- bottom:78px;
+ bottom:35px;
  left:-90px;
  z-index:8;
  display:none;
@@ -800,6 +800,86 @@ body.gameMode .answerPanel{padding-top:9px}
  }
  body.gameMode .chestObj{
   height:150px !important;
+ }
+}
+
+
+
+/* ==========================================================
+   最終位置調整：宝箱・敵をかなり下げる / スマホ宝箱間隔を広げる
+   ※下にあるほど優先される上書きCSS
+========================================================== */
+@media(min-width:561px){
+ body.gameMode .treeArea{
+  bottom:0px !important;
+  min-height:245px !important;
+ }
+ body.gameMode .objSlot{
+  height:245px !important;
+ }
+ body.gameMode .chestObj{
+  height:205px !important;
+ }
+ body.gameMode .chestImg{
+  width:140px !important;
+  bottom:-58px !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:36px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:20px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-78px !important;
+ }
+ body.gameMode .char{
+  bottom:8px !important;
+ }
+ body.gameMode .dragonFly{
+  bottom:38px !important;
+ }
+}
+
+@media(max-width:560px){
+ body.gameMode .treeArea{
+  left:4px !important;
+  right:4px !important;
+  bottom:4px !important;
+  min-height:150px !important;
+ }
+ body.gameMode .objSlot{
+  width:108px !important;
+  height:162px !important;
+ }
+ body.gameMode .objSlot.slotCenter{left:50% !important;}
+ body.gameMode .objSlot.slotLeft{left:22% !important;}
+ body.gameMode .objSlot.slotRight{left:78% !important;}
+ body.gameMode .chestObj{
+  height:150px !important;
+ }
+ body.gameMode .chestImg{
+  width:112px !important;
+  bottom:-64px !important;
+ }
+ body.gameMode .dropItemImg{
+  width:48px !important;
+  height:48px !important;
+  bottom:10px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:2px !important;
+  font-size:9px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-76px !important;
+  font-size:10px !important;
+ }
+ body.gameMode .char{
+  bottom:4px !important;
+ }
+ body.gameMode .dragonFly{
+  bottom:34px !important;
  }
 }
 
