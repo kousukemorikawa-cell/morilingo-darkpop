@@ -1033,6 +1033,86 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+
+/* 最終修正：宝箱が消える問題を解消。PC/スマホとも宝箱を必ず画面内に表示 */
+.chestObj{
+ position:relative !important;
+ overflow:visible !important;
+}
+.chestImg{
+ display:block !important;
+ position:absolute !important;
+ left:50% !important;
+ transform:translateX(-50%) !important;
+ z-index:12 !important;
+ opacity:1 !important;
+ visibility:visible !important;
+ object-fit:contain !important;
+}
+.dropItemImg,
+.chestLabel,
+.chestProgress{
+ z-index:13 !important;
+}
+
+@media(min-width:561px){
+ body.gameMode .chestObj{
+  height:190px !important;
+ }
+ body.gameMode .chestImg{
+  width:140px !important;
+  bottom:0px !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:96px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:78px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-26px !important;
+ }
+}
+
+@media(max-width:560px){
+ body.gameMode .treeArea{
+  left:0 !important;
+  right:0 !important;
+  bottom:12px !important;
+  min-height:170px !important;
+  overflow:visible !important;
+ }
+ body.gameMode .objSlot{
+  width:112px !important;
+  height:170px !important;
+ }
+ body.gameMode .objSlot.slotCenter{left:50% !important;}
+ body.gameMode .objSlot.slotLeft{left:23% !important;}
+ body.gameMode .objSlot.slotRight{left:77% !important;}
+ body.gameMode .chestObj{
+  height:150px !important;
+ }
+ body.gameMode .chestImg{
+  width:104px !important;
+  bottom:0px !important;
+ }
+ body.gameMode .dropItemImg{
+  width:46px !important;
+  height:46px !important;
+  bottom:80px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:62px !important;
+  font-size:10px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-22px !important;
+  font-size:10px !important;
+  padding:3px 8px !important;
+ }
+}
+
 </style>
 </head>
 <body>
