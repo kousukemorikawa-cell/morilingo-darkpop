@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>モリリンゴ クエスト</title>
+
+<style>
+:root{
+  --green:#2f8f57;
+  --ink:#263238;
+  --card:rgba(255,255,255,.92);
+  --red:#ef5350;
+  --blue:#42a5f5;
+  --choiceGreen:#66bb6a;
+  --yellow:#f6c945;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  background:linear-gradient(160deg,#dff7ff,#fff3c9);
+  color:var(--ink);
+}
+
+#scoreHud{
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:999;
+  background:#111;
+  color:#fff;
+  font-weight:1000;
+  padding:8px 16px 10px;
+  border-radius:18px;
+  border:4px solid #fff;
+  box-shadow:0 0 0 4px #111,0 6px 0 rgba(0,0,0,.35);
+  text-align:center;
+  line-height:1.05;
+  min-width:118px;
+}
+
+.scoreLabel{
+  font-size:11px;
+  letter-spacing:.12em;
+  color:#ff3b30;
+  margin-bottom:4px;
+}
+
+.scoreMain{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:5px;
+}
+
+#scoreHudValue{
+  font-size:30px;
+  color:#fff;
+  text-shadow:2px 2px 0 #000;
+}
+
+.scoreUnit{
+  font-size:16px;
+  color:#fff;
+}
+
+.app{
+  max-width:880px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:12px 12px 138px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:1000;
+  color:var(--green);
+  text-shadow:0 2px 0 #fff;
+}
+
+.pill{
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:900;
+  box-shadow:0 4px 14px #0001;
+}
+
+.card{
+  background:var(--card);
+  border:2px solid #fff;
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 16px 38px #24553625;
+}
+
+h1,h2,h3{margin:.35em 0}
+
+.muted{
+  color:#667085;
+  font-weight:800;
+}
+
+.questStatus{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:10px 0;
+}
+
+.stat{
+  text-align:center;
+  background:#ffffffb8;
+  border-radius:16px;
+  padding:9px;
+  font-weight:1000;
+}
+
+.stat.full{
+  grid-column:1/-1;
+}
+
+.life{
+  letter-spacing:2px;
+}
+
+.world{
+  position:relative;
+  height:clamp(260px,38vh,350px);
+  min-height:260px;
+  max-height:350px;
+  border-radius:28px;
+  overflow:hidden;
+  margin:10px 0;
+  border:3px solid #fff;
+  box-shadow:inset 0 -12px 0 #0001;
+  background:#9ee8ff;
+}
+
+.track{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:300%;
+  background:
+    radial-gradient(circle at 80px 52px,#fff 0 20px,transparent 21px),
+    radial-gradient(circle at 120px 52px,#fff 0 26px,transparent 27px),
+    radial-gradient(circle at 660px 42px,#fff 0 18px,transparent 19px),
+    radial-gradient(circle at 700px 42px,#fff 0 26px,transparent 27px),
+    repeating-linear-gradient(90deg, transparent 0 160px, rgba(0,0,0,.06) 160px 164px),
+    linear-gradient(#9ee8ff 0 45%,#bdf2a1 45% 76%,#85d069 76%);
+  transform:translateX(0);
+  transition:transform .65s ease;
+}
+
+.hill{
+  position:absolute;
+  bottom:38px;
+  width:180px;
+  height:80px;
+  border-radius:120px 120px 0 0;
+  background:#76cf61;
+  box-shadow:inset 0 -8px 0 #0001;
+}
+
+.h1a{left:80px}
+.h1b{left:360px;width:230px;height:95px}
+.h1c{left:720px}
+.h1d{left:1060px;width:230px;height:100px}
+.h1e{left:1440px}
+
+.ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:70px;
+  background:repeating-linear-gradient(0deg,#bf6e44 0 18px,#c9784b 18px 22px);
+  box-shadow:inset 0 8px 0 #0001;
+}
+
+.stageCap{
+  position:absolute;
+  left:12px;
+  top:12px;
+  background:#ffffffb8;
+  border-radius:999px;
+  padding:7px 12px;
+  font-weight:1000;
+  z-index:20;
+}
+
+.stepDot{
+  position:absolute;
+  bottom:95px;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#fff;
+  border:3px solid #fff;
+  box-shadow:0 4px 0 #0001;
+}
+
+.dot1{left:220px}.dot2{left:420px}.dot3{left:620px}
+
+.hero{
+  position:absolute;
+  left:110px;
+  bottom:58px;
+  width:76px;
+  height:76px;
+  display:grid;
+  place-items:center;
+  font-size:58px;
+  filter:drop-shadow(0 6px 2px #0003);
+  transition:transform .25s ease;
+  z-index:5;
+}
+.hero img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.hero.walk{animation:hop .35s ease 2}
+.hero.damaged{animation:heroDamage .45s ease 1}
+
+.enemy{
+  position:absolute;
+  right:150px;
+  bottom:58px;
+  width:90px;
+  height:90px;
+  display:none;
+  place-items:center;
+  z-index:6;
+  filter:drop-shadow(0 6px 2px #0003);
+}
+
+.enemyIcon{
+  width:90px;
+  height:90px;
+  display:grid;
+  place-items:center;
+  font-size:66px;
+}
+.enemyIcon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.enemy.hit{animation:hit .35s ease 1}
+.enemy.tackle{animation:tackle .65s ease 1}
+
+.chest{
+  position:absolute;
+  right:140px;
+  bottom:58px;
+  width:96px;
+  height:96px;
+  display:none;
+  z-index:7;
+  filter:drop-shadow(0 6px 2px #0003);
+}
+.chest img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.skinReward{
+  position:absolute;
+  right:152px;
+  bottom:148px;
+  width:64px;
+  height:64px;
+  display:none;
+  z-index:9;
+  filter:drop-shadow(0 6px 2px #0003);
+  animation:itemPop .45s ease-out;
+}
+.skinReward img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+@keyframes itemPop{
+  from{transform:translateY(28px) scale(.35);opacity:0}
+  to{transform:translateY(0) scale(1);opacity:1}
+}
+
+.magic{
+  position:absolute;
+  left:172px;
+  bottom:110px;
+  width:36px;
+  height:36px;
+  display:none;
+  z-index:9;
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#fff 0 18%,#9efcff 19% 48%,#715cff 49% 72%,transparent 73%);
+  box-shadow:0 0 0 8px rgba(113,92,255,.15),0 0 18px rgba(113,92,255,.7);
+}
+
+.magic.fire{display:block;animation:magicShot .55s ease forwards}
+
+.burst{
+  position:absolute;
+  right:164px;
+  bottom:116px;
+  width:90px;
+  height:90px;
+  display:none;
+  z-index:10;
+  pointer-events:none;
+}
+
+.burst.show{display:block;animation:burst .45s ease forwards}
+
+.burst::before,
+.burst::after{
+  content:"✦";
+  position:absolute;
+  font-size:70px;
+  font-weight:900;
+  color:#fff77a;
+  text-shadow:0 3px 0 #111;
+}
+
+.burst::after{
+  content:"✧";
+  left:28px;
+  top:20px;
+  font-size:58px;
+  color:#8fd6ff;
+}
+
+.question{
+  background:#fff;
+  border:3px solid #e9f4ee;
+  border-radius:20px;
+  padding:14px 16px;
+  margin-top:12px;
+  box-shadow:0 7px 0 #2f7d4b14;
+  font-size:21px;
+  font-weight:1000;
+  line-height:1.5;
+}
+
+.feedback{
+  background:#ffffffaa;
+  border-radius:16px;
+  padding:8px 12px;
+  margin-top:8px;
+  min-height:38px;
+  font-weight:1000;
+  text-align:center;
+}
+
+.answerPanel{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#fffffff0;
+  backdrop-filter:blur(10px);
+  padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 28px #0002;
+  z-index:30;
+}
+
+.answers{
+  max-width:880px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+button{font-family:inherit}
+
+.btn{
+  border:0;
+  border-radius:18px;
+  padding:14px 16px;
+  font-weight:1000;
+  font-size:16px;
+  background:#fff;
+  box-shadow:0 6px 0 #0002,0 12px 22px #0001;
+  cursor:pointer;
+}
+
+.btn:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #0002;
+}
+
+.ans{
+  position:relative;
+  min-height:64px;
+  text-align:left;
+  border:4px solid transparent;
+  overflow:hidden;
+}
+
+.ans:before{
+  content:attr(data-label);
+  display:inline-grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  margin-right:8px;
+  color:#fff;
+}
+
+.ans.answered{pointer-events:none}
+
+.ans.correctChoice:after{
+  content:"〇";
+  position:absolute;
+  inset:0;
+  z-index:3;
+  display:grid;
+  place-items:center;
+  font-weight:1000;
+  line-height:1;
+  pointer-events:none;
+  font-size:58px;
+  color:#19a64a;
+  text-shadow:0 3px 0 #fff,3px 0 0 #fff,0 -3px 0 #fff,-3px 0 0 #fff,0 6px 10px #0003;
+}
+
+.ans.wrongChoice:after,
+.ans.wrongChoice .xLine{
+  content:"";
+  position:absolute;
+  left:8%;
+  right:8%;
+  top:50%;
+  height:9px;
+  z-index:3;
+  background:#e53935;
+  border-radius:999px;
+  box-shadow:0 0 0 4px #fff,0 7px 12px #0003;
+  pointer-events:none;
+  transform-origin:center;
+}
+
+.ans.wrongChoice:after{transform:translateY(-50%) rotate(24deg)}
+.ans.wrongChoice .xLine{transform:translateY(-50%) rotate(-24deg)}
+.ans.wrongChoice:before,.ans.correctChoice:before{opacity:.35}
+
+.red{border-color:#ef5350}
+.red:before{background:#ef5350}
+
+.blue{border-color:#42a5f5}
+.blue:before{background:#42a5f5}
+
+.green{border-color:#66bb6a}
+.green:before{background:#66bb6a}
+
+.yellow{border-color:#f6c945}
+.yellow:before{background:#f6c945;color:#5d4300}
+
+.nextBtn,.restartBtn{
+  width:100%;
+  margin-top:10px;
+  padding:14px;
+  border:0;
+  border-radius:18px;
+  font-size:18px;
+  font-weight:1000;
+  background:linear-gradient(#8df08f,#32b85c);
+  color:#fff;
+  box-shadow:0 6px 0 #0002,0 12px 22px #0001;
+}
+
+.nextBtn{display:none}
+.restartBtn{background:linear-gradient(#ffe78f,#ffbd45);color:#553700}
+
+.hpBar{
+  display:flex;
+  justify-content:center;
+  gap:4px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+
+.hp{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#ff6868;
+  border:2px solid #fff;
+  box-shadow:0 2px 0 #0002;
+}
+
+.hp.empty{background:#edf2f0}
+
+.resultCard{
+  text-align:center;
+  padding:16px;
+}
+
+.reward{
+  display:inline-block;
+  margin:12px 0;
+  padding:16px 24px;
+  border-radius:18px;
+  background:#fff;
+  font-size:30px;
+  font-weight:1000;
+  box-shadow:0 6px 0 #0002,0 12px 22px #0001;
+}
+
+@keyframes hop{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-16px)}
+  100%{transform:translateY(0)}
+}
+
+@keyframes hit{
+  0%{transform:translateX(0) scale(1)}
+  35%{transform:translateX(18px) scale(1.08)}
+  65%{transform:translateX(-8px) scale(.96)}
+  100%{transform:translateX(0) scale(1)}
+}
+
+@keyframes tackle{
+  0%{transform:translateX(0)}
+  45%{transform:translateX(-390px) rotate(-8deg)}
+  62%{transform:translateX(-390px) rotate(5deg)}
+  100%{transform:translateX(0)}
+}
+
+@keyframes heroDamage{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-18px) rotate(-8deg)}
+  50%{transform:translateX(10px) rotate(6deg)}
+  75%{transform:translateX(-8px)}
+  100%{transform:translateX(0)}
+}
+
+@keyframes magicShot{
+  0%{transform:translateX(0) scale(.8);opacity:1}
+  70%{transform:translateX(420px) scale(1.18);opacity:1}
+  100%{transform:translateX(420px) scale(.2);opacity:0}
+}
+
+@keyframes burst{
+  0%{transform:scale(.2) rotate(0deg);opacity:0}
+  40%{transform:scale(1.25) rotate(12deg);opacity:1}
+  100%{transform:scale(.75) rotate(-8deg);opacity:0}
+}
+
+@media(max-width:560px){
+  #scoreHud{
+    top:8px;
+    right:8px;
+    padding:7px 12px 8px;
+    border-width:3px;
+    min-width:104px;
+    transform:scale(.86);
+    transform-origin:top right;
+  }
+
+  .scoreLabel{font-size:10px}
+  #scoreHudValue{font-size:25px}
+  .scoreUnit{font-size:13px}
+
+  .app{
+    padding:8px 8px 118px;
+  }
+
+  .logo{font-size:19px}
+  .header{margin-bottom:6px}
+  .card{padding:10px;border-radius:20px}
+
+  .questStatus{
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    margin:6px 0;
+  }
+
+  .stat{
+    padding:6px 4px;
+    font-size:13px;
+    border-radius:12px;
+  }
+
+  .world{
+    height:34vh;
+    min-height:215px;
+    max-height:250px;
+    margin:6px 0;
+    border-radius:22px;
+  }
+
+  .stageCap{
+    left:8px;
+    top:8px;
+    padding:5px 9px;
+    font-size:12px;
+  }
+
+  .hero{
+    left:54px;
+    bottom:48px;
+    font-size:50px;
+  }
+
+  .enemy{
+    right:72px;
+    bottom:48px;
+  }
+
+  .chest{
+    right:72px;
+    bottom:48px;
+    width:78px;
+    height:78px;
+  }
+  .skinReward{
+    right:82px;
+    bottom:124px;
+    width:52px;
+    height:52px;
+  }
+
+  .dot1{left:190px}.dot2{left:350px}.dot3{left:510px}
+
+  .question{
+    font-size:15px;
+    line-height:1.3;
+    padding:9px 11px;
+    margin-top:8px;
+  }
+
+  .feedback{
+    font-size:13px;
+    min-height:30px;
+    padding:6px 9px;
+    margin-top:6px;
+  }
+
+  .answerPanel{
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .answers{
+    gap:7px;
+  }
+
+  .ans{
+    font-size:15px;
+    min-height:50px;
+    padding:8px;
+    border-width:3px;
+    border-radius:14px;
+  }
+
+  .ans:before{
+    width:24px;
+    height:24px;
+    margin-right:6px;
+  }
+
+  .ans.correctChoice:after{font-size:44px}
+
+  .ans.wrongChoice:after,
+  .ans.wrongChoice .xLine{height:7px}
+
+  @keyframes tackle{
+    0%{transform:translateX(0)}
+    45%{transform:translateX(-210px) rotate(-8deg)}
+    62%{transform:translateX(-210px) rotate(5deg)}
+    100%{transform:translateX(0)}
+  }
+
+  @keyframes magicShot{
+    0%{transform:translateX(-46px) scale(.8);opacity:1}
+    70%{transform:translateX(245px) scale(1.18);opacity:1}
+    100%{transform:translateX(245px) scale(.2);opacity:0}
+  }
+
+  .magic{left:116px}
+  .burst{right:82px}
+}
+</style>
+</head>
+
+<body>
+<div id="scoreHud">
+  <div class="scoreLabel">QUEST SCORE</div>
+  <div class="scoreMain"><span id="scoreHudValue">0</span><span class="scoreUnit">PT</span></div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="logo">🌳 モリリンゴ クエスト</div>
+    <div class="pill">STAGE 1</div>
+  </div>
+
+  <div class="card">
+    <h2>ステージ1「草原」</h2>
+    <p class="muted">知識の力で草原を進み、失われたアイテムを取り戻そう。</p>
+
+    <div class="questStatus">
+      <div class="stat" id="areaText">第1エリア</div>
+      <div class="stat" id="phaseText">前進</div>
+      <div class="stat" id="progressText">進行 0/3</div>
+      <div class="stat" id="enemyText">モグラなし</div>
+      <div class="stat" id="playerText">HP ❤️❤️❤️</div>
+      <div class="stat" id="itemText">スキンなし</div>
+    </div>
+
+    <div class="world" id="world">
+      <div class="track" id="track">
+        <div class="hill h1a"></div>
+        <div class="hill h1b"></div>
+        <div class="hill h1c"></div>
+        <div class="hill h1d"></div>
+        <div class="hill h1e"></div>
+        <div class="stepDot dot1"></div>
+        <div class="stepDot dot2"></div>
+        <div class="stepDot dot3"></div>
+        <div class="ground"></div>
+      </div>
+
+      <div class="stageCap">草原クエスト</div>
+      <div class="hero" id="hero">🙂</div>
+
+      <div class="enemy" id="enemy">
+        <div class="enemyIcon" id="enemyIcon">🐹</div>
+      </div>
+
+      <div class="chest" id="chest"></div>
+      <div class="skinReward" id="skinReward"></div>
+      <div class="magic" id="magic"></div>
+      <div class="burst" id="burst"></div>
+    </div>
+
+    <div id="questionText" class="question">問題</div>
+    <div id="msg" class="feedback"></div>
+    <button class="nextBtn" id="nextBtn" onclick="nextQuestion()">次へ</button>
+  </div>
+</div>
+
+<div class="answerPanel">
+  <div class="answers">
+    <button class="btn ans red" data-label="A" id="c0" onclick="choose(0)"></button>
+    <button class="btn ans blue" data-label="B" id="c1" onclick="choose(1)"></button>
+    <button class="btn ans green" data-label="C" id="c2" onclick="choose(2)"></button>
+    <button class="btn ans yellow" data-label="D" id="c3" onclick="choose(3)"></button>
+  </div>
+</div>
+
+<script>
+/*
+  画像パス設計：
+  背景：assets/backgrounds/番号_ステージ名_quest.png
+    例：assets/backgrounds/01_field_quest.png
+
+  敵：assets/enemies/番号_ステージ名_enemy.png
+    例：assets/enemies/01_field_enemy.png
+
+  自分キャラ：assets/me/キャラ名.png
+    例：assets/me/me_magician.png
+*/
+const QUEST_STAGE_NO = "01";
+const QUEST_STAGE_ID = "field";
+
+const QUEST_BACKGROUND_IMAGE = `assets/backgrounds/${QUEST_STAGE_NO}_${QUEST_STAGE_ID}_quest.png`;
+const ENEMY_IMAGE = `assets/enemies/${QUEST_STAGE_NO}_${QUEST_STAGE_ID}_enemy.png`;
+const ME_IMAGE = "assets/me/me_magician.png";
+
+const CHEST_CLOSED_IMAGE = "assets/items/chest_closed.png";
+const CHEST_OPEN_IMAGE = "assets/items/chest_open.png";
+
+// 今後ここを skin_hat_warrior などに差し替える
+const REWARD_SKIN_ID = "skin_hat_magician";
+const REWARD_SKIN_IMAGE = `assets/skins/${REWARD_SKIN_ID}.png`;
+const REWARD_SKIN_NAME = "魔法使いの帽子";
+
+const questions = [
+  {q:"『花咲きけり』の「けり」の意味は？", c:["詠嘆","推量","意志","打消"], a:0},
+  {q:"『昔、男ありけり』の「けり」の意味は？", c:["過去","打消","可能","意志"], a:0},
+  {q:"『都へ帰らむ』の「む」の意味は？", c:["意志","完了","打消","過去"], a:0},
+  {q:"『雨降らむ』の「む」の意味は？", c:["推量","過去","打消","完了"], a:0},
+  {q:"『行かず』の「ず」の意味は？", c:["打消","推量","完了","当然"], a:0},
+  {q:"『花咲きたり』の「たり」の意味は？", c:["完了","打消","推量","意志"], a:0},
+  {q:"『門を開けつ』の「つ」の意味は？", c:["完了","過去","打消","推量"], a:0},
+  {q:"『雪降るべし』の「べし」の意味は？", c:["推量","完了","打消","過去"], a:0},
+  {q:"『すぐに行くべし』の「べし」の意味は？", c:["当然","過去","打消","完了"], a:0},
+  {q:"『月出でぬ』の「ぬ」の意味は？", c:["完了","打消","推量","意志"], a:0},
+  {q:"『忘れじ』の「じ」の意味は？", c:["打消意志","過去","完了","可能"], a:0},
+  {q:"『鳥鳴くらし』の「らし」の意味は？", c:["推定","完了","打消","意志"], a:0},
+  {q:"『風強かるなり』の「なり」の意味は？", c:["推定","打消","過去","意志"], a:0},
+  {q:"『人こそ知らね』の「ね」の意味は？", c:["打消","完了","推量","過去"], a:0},
+  {q:"『見ゆ』の「ゆ」の意味は？", c:["自発・可能","打消","過去","意志"], a:0},
+  {q:"『思はる』の「る」の意味は？", c:["自発","打消","推量","完了"], a:0},
+  {q:"『食べらる』の「らる」の意味は？", c:["可能","打消","過去","意志"], a:0},
+  {q:"『泣かす』の「す」の意味は？", c:["使役","完了","打消","推量"], a:0},
+  {q:"『読ませたまふ』の「さす」の意味は？", c:["使役","過去","打消","完了"], a:0},
+  {q:"『ありき』の「き」の意味は？", c:["過去","推量","打消","完了"], a:0}
+];
+
+let area = 1;
+let progress = 0;
+let phase = "walk";
+let enemyHp = 0;
+let enemyMax = 0;
+let playerHp = 3;
+let score = 0;
+let qNow = null;
+let locked = false;
+let treasureCount = 0;
+let treasureCorrect = 0;
+let gotItem = "なし";
+let usedQueue = [];
+
+const areaText = document.getElementById("areaText");
+const phaseText = document.getElementById("phaseText");
+const progressText = document.getElementById("progressText");
+const enemyText = document.getElementById("enemyText");
+const playerText = document.getElementById("playerText");
+const itemText = document.getElementById("itemText");
+const questionText = document.getElementById("questionText");
+const msg = document.getElementById("msg");
+const nextBtn = document.getElementById("nextBtn");
+const hero = document.getElementById("hero");
+const enemy = document.getElementById("enemy");
+const enemyIcon = document.getElementById("enemyIcon");
+const chest = document.getElementById("chest");
+const skinReward = document.getElementById("skinReward");
+const track = document.getElementById("track");
+const magic = document.getElementById("magic");
+const burst = document.getElementById("burst");
+const scoreHudValue = document.getElementById("scoreHudValue");
+
+function setupImages(){
+  const world = document.getElementById("world");
+  world.style.backgroundImage = `url('${QUEST_BACKGROUND_IMAGE}')`;
+  world.style.backgroundSize = "cover";
+  world.style.backgroundPosition = "center bottom";
+  world.style.backgroundRepeat = "no-repeat";
+
+  hero.innerHTML = `<img src="${ME_IMAGE}" alt="自分キャラ" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
+
+  enemyIcon.innerHTML = `<img src="${ENEMY_IMAGE}" alt="敵キャラ" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
+  chest.innerHTML = `<img src="${CHEST_CLOSED_IMAGE}" alt="閉じた宝箱" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
+  skinReward.innerHTML = `<img src="${REWARD_SKIN_IMAGE}" alt="${REWARD_SKIN_NAME}" onerror="this.onerror=null;this.parentElement.textContent='🎩';">`;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function getQuestion(){
+  if(usedQueue.length===0){
+    usedQueue = shuffle([...Array(questions.length).keys()]);
+  }
+  const base = questions[usedQueue.pop()];
+  const correct = base.c[base.a];
+  const shuffledChoices = shuffle(base.c);
+  return {
+    q:base.q,
+    c:shuffledChoices,
+    a:shuffledChoices.indexOf(correct)
+  };
+}
+
+function loadQuestion(){
+  locked = false;
+  qNow = getQuestion();
+  questionText.textContent = qNow.q;
+
+  for(let i=0;i<4;i++){
+    const btn = document.getElementById("c"+i);
+    btn.textContent = qNow.c[i];
+    btn.classList.remove("correctChoice","wrongChoice","answered");
+    const x = btn.querySelector(".xLine");
+    if(x) x.remove();
+    btn.disabled = false;
+    btn.style.display = "block";
+  }
+
+  msg.textContent = "";
+  nextBtn.style.display = "none";
+  updateUI();
+}
+
+function markAnswer(selectedIndex){
+  for(let i=0;i<4;i++){
+    const btn = document.getElementById("c"+i);
+    btn.classList.add("answered");
+    btn.disabled = true;
+    if(i === qNow.a) btn.classList.add("correctChoice");
+    if(selectedIndex >= 0 && selectedIndex !== qNow.a && i === selectedIndex){
+      btn.classList.add("wrongChoice");
+      btn.insertAdjacentHTML("beforeend",`<span class="xLine"></span>`);
+    }
+  }
+}
+
+function choose(n){
+  if(locked || phase==="finish" || phase==="gameover") return;
+  locked = true;
+
+  const correct = n === qNow.a;
+  markAnswer(n);
+
+  if(phase === "treasure"){
+    treasureCount++;
+    if(correct){
+      treasureCorrect++;
+      score += 10;
+      playMagic();
+      msg.textContent = "⭕ 正解！宝箱の中身が良くなった！";
+    }else{
+      takeDamage(false);
+      msg.textContent = "❌ 不正解！宝箱の魔力が弱まった！";
+    }
+
+    nextBtn.textContent = treasureCount >= 5 ? "結果を見る" : "次へ";
+    nextBtn.style.display = "block";
+    updateUI();
+    return;
+  }
+
+  if(!correct){
+    takeDamage(true);
+    return;
+  }
+
+  score += 10;
+
+  if(phase === "walk"){
+    progress++;
+    hero.classList.remove("walk");
+    void hero.offsetWidth;
+    hero.classList.add("walk");
+    track.style.transform = "translateX(-" + ((area-1)*180 + progress*90) + "px)";
+    msg.textContent = "⭕ 正解！1マス前進！";
+
+    if(progress >= 3){
+      setTimeout(spawnEnemy, 550);
+      updateUI();
+      return;
+    }
+
+    nextBtn.textContent = "次へ";
+    nextBtn.style.display = "block";
+    updateUI();
+    return;
+  }
+
+  if(phase === "battle"){
+    playMagic();
+    setTimeout(()=>{
+      enemyHp--;
+      enemy.classList.remove("hit");
+      void enemy.offsetWidth;
+      enemy.classList.add("hit");
+      msg.textContent = "✨ 魔法攻撃！モグラに1ダメージ！";
+
+      if(enemyHp <= 0){
+        enemyHp = 0;
+        updateUI();
+        msg.textContent = "🎉 モグラ撃破！";
+        nextBtn.textContent = area < 3 ? "次のエリアへ" : "宝箱チャレンジへ";
+        nextBtn.style.display = "block";
+        return;
+      }
+
+      nextBtn.textContent = "次へ";
+      nextBtn.style.display = "block";
+      updateUI();
+    },420);
+  }
+}
+
+function playMagic(){
+  magic.classList.remove("fire");
+  burst.classList.remove("show");
+  void magic.offsetWidth;
+  magic.classList.add("fire");
+  setTimeout(()=>burst.classList.add("show"),380);
+}
+
+function takeDamage(enemyAttack){
+  playerHp--;
+
+  if(enemyAttack && phase==="battle"){
+    enemy.classList.remove("tackle");
+    void enemy.offsetWidth;
+    enemy.classList.add("tackle");
+    setTimeout(()=>{
+      hero.classList.remove("damaged");
+      void hero.offsetWidth;
+      hero.classList.add("damaged");
+    },280);
+    msg.textContent = "💥 不正解！モグラの体当たり！";
+  }else{
+    hero.classList.remove("damaged");
+    void hero.offsetWidth;
+    hero.classList.add("damaged");
+    msg.textContent = "❌ 不正解！こちらに1ダメージ！";
+  }
+
+  updateUI();
+
+  if(playerHp <= 0){
+    setTimeout(gameOver, 520);
+    return;
+  }
+
+  nextBtn.textContent = "次へ";
+  nextBtn.style.display = "block";
+}
+
+function spawnEnemy(){
+  phase = "battle";
+  enemyMax = area + 2;
+  enemyHp = enemyMax;
+  enemy.style.display = "grid";
+  msg.textContent = "🐹 モグラ出現！正解して魔法で攻撃しよう！";
+  nextBtn.textContent = "戦う";
+  nextBtn.style.display = "block";
+  updateUI();
+}
+
+function nextQuestion(){
+  if(phase==="battle" && enemyHp===0){
+    if(area < 3){
+      area++;
+      progress = 0;
+      phase = "walk";
+      enemy.style.display = "none";
+      track.style.transform = "translateX(-" + ((area-1)*180) + "px)";
+      nextBtn.textContent = "次へ";
+      loadQuestion();
+      return;
+    }else{
+      startTreasure();
+      return;
+    }
+  }
+
+  if(phase==="treasure" && treasureCount>=5){
+    finishQuest();
+    return;
+  }
+
+  loadQuestion();
+}
+
+function startTreasure(){
+  phase = "treasure";
+  enemy.style.display = "none";
+  chest.style.display = "block";
+  skinReward.style.display = "none";
+  chest.innerHTML = `<img src="${CHEST_CLOSED_IMAGE}" alt="閉じた宝箱" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
+  treasureCount = 0;
+  treasureCorrect = 0;
+  msg.textContent = "ステージの右端に到着！宝箱を開けよう。";
+  track.style.transform = "translateX(-760px)";
+  loadQuestion();
+}
+
+function finishQuest(){
+  phase = "finish";
+  chest.innerHTML = `<img src="${CHEST_OPEN_IMAGE}" alt="開いた宝箱" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;
+  skinReward.style.display = "block";
+
+  gotItem = "🎩 " + REWARD_SKIN_NAME;
+
+  questionText.innerHTML = `
+    <div class="resultCard">
+      <div style="font-size:34px;font-weight:1000;">クエストクリア！</div>
+      <div style="margin-top:8px;">宝箱チャレンジ：${treasureCorrect} / 5 正解</div>
+      <div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,playerHp))}${"🖤".repeat(3-Math.max(0,playerHp))}</div>
+      <div class="reward">${gotItem}</div>
+      <div>新しいスキンを獲得した！</div>
+      <div class="muted" style="margin-top:8px;">ID：${REWARD_SKIN_ID}</div>
+      <button class="restartBtn" onclick="location.reload()">もう一度遊ぶ</button>
+    </div>
+  `;
+
+  for(let i=0;i<4;i++){
+    document.getElementById("c"+i).style.display = "none";
+  }
+  nextBtn.style.display = "none";
+  msg.textContent = "";
+  updateUI();
+}
+
+function gameOver(){
+  phase = "gameover";
+  questionText.innerHTML = `
+    <div class="resultCard">
+      <div style="font-size:38px;font-weight:1000;">ゲームオーバー</div>
+      <div style="margin-top:10px;">HPが0になった……。</div>
+      <div style="font-size:60px;margin:12px;">💀</div>
+      <button class="restartBtn" onclick="location.reload()">もう一度挑戦</button>
+    </div>
+  `;
+
+  for(let i=0;i<4;i++){
+    document.getElementById("c"+i).style.display = "none";
+  }
+  nextBtn.style.display = "none";
+  msg.textContent = "";
+  updateUI();
+}
+
+function hpHtml(){
+  if(phase !== "battle") return "";
+  let html = '<div class="hpBar">';
+  for(let i=0;i<enemyMax;i++){
+    html += '<span class="hp '+(i>=enemyHp?'empty':'')+'"></span>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function playerHpText(){
+  const hp = Math.max(0, playerHp);
+  return "HP " + "❤️".repeat(hp) + "🖤".repeat(3-hp);
+}
+
+function updateUI(){
+  scoreHudValue.textContent = score;
+  playerText.textContent = playerHpText();
+
+  if(phase === "treasure"){
+    areaText.textContent = "宝箱";
+    phaseText.textContent = "報酬";
+    progressText.textContent = treasureCount + "/5";
+    enemyText.textContent = "正解 " + treasureCorrect + "/5";
+    itemText.textContent = "宝箱：スキン";
+    return;
+  }
+
+  if(phase === "finish"){
+    areaText.textContent = "クリア";
+    phaseText.textContent = "終了";
+    progressText.textContent = treasureCorrect + "/5";
+    enemyText.textContent = "";
+    itemText.textContent = gotItem;
+    return;
+  }
+
+  if(phase === "gameover"){
+    areaText.textContent = "敗北";
+    phaseText.textContent = "終了";
+    progressText.textContent = "第" + area + "エリア";
+    enemyText.textContent = "";
+    itemText.textContent = "なし";
+    return;
+  }
+
+  areaText.textContent = "第" + area + "エリア";
+  phaseText.textContent = phase === "walk" ? "前進" : "戦闘";
+  progressText.textContent = "進行 " + progress + "/3";
+
+  if(phase === "battle"){
+    enemyText.innerHTML = "敵HP " + enemyHp + "/" + enemyMax + hpHtml();
+  }else{
+    enemyText.textContent = "モグラなし";
+  }
+
+  itemText.textContent = gotItem === "なし" ? "スキンなし" : gotItem;
+}
+
+setupImages();
+loadQuestion();
+</script>
+</body>
+</html>
