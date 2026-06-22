@@ -662,7 +662,8 @@ body.gameMode .answerPanel{padding-top:9px}
 }
 
 
-/* 追加修正：木・宝箱の出現位置を固定（中央 → 左 → 右） */
+
+/* 修正：木・宝箱の出現位置を固定（中央 → 左 → 右）＋PC背景/敵位置調整 */
 .treeArea{
  display:block !important;
  overflow:visible !important;
@@ -682,9 +683,9 @@ body.gameMode .answerPanel{padding-top:9px}
  height:100%;
 }
 .treeArea.worldtreeMode .objSlot{
- left:50%;
- width:100%;
- height:100%;
+ left:50% !important;
+ width:100% !important;
+ height:100% !important;
  transform:translateX(-50%);
 }
 
@@ -693,10 +694,9 @@ body.gameMode .answerPanel{padding-top:9px}
  .objSlot.slotCenter{left:50%;}
  .objSlot.slotLeft{left:27%;}
  .objSlot.slotRight{left:73%;}
- body.gameMode .treeArea{bottom:32px;min-height:150px;}
+ body.gameMode .treeArea{bottom:32px !important;min-height:150px !important;}
 }
 
-/* 追加修正：PC版は背景を広げ、敵とドラゴンを下げて見切れを防ぐ */
 @media(min-width:561px){
  body.gameMode .world{
   height:clamp(260px,38vh,350px) !important;
@@ -725,21 +725,24 @@ body.gameMode .answerPanel{padding-top:9px}
   height:170px;
  }
  body.gameMode .chestImg{
-  width:138px;
+  width:140px;
  }
  body.gameMode .dropItemImg{
   width:58px;
   height:58px;
-  bottom:88px;
+  bottom:90px;
+ }
+ body.gameMode .chestProgress{
+  bottom:-23px;
  }
  body.gameMode .char{
-  bottom:42px !important;
+  bottom:46px !important;
   width:100px;
   height:100px;
  }
  body.gameMode .dragonFly{
-  width:155px !important;
   bottom:78px !important;
+  width:155px;
  }
 }
 
@@ -1401,8 +1404,9 @@ function objectSlotClass(idx){
 function renderObjects(){
  const area=$("treeArea");
  if(!game){area.innerHTML="";return;}
- area.classList.toggle("worldtreeMode",isWorldTreeStage(game.stage));
- if(isWorldTreeStage(game.stage)){
+ const worldtree=isWorldTreeStage(game.stage);
+ area.classList.toggle("worldtreeMode",worldtree);
+ if(worldtree){
   area.innerHTML=`<div class="objSlot slotCenter">${renderObject(game.objects[0]||0,0)}</div>`;
   return;
  }
