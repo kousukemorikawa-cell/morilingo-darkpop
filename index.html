@@ -883,6 +883,87 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+/* ==========================================================
+   さらに最終調整：宝箱・モンスターをもっと低くする
+   ※一番下の上書きなので、この数値が最優先
+========================================================== */
+@media(min-width:561px){
+ body.gameMode .treeArea{
+  bottom:-18px !important;
+  min-height:260px !important;
+ }
+ body.gameMode .objSlot{
+  height:260px !important;
+ }
+ body.gameMode .chestObj{
+  height:220px !important;
+ }
+ body.gameMode .chestImg{
+  width:140px !important;
+  bottom:-105px !important;
+  transform:translateX(-50%) translateY(28px) !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:0px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:-16px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-128px !important;
+ }
+ body.gameMode .char{
+  bottom:-24px !important;
+ }
+ body.gameMode .dragonFly{
+  bottom:2px !important;
+ }
+}
+
+@media(max-width:560px){
+ body.gameMode .treeArea{
+  left:2px !important;
+  right:2px !important;
+  bottom:-18px !important;
+  min-height:165px !important;
+ }
+ body.gameMode .objSlot{
+  width:98px !important;
+  height:172px !important;
+ }
+ body.gameMode .objSlot.slotCenter{left:50% !important;}
+ body.gameMode .objSlot.slotLeft{left:18% !important;}
+ body.gameMode .objSlot.slotRight{left:82% !important;}
+ body.gameMode .chestObj{
+  height:165px !important;
+ }
+ body.gameMode .chestImg{
+  width:108px !important;
+  bottom:-112px !important;
+  transform:translateX(-50%) translateY(32px) !important;
+ }
+ body.gameMode .dropItemImg{
+  width:46px !important;
+  height:46px !important;
+  bottom:-28px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:-30px !important;
+  font-size:9px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-134px !important;
+  font-size:10px !important;
+ }
+ body.gameMode .char{
+  bottom:-24px !important;
+ }
+ body.gameMode .dragonFly{
+  bottom:2px !important;
+ }
+}
+
 </style>
 </head>
 <body>
