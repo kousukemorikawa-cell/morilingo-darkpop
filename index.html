@@ -841,6 +841,14 @@ body.gameMode .answerPanel{padding-top:9px}
 }
 
 
+.messageBtn{
+ background:linear-gradient(#ffb7d5,#ff5fa2);
+ color:#fff;
+}
+.messageBtn:hover{
+ filter:brightness(1.03);
+}
+
 .devNote{
  background:#fffdf4;
  border:2px dashed #eadb96;
@@ -904,7 +912,7 @@ body.gameMode .answerPanel{padding-top:9px}
     今週ランキング
   </button>
 
-  <button class="btn info" onclick="showDevMessage()">
+  <button class="btn messageBtn" onclick="showDevMessage()">
     💌 開発者へのメッセージ
   </button>
 
@@ -980,7 +988,7 @@ body.gameMode .answerPanel{padding-top:9px}
       <div class="devNote">送信内容には、プレイヤー登録の名前・クラス・出席番号も一緒に記録されます。</div>
 
       <div class="toolbar">
-        <button class="btn primary" onclick="sendDevMessage()">送信する</button>
+        <button class="btn messageBtn" onclick="sendDevMessage()">送信する</button>
         <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
       </div>
     </div>
