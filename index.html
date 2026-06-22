@@ -1211,8 +1211,11 @@ body.gameMode .answerPanel{padding-top:9px}
   bottom:36px !important;
   font-size:10px !important;
  }
+}
 
- /* スマホ版：ステージ1のゴブリンだけ見える位置へ上げる */
+
+/* 2026-06-22 修正：スマホ版だけ、ステージ1のゴブリンを上げる。PC版には影響させない */
+@media(max-width:560px){
  body.gameMode .char.fieldEnemy{
   bottom:34px !important;
  }
@@ -1780,10 +1783,8 @@ function setupWorld(cls,sun,label,image,enemyImage){
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
    $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
-   $("ninja").classList.remove("fieldEnemy");
-   if(String(label).includes("田園")){
-     $("ninja").classList.add("fieldEnemy");
-   }
+   $("ninja").className = "char";
+   $("ninja").dataset.fieldEnemy = String(label).includes("田園") ? "1" : "0";
    $("ninja").onerror = function(){
      this.onerror = null;
      this.src = "assets/enemies/gobelyn.png";
@@ -2048,11 +2049,11 @@ function dragonMessage(){
 }
 function ninjaEvent(){
  const has=hasAnyObject();
- const fieldClass=String(game?.stage?.id||"")==="field" ? " fieldEnemy" : "";
- $("ninja").className="char gobelynRun"+fieldClass;
+ const fieldEnemy = $("ninja").dataset.fieldEnemy === "1" ? " fieldEnemy" : "";
+ $("ninja").className="char gobelynRun" + fieldEnemy;
  $("feedback").textContent=stealMessage();
  if(has)setTimeout(stealObject,2350);
- setTimeout(()=>{$("ninja").className="char"+fieldClass;scheduleNext(0);},4300);
+ setTimeout(()=>{$("ninja").className="char";scheduleNext(0);},4300);
 }
 function dragonEvent(){
  game.miss=0;updateStats();
