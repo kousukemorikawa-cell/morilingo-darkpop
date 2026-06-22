@@ -589,6 +589,78 @@ body.gameMode .answerPanel{padding-top:9px}
  .storyText p{font-size:14px;line-height:1.55}
 }
 
+
+/* ステージ20：世界樹復活演出 */
+.worldtreeRitual{
+ position:relative;
+ width:100%;
+ height:100%;
+ min-height:210px;
+}
+.ritualItem{
+ position:absolute;
+ width:48px;
+ height:48px;
+ object-fit:contain;
+ transform:translate(-50%,-50%) scale(.25);
+ opacity:0;
+ z-index:5;
+ filter:drop-shadow(0 5px 3px #0004);
+ animation:ritualPop .42s ease-out forwards;
+}
+.finalWorldtreeItem{
+ position:absolute;
+ left:50%;
+ top:50%;
+ width:92px;
+ height:92px;
+ object-fit:contain;
+ transform:translate(-50%,-210%) scale(.45);
+ opacity:0;
+ z-index:8;
+ filter:drop-shadow(0 8px 5px #0005);
+ animation:finalDrop .75s cubic-bezier(.18,1.25,.38,1) forwards;
+}
+.ritualGuide{
+ position:absolute;
+ left:50%;
+ top:50%;
+ width:70%;
+ aspect-ratio:1/1;
+ border:3px dashed rgba(255,255,255,.55);
+ border-radius:50%;
+ transform:translate(-50%,-50%);
+ z-index:1;
+ pointer-events:none;
+}
+.worldtreeProgress{
+ position:absolute;
+ left:50%;
+ bottom:2px;
+ transform:translateX(-50%);
+ background:#111;
+ color:#fff;
+ border:3px solid #fff;
+ border-radius:999px;
+ padding:5px 12px;
+ font-size:13px;
+ font-weight:1000;
+ z-index:10;
+ white-space:nowrap;
+}
+@keyframes ritualPop{to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes finalDrop{
+ 0%{transform:translate(-50%,-230%) scale(.45);opacity:0}
+ 70%{transform:translate(-50%,-50%) scale(1.12);opacity:1}
+ 100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+@media(max-width:560px){
+ .ritualItem{width:34px;height:34px}
+ .finalWorldtreeItem{width:68px;height:68px}
+ .worldtreeProgress{font-size:10px;padding:3px 8px;bottom:0}
+ .ritualGuide{width:76%}
+}
+
 </style>
 </head>
 <body>
@@ -703,26 +775,26 @@ const STAGES=[
  {id:'subtropical',name:'ステージ2「亜熱帯」',icon:'🌴',image:'assets/backgrounds/02_subtropical.png',enemyImage:'assets/enemies/02_subtropical_enemy.png',enemyName:'バナナモンキー',saplingImage:'assets/items/02_subtropical_sapling.png',grownImage:'assets/items/02_subtropical_grown.png',itemImage:'assets/items/02_subtropical_item.png',cls:'',sun:'',clearTrees:2,plant:'banana',growName:'バナナ',unit:'stageItem'},
  {id:'snow',name:'ステージ3「雪山」',icon:'🏔️',image:'assets/backgrounds/03_snow.png',enemyImage:'assets/enemies/03_snow_enemy.png',enemyName:'ゆきモグラ',saplingImage:'assets/items/03_snow_sapling.png',grownImage:'assets/items/03_snow_grown.png',itemImage:'assets/items/03_snow_item.png',cls:'',sun:'',clearTrees:3,plant:'snow',growName:'雪の結晶',unit:'stageItem'},
  {id:'volcano',name:'ステージ4「火山」',icon:'🌋',image:'assets/backgrounds/04_volcano.png',enemyImage:'assets/enemies/04_volcano_enemy.png',enemyName:'マグマトカゲ',saplingImage:'assets/items/04_volcano_sapling.png',grownImage:'assets/items/04_volcano_grown.png',itemImage:'assets/items/04_volcano_item.png',cls:'',sun:'',clearTrees:4,plant:'volcano',growName:'火山石',unit:'stageItem'},
- {id:'desert',name:'ステージ5「砂漠」',icon:'🏜️',image:'assets/backgrounds/05_desert.png',enemyImage:'assets/enemies/05_desert_enemy.png',enemyName:'サボテンコヨーテ',saplingImage:'assets/items/05_desert_sapling.png',grownImage:'assets/items/05_desert_grown.png',itemImage:'assets/items/05_desert_item.png',cls:'',sun:'',clearTrees:5,plant:'cactus',growName:'サボテン',unit:'stageItem'},
- {id:'cave',name:'ステージ6「洞窟」',icon:'💎',image:'assets/backgrounds/06_cave.png',enemyImage:'assets/enemies/06_cave_enemy.png',enemyName:'クリスタルコウモリ',saplingImage:'assets/items/06_cave_sapling.png',grownImage:'assets/items/06_cave_grown.png',itemImage:'assets/items/06_cave_item.png',cls:'',sun:'',clearTrees:6,plant:'crystal',growName:'水晶',unit:'stageItem'},
- {id:'deepsea',name:'ステージ7「深海」',icon:'🦪',image:'assets/backgrounds/07_deepsea.png',enemyImage:'assets/enemies/07_deepsea_enemy.png',enemyName:'パールオクト',saplingImage:'assets/items/07_deepsea_sapling.png',grownImage:'assets/items/07_deepsea_grown.png',itemImage:'assets/items/07_deepsea_item.png',cls:'',sun:'',clearTrees:7,plant:'pearl',growName:'真珠',unit:'stageItem'},
- {id:'jungle',name:'ステージ8「ジャングル」',icon:'🥭',image:'assets/backgrounds/08_jungle.png',enemyImage:'assets/enemies/08_jungle_enemy.png',enemyName:'マンゴーゴリラ',saplingImage:'assets/items/08_jungle_sapling.png',grownImage:'assets/items/08_jungle_grown.png',itemImage:'assets/items/08_jungle_item.png',cls:'',sun:'',clearTrees:8,plant:'mango',growName:'マンゴー',unit:'stageItem'},
- {id:'ruins',name:'ステージ9「遺跡」',icon:'🏛️',image:'assets/backgrounds/09_ruins.png',enemyImage:'assets/enemies/09_ruins_enemy.png',enemyName:'ストーンガーディアン',saplingImage:'assets/items/09_ruins_sapling.png',grownImage:'assets/items/09_ruins_grown.png',itemImage:'assets/items/09_ruins_item.png',cls:'',sun:'',clearTrees:9,plant:'relic',growName:'古代の遺物',unit:'stageItem'},
- {id:'magicforest',name:'ステージ10「魔法の森」',icon:'🪄',image:'assets/backgrounds/10_magicforest.png',enemyImage:'assets/enemies/10_magicforest_enemy.png',enemyName:'マンドラゴラ',saplingImage:'assets/items/10_magicforest_sapling.png',grownImage:'assets/items/10_magicforest_grown.png',itemImage:'assets/items/10_magicforest_item.png',cls:'',sun:'',clearTrees:10,plant:'magic',growName:'魔法の実',unit:'stageItem'},
- {id:'skyisland',name:'ステージ11「天空島」',icon:'☁️',image:'assets/backgrounds/11_skyisland.png',enemyImage:'assets/enemies/11_skyisland_enemy.png',enemyName:'スカイワイバーン',saplingImage:'assets/items/11_skyisland_sapling.png',grownImage:'assets/items/11_skyisland_grown.png',itemImage:'assets/items/11_skyisland_item.png',cls:'',sun:'',clearTrees:11,plant:'sky',growName:'空のかけら',unit:'stageItem'},
- {id:'thunder',name:'ステージ12「雷雲地帯」',icon:'⚡',image:'assets/backgrounds/12_thunder.png',enemyImage:'assets/enemies/12_thunder_enemy.png',enemyName:'サンダーバード',saplingImage:'assets/items/12_thunder_sapling.png',grownImage:'assets/items/12_thunder_grown.png',itemImage:'assets/items/12_thunder_item.png',cls:'',sun:'',clearTrees:12,plant:'thunder',growName:'雷の石',unit:'stageItem'},
- {id:'glacier',name:'ステージ13「氷河」',icon:'🧊',image:'assets/backgrounds/13_glacier.png',enemyImage:'assets/enemies/13_glacier_enemy.png',enemyName:'フロストベア',saplingImage:'assets/items/13_glacier_sapling.png',grownImage:'assets/items/13_glacier_grown.png',itemImage:'assets/items/13_glacier_item.png',cls:'',sun:'',clearTrees:13,plant:'ice',growName:'氷晶',unit:'stageItem'},
- {id:'machinecity',name:'ステージ14「機械都市」',icon:'⚙️',image:'assets/backgrounds/14_machinecity.png',enemyImage:'assets/enemies/14_machinecity_enemy.png',enemyName:'ギアゴーレム',saplingImage:'assets/items/14_machinecity_sapling.png',grownImage:'assets/items/14_machinecity_grown.png',itemImage:'assets/items/14_machinecity_item.png',cls:'',sun:'',clearTrees:14,plant:'gear',growName:'歯車',unit:'stageItem'},
- {id:'haunted',name:'ステージ15「幽霊屋敷」',icon:'👻',image:'assets/backgrounds/15_haunted.png',enemyImage:'assets/enemies/15_haunted_enemy.png',enemyName:'ゴーストメイド',saplingImage:'assets/items/15_haunted_sapling.png',grownImage:'assets/items/15_haunted_grown.png',itemImage:'assets/items/15_haunted_item.png',cls:'',sun:'',clearTrees:15,plant:'ghost',growName:'霊魂の灯',unit:'stageItem'},
- {id:'dragonvalley',name:'ステージ16「竜の谷」',icon:'🐉',image:'assets/backgrounds/16_dragonvalley.png',enemyImage:'assets/enemies/16_dragonvalley_enemy.png',enemyName:'ドラゴン',saplingImage:'assets/items/16_dragonvalley_sapling.png',grownImage:'assets/items/16_dragonvalley_grown.png',itemImage:'assets/items/16_dragonvalley_item.png',cls:'',sun:'',clearTrees:16,plant:'dragon',growName:'竜の鱗',unit:'stageItem'},
- {id:'moon',name:'ステージ17「月面」',icon:'🌕',image:'assets/backgrounds/17_moon.png',enemyImage:'assets/enemies/17_moon_enemy.png',enemyName:'ムーンラビット',saplingImage:'assets/items/17_moon_sapling.png',grownImage:'assets/items/17_moon_grown.png',itemImage:'assets/items/17_moon_item.png',cls:'',sun:'',clearTrees:17,plant:'moon',growName:'月の石',unit:'stageItem'},
- {id:'starsea',name:'ステージ18「星の海」',icon:'🌌',image:'assets/backgrounds/18_starsea.png',enemyImage:'assets/enemies/18_starsea_enemy.png',enemyName:'スターフィッシュドラゴン',saplingImage:'assets/items/18_starsea_sapling.png',grownImage:'assets/items/18_starsea_grown.png',itemImage:'assets/items/18_starsea_item.png',cls:'',sun:'',clearTrees:18,plant:'star',growName:'星のかけら',unit:'stageItem'},
- {id:'timedimension',name:'ステージ19「時空のはざま」',icon:'🌀',image:'assets/backgrounds/19_timedimension.png',enemyImage:'assets/enemies/19_timedimension_enemy.png',enemyName:'クロノファントム',saplingImage:'assets/items/19_timedimension_sapling.png',grownImage:'assets/items/19_timedimension_grown.png',itemImage:'assets/items/19_timedimension_item.png',cls:'',sun:'',clearTrees:19,plant:'time',growName:'時空の結晶',unit:'stageItem'},
- {id:'worldtree',name:'ステージ20「世界樹」',icon:'🌳',image:'assets/backgrounds/20_worldtree.png',enemyImage:'assets/enemies/20_worldtree_enemy.png',enemyName:'黄金竜アルボル',saplingImage:'assets/items/20_worldtree_sapling.png',grownImage:'assets/items/20_worldtree_grown.png',itemImage:'assets/items/20_worldtree_item.png',cls:'',sun:'',clearTrees:20,plant:'goldapple',growName:'黄金のリンゴ',unit:'stageItem'}
+ {id:'desert',name:'ステージ5「砂漠」',icon:'🏜️',image:'assets/backgrounds/05_desert.png',enemyImage:'assets/enemies/05_desert_enemy.png',enemyName:'サボテンコヨーテ',saplingImage:'assets/items/05_desert_sapling.png',grownImage:'assets/items/05_desert_grown.png',itemImage:'assets/items/05_desert_item.png',cls:'',sun:'',clearTrees:3,plant:'cactus',growName:'サボテン',unit:'stageItem'},
+ {id:'cave',name:'ステージ6「洞窟」',icon:'💎',image:'assets/backgrounds/06_cave.png',enemyImage:'assets/enemies/06_cave_enemy.png',enemyName:'クリスタルコウモリ',saplingImage:'assets/items/06_cave_sapling.png',grownImage:'assets/items/06_cave_grown.png',itemImage:'assets/items/06_cave_item.png',cls:'',sun:'',clearTrees:3,plant:'crystal',growName:'水晶',unit:'stageItem'},
+ {id:'deepsea',name:'ステージ7「深海」',icon:'🦪',image:'assets/backgrounds/07_deepsea.png',enemyImage:'assets/enemies/07_deepsea_enemy.png',enemyName:'パールオクト',saplingImage:'assets/items/07_deepsea_sapling.png',grownImage:'assets/items/07_deepsea_grown.png',itemImage:'assets/items/07_deepsea_item.png',cls:'',sun:'',clearTrees:3,plant:'pearl',growName:'真珠',unit:'stageItem'},
+ {id:'jungle',name:'ステージ8「ジャングル」',icon:'🥭',image:'assets/backgrounds/08_jungle.png',enemyImage:'assets/enemies/08_jungle_enemy.png',enemyName:'マンゴーゴリラ',saplingImage:'assets/items/08_jungle_sapling.png',grownImage:'assets/items/08_jungle_grown.png',itemImage:'assets/items/08_jungle_item.png',cls:'',sun:'',clearTrees:3,plant:'mango',growName:'マンゴー',unit:'stageItem'},
+ {id:'ruins',name:'ステージ9「遺跡」',icon:'🏛️',image:'assets/backgrounds/09_ruins.png',enemyImage:'assets/enemies/09_ruins_enemy.png',enemyName:'ストーンガーディアン',saplingImage:'assets/items/09_ruins_sapling.png',grownImage:'assets/items/09_ruins_grown.png',itemImage:'assets/items/09_ruins_item.png',cls:'',sun:'',clearTrees:3,plant:'relic',growName:'古代の遺物',unit:'stageItem'},
+ {id:'magicforest',name:'ステージ10「魔法の森」',icon:'🪄',image:'assets/backgrounds/10_magicforest.png',enemyImage:'assets/enemies/10_magicforest_enemy.png',enemyName:'マンドラゴラ',saplingImage:'assets/items/10_magicforest_sapling.png',grownImage:'assets/items/10_magicforest_grown.png',itemImage:'assets/items/10_magicforest_item.png',cls:'',sun:'',clearTrees:3,plant:'magic',growName:'魔法の実',unit:'stageItem'},
+ {id:'skyisland',name:'ステージ11「天空島」',icon:'☁️',image:'assets/backgrounds/11_skyisland.png',enemyImage:'assets/enemies/11_skyisland_enemy.png',enemyName:'スカイワイバーン',saplingImage:'assets/items/11_skyisland_sapling.png',grownImage:'assets/items/11_skyisland_grown.png',itemImage:'assets/items/11_skyisland_item.png',cls:'',sun:'',clearTrees:3,plant:'sky',growName:'空のかけら',unit:'stageItem'},
+ {id:'thunder',name:'ステージ12「雷雲地帯」',icon:'⚡',image:'assets/backgrounds/12_thunder.png',enemyImage:'assets/enemies/12_thunder_enemy.png',enemyName:'サンダーバード',saplingImage:'assets/items/12_thunder_sapling.png',grownImage:'assets/items/12_thunder_grown.png',itemImage:'assets/items/12_thunder_item.png',cls:'',sun:'',clearTrees:3,plant:'thunder',growName:'雷の石',unit:'stageItem'},
+ {id:'glacier',name:'ステージ13「氷河」',icon:'🧊',image:'assets/backgrounds/13_glacier.png',enemyImage:'assets/enemies/13_glacier_enemy.png',enemyName:'フロストベア',saplingImage:'assets/items/13_glacier_sapling.png',grownImage:'assets/items/13_glacier_grown.png',itemImage:'assets/items/13_glacier_item.png',cls:'',sun:'',clearTrees:3,plant:'ice',growName:'氷晶',unit:'stageItem'},
+ {id:'machinecity',name:'ステージ14「機械都市」',icon:'⚙️',image:'assets/backgrounds/14_machinecity.png',enemyImage:'assets/enemies/14_machinecity_enemy.png',enemyName:'ギアゴーレム',saplingImage:'assets/items/14_machinecity_sapling.png',grownImage:'assets/items/14_machinecity_grown.png',itemImage:'assets/items/14_machinecity_item.png',cls:'',sun:'',clearTrees:3,plant:'gear',growName:'歯車',unit:'stageItem'},
+ {id:'haunted',name:'ステージ15「幽霊屋敷」',icon:'👻',image:'assets/backgrounds/15_haunted.png',enemyImage:'assets/enemies/15_haunted_enemy.png',enemyName:'ゴーストメイド',saplingImage:'assets/items/15_haunted_sapling.png',grownImage:'assets/items/15_haunted_grown.png',itemImage:'assets/items/15_haunted_item.png',cls:'',sun:'',clearTrees:3,plant:'ghost',growName:'霊魂の灯',unit:'stageItem'},
+ {id:'dragonvalley',name:'ステージ16「竜の谷」',icon:'🐉',image:'assets/backgrounds/16_dragonvalley.png',enemyImage:'assets/enemies/16_dragonvalley_enemy.png',enemyName:'ドラゴン',saplingImage:'assets/items/16_dragonvalley_sapling.png',grownImage:'assets/items/16_dragonvalley_grown.png',itemImage:'assets/items/16_dragonvalley_item.png',cls:'',sun:'',clearTrees:3,plant:'dragon',growName:'竜の鱗',unit:'stageItem'},
+ {id:'moon',name:'ステージ17「月面」',icon:'🌕',image:'assets/backgrounds/17_moon.png',enemyImage:'assets/enemies/17_moon_enemy.png',enemyName:'ムーンラビット',saplingImage:'assets/items/17_moon_sapling.png',grownImage:'assets/items/17_moon_grown.png',itemImage:'assets/items/17_moon_item.png',cls:'',sun:'',clearTrees:3,plant:'moon',growName:'月の石',unit:'stageItem'},
+ {id:'starsea',name:'ステージ18「星の海」',icon:'🌌',image:'assets/backgrounds/18_starsea.png',enemyImage:'assets/enemies/18_starsea_enemy.png',enemyName:'スターフィッシュドラゴン',saplingImage:'assets/items/18_starsea_sapling.png',grownImage:'assets/items/18_starsea_grown.png',itemImage:'assets/items/18_starsea_item.png',cls:'',sun:'',clearTrees:3,plant:'star',growName:'星のかけら',unit:'stageItem'},
+ {id:'timedimension',name:'ステージ19「時空のはざま」',icon:'🌀',image:'assets/backgrounds/19_timedimension.png',enemyImage:'assets/enemies/19_timedimension_enemy.png',enemyName:'クロノファントム',saplingImage:'assets/items/19_timedimension_sapling.png',grownImage:'assets/items/19_timedimension_grown.png',itemImage:'assets/items/19_timedimension_item.png',cls:'',sun:'',clearTrees:3,plant:'time',growName:'時空の結晶',unit:'stageItem'},
+ {id:'worldtree',name:'ステージ20「世界樹」',icon:'🌳',image:'assets/backgrounds/20_worldtree.png',enemyImage:'assets/enemies/20_worldtree_enemy.png',enemyName:'黄金竜アルボル',saplingImage:'assets/items/20_worldtree_sapling.png',grownImage:'assets/items/20_worldtree_grown.png',itemImage:'assets/items/20_worldtree_item.png',cls:'',sun:'',clearTrees:1,plant:'goldapple',growName:'黄金のリンゴ',unit:'stageItem'}
 ];
 
 // 従来どおり「木になる」ステージ。これ以外は宝箱ドロップ式。
-const TREE_STAGE_IDS=["field","subtropical","volcano","jungle","worldtree"];
+const TREE_STAGE_IDS=["field","subtropical","volcano","jungle"];
 const CHEST_CLOSED_IMAGE="assets/items/chest_closed.png";
 const CHEST_OPEN_IMAGE="assets/items/chest_open.png";
 function isTreeStage(stage){
@@ -731,6 +803,13 @@ function isTreeStage(stage){
 }
 function stageSystemName(stage){
  return isTreeStage(stage) ? "tree" : "chest";
+}
+function isWorldTreeStage(stage){
+ const id=typeof stage==="string" ? stage : stage?.id;
+ return id==="worldtree";
+}
+function worldTreeItemImages(){
+ return STAGES.slice(0,19).map(s=>s.itemImage || `assets/items/${String(STAGES.indexOf(s)+1).padStart(2,"0")}_${s.id}_item.png`);
 }
 
 /*
@@ -1094,11 +1173,14 @@ function clearTargetName(s){
  return s.growName || "育成物";
 }
 function clearConditionText(s){
+ if(isWorldTreeStage(s))return "クリア条件：1〜19のアイテムを集めて世界樹を復活";
  if(isTreeStage(s))return `クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個`;
  return `クリア条件：宝箱 ${s.clearTrees}個開封`;
 }
 function completedObjectCount(){
- if(!game||!Array.isArray(game.objects))return 0;
+ if(!game)return 0;
+ if(isWorldTreeStage(game.stage))return game.finalWorldtreeDropped ? 1 : 0;
+ if(!Array.isArray(game.objects))return 0;
  return game.objects.filter(n=>n>=6).length;
 }
 function renderStages(){
@@ -1111,7 +1193,7 @@ function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).ma
 
 function startChallenge(i){
  const s=STAGES[i];
- game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
+ game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name;
  startGame();
@@ -1238,6 +1320,7 @@ function assetImg(src, className, alt, extra=""){
 
 function renderObject(n,idx){
  const stage=game.stage||{};
+ if(isWorldTreeStage(stage))return renderWorldTreeObject();
  if(!isTreeStage(stage))return renderChestObject(n,idx);
 
  const saplingImage=stage.saplingImage || "assets/items/sapling.png";
@@ -1262,6 +1345,29 @@ function renderObject(n,idx){
  <div class="obj">
    ${assetImg(grownImage,"treeImg",`${itemName}の育成物`)}
    ${items}
+ </div>`;
+}
+function renderWorldTreeObject(){
+ const count=Math.min(game.worldtreeItems||0,19);
+ const finalDropped=!!game.finalWorldtreeDropped;
+ const images=worldTreeItemImages();
+ const items=images.slice(0,count).map((src,i)=>{
+  const angle=(-90 + i*(360/19)) * Math.PI/180;
+  const x=50 + Math.cos(angle)*34;
+  const y=50 + Math.sin(angle)*39;
+  const name=STAGES[i]?.growName || `ステージ${i+1}アイテム`;
+  return assetImg(src,"ritualItem",name,`style="left:${x}%;top:${y}%;animation-delay:${Math.min(i*.025,.4)}s"`);
+ }).join("");
+ const final=finalDropped ? assetImg(game.stage.itemImage,"finalWorldtreeItem",game.stage.growName||"黄金のリンゴ") : "";
+ const label=finalDropped ? "世界樹復活！" : `${count}/19`;
+ return `
+ <div class="obj" style="width:100%;height:100%;flex:1 1 auto;">
+   <div class="worldtreeRitual">
+    <div class="ritualGuide"></div>
+    ${items}
+    ${final}
+    <div class="worldtreeProgress">${label}</div>
+   </div>
  </div>`;
 }
 function renderChestObject(n,idx){
@@ -1296,6 +1402,17 @@ function renderSnowman(n){
 function growObject(){
  let last=game.objects.length-1;
  const stage=game.stage||{};
+ if(isWorldTreeStage(stage)){
+  if((game.worldtreeItems||0)<19){
+   game.worldtreeItems=(game.worldtreeItems||0)+1;
+   renderObjects();
+   const itemName=STAGES[game.worldtreeItems-1]?.growName || "アイテム";
+   return `正解！ ${itemName}が世界樹のまわりに集まった！（${game.worldtreeItems}/19）`;
+  }
+  game.finalWorldtreeDropped=true;
+  renderObjects();
+  return `正解！ ${stage.growName||"黄金のリンゴ"}が中央にドロップした！`;
+ }
  if(game.objects[last]<6){
   game.objects[last]++;
  }else{
@@ -1313,13 +1430,25 @@ function growObject(){
   ? `正解！ 宝箱が開いた！ ${stage.growName||"アイテム"}を手に入れた！`
   : `正解！ 宝箱に力がたまった！（${now}/6）`;
 }
-function hasAnyObject(){return game.objects.some(n=>n>0);}
+function hasAnyObject(){
+ if(isWorldTreeStage(game?.stage))return (game.worldtreeItems||0)>0 || !!game.finalWorldtreeDropped;
+ return game.objects.some(n=>n>0);
+}
 function stealObject(){
+ if(isWorldTreeStage(game?.stage)){
+  if(game.finalWorldtreeDropped)game.finalWorldtreeDropped=false;
+  else game.worldtreeItems=Math.max(0,(game.worldtreeItems||0)-1);
+  renderObjects();
+  return;
+ }
  for(let i=game.objects.length-1;i>=0;i--){if(game.objects[i]>0){game.objects[i]--;break;}}
  while(game.objects.length>1 && game.objects[game.objects.length-1]===0 && game.objects[game.objects.length-2]===0)game.objects.pop();
  renderObjects();
 }
-function clearObjects(){game.objects=[0];renderObjects();}
+function clearObjects(){
+ if(isWorldTreeStage(game?.stage)){game.worldtreeItems=0;game.finalWorldtreeDropped=false;renderObjects();return;}
+ game.objects=[0];renderObjects();
+}
 function growMessage(){
  if(isTreeStage(game?.stage))return `正解！ ${game.stage.growName||"アイテム"}が出現した！`;
  return `正解！ 宝箱に力がたまった！`;
@@ -1330,11 +1459,13 @@ function enemyName(){
 function stealMessage(){
  const enemy=enemyName();
  if(!hasAnyObject())return `${enemy}は取るものがなく、悲しそうに帰っていった……`;
+ if(isWorldTreeStage(game.stage))return `${enemy}が復活の力を1つ奪っていった！`;
  return isTreeStage(game.stage)
   ? `${enemy}が${game.stage.growName||"アイテム"}を1つ奪っていった！`
   : `${enemy}が宝箱の力を1つ奪っていった！`;
 }
 function dragonMessage(){
+ if(isWorldTreeStage(game.stage))return `ドラゴン襲来！集めた復活アイテムが全没収！`;
  return isTreeStage(game.stage)
   ? `ドラゴン襲来！${game.stage.growName||"アイテム"}が全没収！`
   : `ドラゴン襲来！宝箱とドロップが全没収！`;
