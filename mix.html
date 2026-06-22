@@ -887,9 +887,9 @@ body.gameMode .answerPanel{padding-top:9px}
 .itemCard{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:10px;font-weight:900}
 .itemIcon{font-size:32px;text-align:center}.itemName{font-weight:1000}.itemType{font-size:12px;color:#667085}.itemCount{font-size:20px;font-weight:1000;color:#2f8f57}
 .questWorld{position:relative;height:clamp(260px,38vh,350px);min-height:260px;max-height:350px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:#9ee8ff}
-.questBgTrack{position:absolute;left:0;top:0;bottom:0;width:500%;background-size:100% 100%;background-position:left bottom;background-repeat:no-repeat;transform:translateX(0);transition:transform 1.35s ease-in-out;z-index:0}
-.questGround{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(#0000,#0002);z-index:1;pointer-events:none}.questCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.questHero,.questEnemy,.questChest{position:absolute;z-index:6;filter:drop-shadow(0 6px 2px #0003)}.questHero{left:110px;bottom:18px;width:86px;height:86px;display:grid;place-items:center;font-size:58px}.questHero img,.questEnemy img,.questChest img{width:100%;height:100%;object-fit:contain}.questEnemy{right:150px;bottom:18px;width:96px;height:96px;display:none}.questChest{right:142px;bottom:18px;width:94px;height:94px;display:none}.questHpText{position:absolute;left:50%;top:-42px;transform:translateX(-50%);background:#111;color:#fff;border:2px solid #fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:1000;white-space:nowrap;box-shadow:0 2px 0 #0003;z-index:13}.questHpGauge{position:absolute;left:50%;top:-20px;width:82px;height:13px;transform:translateX(-50%);background:#edf2f0;border:2px solid #fff;border-radius:999px;overflow:hidden;box-shadow:0 3px 0 #0002;z-index:12}.questHpFill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);border-radius:999px}.questHero.walk{animation:hop .35s ease 2}.questHero.damaged{animation:heroDamage .45s ease 1}.questEnemy.hit{animation:hit .35s ease 1}.questEnemy.tackle{animation:tackle .65s ease 1}.questMagic{position:absolute;left:174px;bottom:80px;width:36px;height:36px;display:none;z-index:9;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#9efcff 19% 48%,#715cff 49% 72%,transparent 73%);box-shadow:0 0 0 8px rgba(113,92,255,.15),0 0 18px rgba(113,92,255,.7)}.questMagic.fire{display:block;animation:magicShot .55s ease forwards}.questBurst{position:absolute;right:164px;bottom:86px;width:90px;height:90px;display:none;z-index:10;pointer-events:none}.questBurst.show{display:block;animation:burst .45s ease forwards}.questBurst:before,.questBurst:after{content:"✦";position:absolute;font-size:70px;font-weight:900;color:#fff77a;text-shadow:0 3px 0 #111}.questBurst:after{content:"✧";left:28px;top:20px;font-size:58px;color:#8fd6ff}.questControls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}.questControls .btn{padding:10px 10px;font-size:14px;border-radius:15px;min-height:44px}.questItemButton{background:linear-gradient(#caa9ff,#8e5cf7);color:#fff}.questModal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}.questModal.show{display:flex}.questModalCard{width:min(760px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:24px;border:4px solid #fff;padding:16px;box-shadow:0 18px 48px #0006}.questUseRow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;border:2px solid #edf2f0;border-radius:16px;padding:10px;margin:8px 0}.questUseBtn{border:0;border-radius:999px;padding:8px 12px;font-weight:1000;background:#32b85c;color:#fff}.questUseBtn:disabled{background:#d7dee2;color:#7b858b}.questPause{filter:blur(1px);opacity:.45;pointer-events:none}
-@media(max-width:560px){.itemList{grid-template-columns:1fr}.stageQuestBtns{grid-template-columns:1fr}.questWorld{height:34vh;min-height:215px;max-height:250px;border-radius:22px}.questHero{left:54px;bottom:4px;width:74px;height:74px}.questEnemy{right:72px;bottom:4px;width:82px;height:82px}.questChest{right:72px;bottom:4px;width:78px;height:78px}.questMagic{left:116px;bottom:64px}.questBurst{right:82px;bottom:64px}.questHpGauge{width:68px;height:11px;top:-15px}.questHpText{top:-35px;font-size:10px;padding:2px 7px}.questControls{grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:6px}.questControls .btn{padding:7px 4px;font-size:11px;border-radius:12px;min-height:36px;line-height:1.1;white-space:nowrap}.questItemButton{font-size:11px!important}}
+.questBgTrack{position:absolute;left:0;top:0;bottom:0;width:500%;background-size:100% 100%;background-position:left bottom;background-repeat:no-repeat;transform:translateX(0);transition:transform 2.05s ease-in-out;z-index:0}
+.questGround{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(#0000,#0002);z-index:1;pointer-events:none}.questCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.questHero,.questEnemy,.questChest{position:absolute;z-index:6;filter:drop-shadow(0 6px 2px #0003)}.questHero{left:110px;bottom:18px;width:86px;height:86px;display:grid;place-items:center;font-size:58px}.questHero img,.questEnemy img,.questChest img{width:100%;height:100%;object-fit:contain}.questEnemy{right:150px;bottom:18px;width:96px;height:96px;display:none}.questChest{right:142px;bottom:18px;width:94px;height:94px;display:none}.questHpText{position:absolute;left:50%;top:-42px;transform:translateX(-50%);background:#111;color:#fff;border:2px solid #fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:1000;white-space:nowrap;box-shadow:0 2px 0 #0003;z-index:13}.questHpGauge{position:absolute;left:50%;top:-20px;width:82px;height:13px;transform:translateX(-50%);background:#edf2f0;border:2px solid #fff;border-radius:999px;overflow:hidden;box-shadow:0 3px 0 #0002;z-index:12}.questHpFill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);border-radius:999px}.questHero.walk{animation:hop .35s ease 2}.questHero.damaged{animation:heroDamage .45s ease 1}.questEnemy.hit{animation:hit .35s ease 1}.questEnemy.tackle{animation:tackle .65s ease 1}.questMagic{position:absolute;left:174px;bottom:80px;width:36px;height:36px;display:none;z-index:9;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#9efcff 19% 48%,#715cff 49% 72%,transparent 73%);box-shadow:0 0 0 8px rgba(113,92,255,.15),0 0 18px rgba(113,92,255,.7)}.questMagic.fire{display:block;animation:magicShot .55s ease forwards}.questBurst{position:absolute;right:164px;bottom:86px;width:90px;height:90px;display:none;z-index:10;pointer-events:none}.questBurst.show{display:block;animation:burst .45s ease forwards}.questBurst:before,.questBurst:after{content:"✦";position:absolute;font-size:70px;font-weight:900;color:#fff77a;text-shadow:0 3px 0 #111}.questBurst:after{content:"✧";left:28px;top:20px;font-size:58px;color:#8fd6ff}.questControls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;transform:translateY(-8px)}.questControls .btn{padding:10px 10px;font-size:14px;border-radius:15px;min-height:44px}.questItemButton{background:linear-gradient(#caa9ff,#8e5cf7);color:#fff}.questModal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}.questModal.show{display:flex}.questModalCard{width:min(760px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:24px;border:4px solid #fff;padding:16px;box-shadow:0 18px 48px #0006}.questUseRow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;border:2px solid #edf2f0;border-radius:16px;padding:10px;margin:8px 0}.questUseBtn{border:0;border-radius:999px;padding:8px 12px;font-weight:1000;background:#32b85c;color:#fff}.questUseBtn:disabled{background:#d7dee2;color:#7b858b}.questPause{filter:blur(1px);opacity:.45;pointer-events:none}
+@media(max-width:560px){.itemList{grid-template-columns:1fr}.stageQuestBtns{grid-template-columns:1fr}.questWorld{height:34vh;min-height:215px;max-height:250px;border-radius:22px}.questHero{left:54px;bottom:4px;width:74px;height:74px}.questEnemy{right:72px;bottom:4px;width:82px;height:82px}.questChest{right:72px;bottom:4px;width:78px;height:78px}.questMagic{left:116px;bottom:64px}.questBurst{right:82px;bottom:64px}.questHpGauge{width:68px;height:11px;top:-15px}.questHpText{top:-35px;font-size:10px;padding:2px 7px}.questControls{grid-template-columns:1fr 1fr;gap:6px;margin-top:0;transform:translateY(-14px)}.questControls .btn{padding:7px 6px;font-size:12px;border-radius:12px;min-height:34px;line-height:1.1;white-space:nowrap}.questItemButton{font-size:12px!important}}
 
 </style>
 </head>
@@ -1067,7 +1067,7 @@ body.gameMode .answerPanel{padding-top:9px}
       </div>
       <div id="questQuestion" class="question">問題</div>
       <div id="questFeedback" class="feedback"></div>
-      <div class="questControls"><button class="btn questItemButton" onclick="openQuestItemModal()">🎒 アイテム</button><button id="questNextBtn" class="btn primary" style="display:none" onclick="questNextQuestion()">次へ</button><button class="btn ghost" onclick="quitQuest()">メニュー</button></div>
+      <div class="questControls"><button class="btn questItemButton" onclick="openQuestItemModal()">🎒 アイテム</button><button class="btn ghost" onclick="quitQuest()">メニュー</button></div><button id="questNextBtn" class="btn primary" style="display:none" onclick="questNextQuestion()">次へ</button>
     </div>
   </section>
 
@@ -2148,7 +2148,7 @@ function setupQuestWorld(){
 function questMoveBg(rate){
  const r=Math.max(0,Math.min(1,rate));
  // 背景トラックは画面幅の6倍。最後まで進むと右端が見える。
- $("questBgTrack").style.transform=`translateX(-${r*80}%)`;
+ $("questBgTrack").style.transform=`translateX(-${r*72}%)`;
 }
 function quitQuest(){questStopTimer();quest=null;show("challenge");renderStages();}
 function questStopTimer(){if(questTimerId){clearInterval(questTimerId);questTimerId=null;}}
@@ -2186,7 +2186,7 @@ function questAnswer(i){
   if(quest.missGuard){
    quest.missGuard=false;
    $("questFeedback").textContent="✨ 星の精霊がミスを無効にした！";
-   questShowNext("次へ");questUpdateUI();return;
+   questShowNext("次へ");questUpdateUI();questAutoNext(950);questAutoNext(950);return;
   }
   questTakeDamage(quest.phase==="battle", i<0?"⏰ 時間切れ！HPが1減った！":null);return;
  }
@@ -2196,19 +2196,28 @@ function questAnswer(i){
   $("questHero").classList.remove("walk");void $("questHero").offsetWidth;$("questHero").classList.add("walk");
   $("questFeedback").textContent="⭕ 正解！1マス前進！";
   if(quest.progress>=3){setTimeout(questSpawnEnemy,550);questUpdateUI();return;}
-  questShowNext("次へ");questUpdateUI();return;
+  questShowNext("次へ");questUpdateUI();questAutoNext(950);questAutoNext(950);return;
  }
  if(quest.phase==="battle"){
   questPlayMagic();setTimeout(()=>{
    const damage=(quest.baseAttack||1)+(quest.attackBoost||1)-1;quest.attackBoost=1;quest.enemyHp=Math.max(0,quest.enemyHp-damage);
    $("questEnemy").classList.remove("hit");void $("questEnemy").offsetWidth;$("questEnemy").classList.add("hit");
    $("questFeedback").textContent=`✨ 攻撃！敵に${damage}ダメージ！`;
-   if(quest.enemyHp<=0){$("questFeedback").textContent="🎉 敵を撃破！";questShowNext(quest.area<3?"次のエリアへ":"宝箱へ");questUpdateUI();return;}
-   questShowNext("次へ");questUpdateUI();
+   if(quest.enemyHp<=0){$("questFeedback").textContent=quest.area<3?"🎉 敵を撃破！次のエリアへ進む！":"🎉 敵を撃破！クリア！";questShowNext(quest.area<3?"次のエリアへ":"クリア");questUpdateUI();questAutoNext(1200);return;}
+   questShowNext("次へ");questUpdateUI();questAutoNext(950);
   },420);
  }
 }
-function questShowNext(text){$("questNextBtn").textContent=text;$("questNextBtn").style.display="block";}
+function questShowNext(text){
+ // クエストは自動進行にするので、次へ/戦うボタンは表示しない
+ const btn=$("questNextBtn");
+ if(btn){btn.textContent=text||"次へ";btn.style.display="none";}
+}
+function questAutoNext(ms=900){
+ const btn=$("questNextBtn");
+ if(btn)btn.style.display="none";
+ setTimeout(()=>{if(quest && quest.phase!=="finish" && quest.phase!=="gameover")questNextQuestion();},ms);
+}
 function questNextQuestion(){
  if(quest.phase==="battle" && quest.enemyHp<=0){
   if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg((quest.area-1)/3);questLoadQuestion();return;}
@@ -2217,7 +2226,7 @@ function questNextQuestion(){
  questLoadQuestion();
 }
 function questSpawnEnemy(){
- quest.phase="battle";quest.enemyMax=Math.max(1,quest.stageIndex+1);quest.enemyHp=quest.enemyMax;$("questEnemy").style.display="block";$("questFeedback").textContent=`${quest.stage.enemyName}出現！正解して攻撃しよう！`;questShowNext("戦う");questUpdateUI();
+ quest.phase="battle";quest.enemyMax=Math.max(1,quest.stageIndex+1);quest.enemyHp=quest.enemyMax;$("questEnemy").style.display="block";$("questFeedback").textContent=`${quest.stage.enemyName}出現！戦闘開始！`;questShowNext("戦う");questUpdateUI();questAutoNext(900);
 }
 function questTakeDamage(enemyAttack,customMessage){
  quest.playerHp--;
@@ -2227,6 +2236,7 @@ function questTakeDamage(enemyAttack,customMessage){
  questUpdateUI();
  if(quest.playerHp<=0){setTimeout(questGameOver,520);return;}
  questShowNext("次へ");
+ questAutoNext(950);
 }
 function questPlayMagic(){
  $("questMagic").classList.remove("fire");$("questBurst").classList.remove("show");void $("questMagic").offsetWidth;$("questMagic").classList.add("fire");setTimeout(()=>$("questBurst").classList.add("show"),380);
@@ -2234,8 +2244,9 @@ function questPlayMagic(){
 function questFinish(){
  questStopTimer();quest.phase="finish";$("questEnemy").style.display="none";$("questChest").style.display="block";$("questChest").innerHTML=`<img src="${CHEST_OPEN_IMAGE}" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;questMoveBg(1);
  state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();
- $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:34px;font-weight:1000;">クエストクリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat(QUEST_PLAYER_MAX_HP-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">背景は6000pxなら4分割想定。進行に合わせて右へ進む表示です。</div></div>`;
- $("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="🎉 冒険成功！";questUpdateUI();
+ $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat(QUEST_PLAYER_MAX_HP-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">チャレンジ画面に戻ります。</div></div>`;
+ $("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="🎉 クエストクリア！";questUpdateUI();
+ setTimeout(()=>{quest=null;document.body.classList.remove("gameMode");renderStages();show("challenge");},1500);
 }
 function questGameOver(){
  questStopTimer();quest.phase="gameover";$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
