@@ -840,6 +840,31 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+.devNote{
+ background:#fffdf4;
+ border:2px dashed #eadb96;
+ border-radius:16px;
+ padding:10px;
+ font-size:13px;
+ font-weight:900;
+ color:#6b5a18;
+}
+.devJumpGrid{
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:8px;
+ margin-top:10px;
+}
+.devJumpGrid .btn{
+ padding:10px 8px;
+ font-size:13px;
+ border-radius:14px;
+}
+@media(max-width:560px){
+ .devJumpGrid{grid-template-columns:repeat(4,1fr)}
+}
+
 </style>
 </head>
 <body>
@@ -877,6 +902,14 @@ body.gameMode .answerPanel{padding-top:9px}
 
   <button class="btn danger" onclick="loadRanking('weekly')">
     今週ランキング
+  </button>
+
+  <button class="btn info" onclick="showDevMessage()">
+    💌 開発者へのメッセージ
+  </button>
+
+  <button id="devAdminBtn" class="btn ghost" style="display:none" onclick="showDevTools()">
+    🛠 開発者メニュー
   </button>
 </div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>表示中の称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
 
@@ -926,6 +959,49 @@ body.gameMode .answerPanel{padding-top:9px}
   </section>
 
   <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
+
+  <section id="devMessage" class="screen">
+    <div class="card">
+      <h2>💌 開発者へのメッセージ</h2>
+      <p class="muted">要望・応援メッセージ・バグ報告を送れます。1回送ると称号「モリリンゴ支援者」を獲得できます。</p>
+
+      <div class="form">
+        <label><b>種類</b></label>
+        <select id="devMsgType">
+          <option value="要望">要望</option>
+          <option value="応援メッセージ">応援メッセージ</option>
+          <option value="バグの報告">バグの報告</option>
+        </select>
+
+        <label><b>メッセージ</b></label>
+        <textarea id="devMsgText" maxlength="300" placeholder="ここに自由に書いてね（300文字以内）"></textarea>
+      </div>
+
+      <div class="devNote">送信内容には、プレイヤー登録の名前・クラス・出席番号も一緒に記録されます。</div>
+
+      <div class="toolbar">
+        <button class="btn primary" onclick="sendDevMessage()">送信する</button>
+        <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="devTools" class="screen">
+    <div class="card">
+      <h2>🛠 開発者メニュー</h2>
+      <p class="muted">開発者だけに表示されるテスト用メニューです。</p>
+
+      <div class="toolbar">
+        <button class="btn primary" onclick="debugUnlockAllStages()">全ステージ解放</button>
+        <button class="btn secondary" onclick="debugUnlockAllTitles()">全称号解放</button>
+        <button class="btn info" onclick="debugGiveScore()">テストPT加算</button>
+        <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
+      </div>
+
+      <h3>ステージジャンプ</h3>
+      <div id="devStageJump" class="devJumpGrid"></div>
+    </div>
+  </section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
@@ -941,6 +1017,12 @@ const $=id=>document.getElementById(id);
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
 const GAS_URL="https://script.google.com/macros/s/AKfycbw-7RODPiL6VMdwd8q3-bRHBSVtPJ83AGqiZXEyiVXO90xh50T-QoMX3UmwLA2BzTW_sw/exec";
+const ADMIN_NAMES=["Kosuke","kosuke","森林太郎"];
+function isAdmin(){
+ const name=(state?.player?.name||"").trim();
+ return ADMIN_NAMES.includes(name);
+}
+
 /*
 ============================================================
 【開発者用：ステージ設定】
@@ -1089,14 +1171,15 @@ let currentRankingPeriod="total";
 const TITLE_MASTER=[
  {id:"stage1_clear",name:"はじまりの勇者",desc:"ステージ1をクリア",badgeId:"field"},
  {id:"correct_10",name:"次期エース",desc:"累計10問正解",badgeId:"correct_10"},
- {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"}
+ {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"},
+ {id:"dev_supporter",name:"モリリンゴ支援者",desc:"開発者へメッセージを送った",badgeId:"dev_supporter"}
 ];
 function titleById(id){return TITLE_MASTER.find(t=>t.id===id);}
 function earnedTitleIds(){
  const earned=[];
- if(state.badges.includes("field"))earned.push("stage1_clear");
- if(state.badges.includes("correct_10"))earned.push("correct_10");
- if(state.badges.includes("weekly_king"))earned.push("weekly_king");
+ TITLE_MASTER.forEach(t=>{
+  if(state.badges.includes(t.badgeId || t.id))earned.push(t.id);
+ });
  return earned;
 }
 function cleanSelectedTitles(){
@@ -1115,6 +1198,119 @@ function showTitles(){
 
 function showStory(){
  show("story");
+}
+
+function showDevMessage(){
+ if(!$("devMsgText"))return;
+ $("devMsgText").value="";
+ show("devMessage");
+}
+function showDevTools(){
+ if(!isAdmin()){
+  alert("開発者専用です");
+  show("menu");
+  return;
+ }
+ renderDevStageJump();
+ show("devTools");
+}
+function renderDevStageJump(){
+ if(!$("devStageJump"))return;
+ $("devStageJump").innerHTML=STAGES.map((s,i)=>{
+  return `<button class="btn ghost" onclick="debugJumpStage(${i})">${i+1}</button>`;
+ }).join("");
+}
+function unlockTitle(id){
+ const t=titleById(id);
+ addBadge(t?.badgeId || id);
+ cleanSelectedTitles();
+ save();
+}
+async function sendDevMessage(){
+ const type=$("devMsgType").value;
+ const message=$("devMsgText").value.trim();
+ const p=state.player||{};
+
+ if(!p.name){
+  alert("先にプレイヤー登録をしてください");
+  showProfile();
+  return;
+ }
+ if(!message){
+  alert("メッセージを書いてね");
+  return;
+ }
+ if(message.length>300){
+  alert("300文字以内で書いてね");
+  return;
+ }
+
+ const last=Number(localStorage.getItem("morilingoLastDevMessageAt")||0);
+ if(Date.now()-last<60000){
+  alert("連続送信はできません。少し待ってから送ってね");
+  return;
+ }
+
+ if(GAS_URL){
+  const data=new URLSearchParams({
+   action:"message",
+   name:p.name||"",
+   className:p.className||"",
+   number:p.number||"",
+   type,
+   message
+  });
+
+  try{
+   await fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data});
+   $("savePill").textContent="メッセージ送信済み";
+  }catch(e){
+   $("savePill").textContent="メッセージ未送信";
+   alert("送信に失敗しました。通信状況を確認してください");
+   return;
+  }
+ }
+
+ localStorage.setItem("morilingoLastDevMessageAt",String(Date.now()));
+ const already=earnedTitleIds().includes("dev_supporter");
+ unlockTitle("dev_supporter");
+
+ alert(already
+  ? "メッセージを送信しました！ありがとう！"
+  : "メッセージを送信しました！\n称号『モリリンゴ支援者』を獲得！");
+ show("menu");
+}
+function debugUnlockAllStages(){
+ if(!isAdmin())return;
+ state.unlocked=STAGES.length;
+ save();
+ alert("全ステージを解放しました");
+ renderStages();
+}
+function debugUnlockAllTitles(){
+ if(!isAdmin())return;
+ TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
+ cleanSelectedTitles();
+ save();
+ alert("全称号を解放しました");
+ renderTitles();
+ renderBadges();
+}
+function debugGiveScore(){
+ if(!isAdmin())return;
+ if(game){
+  game.score=(game.score||0)+100;
+  updateStats();
+  alert("現在のゲームに100PT加算しました");
+ }else{
+  alert("ゲーム中だけ加算できます");
+ }
+}
+function debugJumpStage(index){
+ if(!isAdmin())return;
+ state.unlocked=Math.max(state.unlocked||1,index+1);
+ save();
+ startChallenge(index);
 }
 
 function toggleMenuTitle(id){
@@ -1200,6 +1396,7 @@ function saveProfileAndMenu(){
  show("menu");
 }
 function updatePlayerDisplay(){
+ if($("devAdminBtn"))$("devAdminBtn").style.display=isAdmin()?"block":"none";
  if(!$("playerDisplay"))return;
  const p=state.player||{};
  $("playerDisplay").textContent=p.name?`プレイヤー：${p.className||"クラス未入力"} ${p.number? p.number+"番 " : ""}${p.name}`:"プレイヤー未登録";
