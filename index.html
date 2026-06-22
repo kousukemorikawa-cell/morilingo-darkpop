@@ -666,9 +666,7 @@ body.gameMode .answerPanel{padding-top:9px}
 
 /* ==========================================================
    2026-06-22 位置調整・完全整理版
-   これより上にある古い位置調整CSSを最終上書きする
-   PC：木をリンゴ位置に合わせて上げる / 宝箱は画面内 / 敵は低すぎ防止
-   スマホ：木中央固定 / 宝箱表示 / ステージ1ゴブリンだけ上げる
+   ※位置調整はここだけ直す
 ========================================================== */
 .chestProgress{
  display:none !important;
@@ -742,17 +740,20 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .fruitImg{
   width:34px !important;
   height:34px !important;
+  transform:translate(-50%,-50%) translateY(60px) !important;
  }
  body.gameMode .fruitEmoji{
   font-size:24px !important;
  }
+
+ /* PC版：宝箱。下げたいときは bottom を -45 → -55 のように小さくする */
  body.gameMode .chestObj{
   height:185px !important;
  }
  body.gameMode .chestImg{
   width:140px !important;
-  bottom:-80px !important;
-  transform:translateX(-50%) 
+  bottom:-45px !important;
+  transform:translateX(-50%) !important;
  }
  body.gameMode .dropItemImg{
   width:58px !important;
@@ -770,11 +771,6 @@ body.gameMode .answerPanel{padding-top:9px}
  body.gameMode .dragonFly{
   bottom:52px !important;
   width:155px !important;
- }
- body.gameMode .fruitImg{
-  width:34px !important;
-  height:34px !important;
-  transform:translate(-50%,-50%) translateY(60px) !important;
  }
 }
 
