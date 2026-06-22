@@ -663,11 +663,18 @@ body.gameMode .answerPanel{padding-top:9px}
 
 
 
-/* 修正：木・宝箱の出現位置を固定（中央 → 左 → 右）＋PC背景/敵位置調整 */
+/* ==========================================================
+   2026-06-22 位置調整・整理済み最終版
+   ここより上の基本CSSはそのまま。
+   ここではゲーム画面の木・宝箱・敵の位置だけをまとめて管理する。
+========================================================== */
+
+/* 木・宝箱の出現位置：中央 → 左 → 右 */
 .treeArea{
  display:block !important;
  overflow:visible !important;
 }
+
 .objSlot{
  position:absolute;
  bottom:0;
@@ -675,371 +682,42 @@ body.gameMode .answerPanel{padding-top:9px}
  height:230px;
  transform:translateX(-50%);
 }
-.objSlot.slotCenter{left:50%;}
-.objSlot.slotLeft{left:30%;}
-.objSlot.slotRight{left:70%;}
-.objSlot > .obj{
- width:100%;
- height:100%;
+
+.objSlot.slotCenter{
+ left:50%;
 }
+
+.objSlot.slotLeft{
+ left:30%;
+}
+
+.objSlot.slotRight{
+ left:70%;
+}
+
+.objSlot > .obj{
+ width:100% !important;
+ height:100% !important;
+ position:relative !important;
+}
+
 .treeArea.worldtreeMode .objSlot{
  left:50% !important;
  width:100% !important;
  height:100% !important;
- transform:translateX(-50%);
+ transform:translateX(-50%) !important;
 }
 
-@media(max-width:560px){
- .objSlot{width:132px;height:162px;}
- .objSlot.slotCenter{left:50%;}
- .objSlot.slotLeft{left:27%;}
- .objSlot.slotRight{left:73%;}
- body.gameMode .treeArea{bottom:32px !important;min-height:150px !important;}
+/* 宝箱の数字ラベルは表示しない */
+.chestProgress{
+ display:none !important;
 }
 
-@media(min-width:561px){
- body.gameMode .world{
-  height:clamp(260px,38vh,350px) !important;
-  min-height:260px !important;
-  max-height:350px !important;
- }
- body.gameMode .treeArea{
-  left:30px !important;
-  right:30px !important;
-  bottom:44px !important;
-  min-height:205px !important;
- }
- body.gameMode .objSlot{
-  width:160px;
-  height:205px;
- }
- body.gameMode .treeImg{
-  width:160px;
-  bottom:-4px;
- }
- body.gameMode .saplingImg{
-  width:92px;
-  bottom:8px;
- }
- body.gameMode .chestObj{
-  height:170px;
- }
- body.gameMode .chestImg{
-  width:140px;
- }
- body.gameMode .dropItemImg{
-  width:58px;
-  height:58px;
-  bottom:90px;
- }
- body.gameMode .chestProgress{
-  bottom:-23px;
- }
- body.gameMode .char{
-  bottom:46px !important;
-  width:100px;
-  height:100px;
- }
- body.gameMode .dragonFly{
-  bottom:78px !important;
-  width:155px;
- }
-}
-
-
-/* 追加微調整：PC敵は少し上へ、PCの木・宝箱とスマホ宝箱は低くする */
-@media(min-width:561px){
- body.gameMode .treeArea{
-  bottom:22px !important;
-  min-height:225px !important;
- }
- body.gameMode .objSlot{
-  height:225px !important;
- }
- body.gameMode .treeImg{
-  bottom:-22px !important;
- }
- body.gameMode .saplingImg{
-  bottom:-4px !important;
- }
- body.gameMode .chestObj{
-  height:190px !important;
- }
- body.gameMode .chestImg{
-  bottom:-24px !important;
- }
- body.gameMode .dropItemImg{
-  bottom:66px !important;
- }
- body.gameMode .chestLabel{
-  bottom:48px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-44px !important;
- }
- body.gameMode .char{
-  bottom:68px !important;
- }
- body.gameMode .dragonFly{
-  bottom:100px !important;
- }
-}
-
-@media(max-width:560px){
- body.gameMode .chestImg{
-  bottom:-32px !important;
- }
- body.gameMode .dropItemImg{
-  bottom:42px !important;
- }
- body.gameMode .chestLabel{
-  bottom:32px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-48px !important;
- }
- body.gameMode .chestObj{
-  height:150px !important;
- }
-}
-
-
-
-/* ==========================================================
-   最終位置調整：宝箱・敵をかなり下げる / スマホ宝箱間隔を広げる
-   ※下にあるほど優先される上書きCSS
-========================================================== */
-@media(min-width:561px){
- body.gameMode .treeArea{
-  bottom:0px !important;
-  min-height:245px !important;
- }
- body.gameMode .objSlot{
-  height:245px !important;
- }
- body.gameMode .chestObj{
-  height:205px !important;
- }
- body.gameMode .chestImg{
-  width:140px !important;
-  bottom:-58px !important;
- }
- body.gameMode .dropItemImg{
-  bottom:36px !important;
- }
- body.gameMode .chestLabel{
-  bottom:20px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-78px !important;
- }
- body.gameMode .char{
-  bottom:8px !important;
- }
- body.gameMode .dragonFly{
-  bottom:38px !important;
- }
-}
-
-@media(max-width:560px){
- body.gameMode .treeArea{
-  left:4px !important;
-  right:4px !important;
-  bottom:4px !important;
-  min-height:150px !important;
- }
- body.gameMode .objSlot{
-  width:108px !important;
-  height:162px !important;
- }
- body.gameMode .objSlot.slotCenter{left:50% !important;}
- body.gameMode .objSlot.slotLeft{left:22% !important;}
- body.gameMode .objSlot.slotRight{left:78% !important;}
- body.gameMode .chestObj{
-  height:150px !important;
- }
- body.gameMode .chestImg{
-  width:112px !important;
-  bottom:-64px !important;
- }
- body.gameMode .dropItemImg{
-  width:48px !important;
-  height:48px !important;
-  bottom:10px !important;
- }
- body.gameMode .chestLabel{
-  bottom:2px !important;
-  font-size:9px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-76px !important;
-  font-size:10px !important;
- }
- body.gameMode .char{
-  bottom:4px !important;
- }
- body.gameMode .dragonFly{
-  bottom:34px !important;
- }
-}
-
-
-/* ==========================================================
-   さらに最終調整：宝箱・モンスターをもっと低くする
-   ※一番下の上書きなので、この数値が最優先
-========================================================== */
-@media(min-width:561px){
- body.gameMode .treeArea{
-  bottom:-18px !important;
-  min-height:260px !important;
- }
- body.gameMode .objSlot{
-  height:260px !important;
- }
- body.gameMode .chestObj{
-  height:220px !important;
- }
- body.gameMode .chestImg{
-  width:140px !important;
-  bottom:-105px !important;
-  transform:translateX(-50%) translateY(28px) !important;
- }
- body.gameMode .dropItemImg{
-  bottom:0px !important;
- }
- body.gameMode .chestLabel{
-  bottom:-16px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-128px !important;
- }
- body.gameMode .char{
-  bottom:-24px !important;
- }
- body.gameMode .dragonFly{
-  bottom:2px !important;
- }
-}
-
-@media(max-width:560px){
- body.gameMode .treeArea{
-  left:2px !important;
-  right:2px !important;
-  bottom:-18px !important;
-  min-height:165px !important;
- }
- body.gameMode .objSlot{
-  width:98px !important;
-  height:172px !important;
- }
- body.gameMode .objSlot.slotCenter{left:50% !important;}
- body.gameMode .objSlot.slotLeft{left:18% !important;}
- body.gameMode .objSlot.slotRight{left:82% !important;}
- body.gameMode .chestObj{
-  height:165px !important;
- }
- body.gameMode .chestImg{
-  width:108px !important;
-  bottom:-112px !important;
-  transform:translateX(-50%) translateY(32px) !important;
- }
- body.gameMode .dropItemImg{
-  width:46px !important;
-  height:46px !important;
-  bottom:-28px !important;
- }
- body.gameMode .chestLabel{
-  bottom:-30px !important;
-  font-size:9px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-134px !important;
-  font-size:10px !important;
- }
- body.gameMode .char{
-  bottom:-24px !important;
- }
- body.gameMode .dragonFly{
-  bottom:2px !important;
- }
-}
-
-
-/* ==========================================================
-   スマホ版だけ最終調整：PC版は変更しない
-   木は中央に戻す／宝箱は画面内に戻す／3つの間隔は見切れない範囲で広げる
-========================================================== */
-@media(max-width:560px){
- body.gameMode .treeArea{
-  left:0 !important;
-  right:0 !important;
-  bottom:12px !important;
-  min-height:168px !important;
-  overflow:visible !important;
- }
- body.gameMode .objSlot{
-  width:112px !important;
-  height:168px !important;
-  bottom:0 !important;
-  transform:translateX(-50%) !important;
- }
- body.gameMode .objSlot.slotCenter{left:50% !important;}
- body.gameMode .objSlot.slotLeft{left:25% !important;}
- body.gameMode .objSlot.slotRight{left:75% !important;}
-
- /* 木・苗：中央から右下にずれないように、スマホでは少し小さくして中央固定 */
- body.gameMode .treeImg{
-  width:124px !important;
-  left:50% !important;
-  bottom:-10px !important;
-  transform:translateX(-50%) !important;
- }
- body.gameMode .saplingImg{
-  width:74px !important;
-  left:50% !important;
-  bottom:2px !important;
-  transform:translateX(-50%) !important;
- }
-
- /* 宝箱：下げすぎで画面外に消えていたので、スマホだけ画面内へ戻す */
- body.gameMode .chestObj{
-  height:148px !important;
- }
- body.gameMode .chestImg{
-  width:104px !important;
-  left:50% !important;
-  bottom:-24px !important;
-  transform:translateX(-50%) !important;
- }
- body.gameMode .dropItemImg{
-  width:44px !important;
-  height:44px !important;
-  bottom:44px !important;
- }
- body.gameMode .chestLabel{
-  bottom:32px !important;
-  font-size:9px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-48px !important;
-  font-size:10px !important;
- }
-
- /* 世界樹ステージは円形演出なので、通常スロット調整の影響を避ける */
- body.gameMode .treeArea.worldtreeMode .objSlot{
-  left:50% !important;
-  width:100% !important;
-  height:100% !important;
- }
-}
-
-
-
-/* 最終修正：宝箱が消える問題を解消。PC/スマホとも宝箱を必ず画面内に表示 */
 .chestObj{
  position:relative !important;
  overflow:visible !important;
 }
+
 .chestImg{
  display:block !important;
  position:absolute !important;
@@ -1050,166 +728,170 @@ body.gameMode .answerPanel{padding-top:9px}
  visibility:visible !important;
  object-fit:contain !important;
 }
+
 .dropItemImg,
-.chestLabel,
-.chestProgress{
+.chestLabel{
  z-index:13 !important;
 }
 
+/* PC版：木が見切れない高さに固定。宝箱・敵はこれまでの位置を維持 */
 @media(min-width:561px){
- body.gameMode .chestObj{
-  height:190px !important;
+ body.gameMode .world{
+  height:clamp(260px,38vh,350px) !important;
+  min-height:260px !important;
+  max-height:350px !important;
  }
- body.gameMode .chestImg{
-  width:140px !important;
-  bottom:0px !important;
- }
- body.gameMode .dropItemImg{
-  bottom:96px !important;
- }
- body.gameMode .chestLabel{
-  bottom:78px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-26px !important;
- }
-}
 
-@media(max-width:560px){
  body.gameMode .treeArea{
-  left:0 !important;
-  right:0 !important;
-  bottom:12px !important;
-  min-height:170px !important;
-  overflow:visible !important;
+  left:30px !important;
+  right:30px !important;
+  bottom:-18px !important;
+  min-height:260px !important;
  }
+
  body.gameMode .objSlot{
-  width:112px !important;
-  height:170px !important;
+  width:160px !important;
+  height:260px !important;
  }
- body.gameMode .objSlot.slotCenter{left:50% !important;}
- body.gameMode .objSlot.slotLeft{left:23% !important;}
- body.gameMode .objSlot.slotRight{left:77% !important;}
- body.gameMode .chestObj{
-  height:150px !important;
- }
- body.gameMode .chestImg{
-  width:104px !important;
-  bottom:0px !important;
- }
- body.gameMode .dropItemImg{
-  width:46px !important;
-  height:46px !important;
-  bottom:80px !important;
- }
- body.gameMode .chestLabel{
-  bottom:62px !important;
-  font-size:10px !important;
- }
- body.gameMode .chestProgress{
-  bottom:-22px !important;
-  font-size:10px !important;
-  padding:3px 8px !important;
- }
-}
 
+ body.gameMode .treeImg{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:160px !important;
+  bottom:50px !important;
+ }
 
-/* 2026-06-22 最終調整：宝箱下ラベル削除後の位置調整＋スマホ木中央固定 */
-.chestProgress{
- display:none !important;
-}
+ body.gameMode .saplingImg{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:92px !important;
+  bottom:8px !important;
+ }
 
-/* スロット内のオブジェクト幅を必ず親に合わせる。スマホで木が右下にズレる原因を防ぐ */
-.objSlot > .obj{
- width:100% !important;
- height:100% !important;
- position:relative !important;
-}
-.objSlot.slotCenter{
- left:50% !important;
- transform:translateX(-50%) !important;
-}
+ body.gameMode .fruitImg{
+  width:34px !important;
+  height:34px !important;
+ }
 
-@media(min-width:561px){
- /* PC版：宝箱下の数字を消したので、宝箱本体をさらに下げる */
+ body.gameMode .fruitEmoji{
+  font-size:24px !important;
+ }
+
  body.gameMode .chestObj{
   height:185px !important;
  }
+
  body.gameMode .chestImg{
   width:140px !important;
   bottom:-34px !important;
  }
+
  body.gameMode .dropItemImg{
+  width:58px !important;
+  height:58px !important;
   bottom:62px !important;
  }
+
  body.gameMode .chestLabel{
   bottom:48px !important;
  }
+
+ body.gameMode .char{
+  bottom:-24px !important;
+  width:100px !important;
+  height:100px !important;
+ }
+
+ body.gameMode .dragonFly{
+  bottom:2px !important;
+  width:155px !important;
+ }
 }
 
+/* スマホ版：木は中央固定・少し上げる。宝箱は画面内。ステージ1ゴブリンだけ上げる */
 @media(max-width:560px){
- /* スマホ版：木・宝箱の土台エリアを画面内に固定 */
  body.gameMode .treeArea{
   left:0 !important;
   right:0 !important;
-  bottom:8px !important;
+  bottom:30px !important;
   min-height:178px !important;
   overflow:visible !important;
  }
+
  body.gameMode .objSlot{
   width:118px !important;
   height:172px !important;
   bottom:0 !important;
- }
- body.gameMode .objSlot.slotCenter{
-  left:50% !important;
-  transform:translateX(-50%) !important;
- }
- body.gameMode .objSlot.slotLeft{
-  left:24% !important;
-  transform:translateX(-50%) !important;
- }
- body.gameMode .objSlot.slotRight{
-  left:76% !important;
   transform:translateX(-50%) !important;
  }
 
- /* スマホ版：木をスロット中央に確実配置。右下ズレを止める */
+ body.gameMode .objSlot.slotCenter{
+  left:50% !important;
+ }
+
+ body.gameMode .objSlot.slotLeft{
+  left:24% !important;
+ }
+
+ body.gameMode .objSlot.slotRight{
+  left:76% !important;
+ }
+
  body.gameMode .treeImg{
   left:50% !important;
   transform:translateX(-50%) !important;
   width:118px !important;
-  bottom:-8px !important;
+  bottom:12px !important;
  }
+
  body.gameMode .saplingImg{
   left:50% !important;
   transform:translateX(-50%) !important;
   width:76px !important;
-  bottom:2px !important;
+  bottom:8px !important;
  }
+
  body.gameMode .fruitImg{
   width:24px !important;
   height:24px !important;
  }
 
- /* スマホ版：宝箱の数字ラベルを消した分、画面内で下へ */
+ body.gameMode .fruitEmoji{
+  font-size:21px !important;
+ }
+
  body.gameMode .chestObj{
   height:158px !important;
  }
+
  body.gameMode .chestImg{
   left:50% !important;
   transform:translateX(-50%) !important;
   width:104px !important;
   bottom:-30px !important;
  }
+
  body.gameMode .dropItemImg{
   width:44px !important;
   height:44px !important;
   bottom:50px !important;
  }
+
  body.gameMode .chestLabel{
   bottom:36px !important;
   font-size:10px !important;
+ }
+
+ body.gameMode .char{
+  bottom:-24px !important;
+ }
+
+ body.gameMode .char.fieldEnemy{
+  bottom:34px !important;
+ }
+
+ body.gameMode .dragonFly{
+  bottom:2px !important;
  }
 }
 
@@ -1775,6 +1457,7 @@ function setupWorld(cls,sun,label,image,enemyImage){
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
    $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
+   $("ninja").dataset.fieldEnemy = String(label).includes("田園") ? "1" : "0";
    $("ninja").onerror = function(){
      this.onerror = null;
      this.src = "assets/enemies/gobelyn.png";
@@ -2039,7 +1722,8 @@ function dragonMessage(){
 }
 function ninjaEvent(){
  const has=hasAnyObject();
- $("ninja").className="char gobelynRun";
+ const fieldEnemyClass = $("ninja").dataset.fieldEnemy === "1" ? " fieldEnemy" : "";
+ $("ninja").className="char gobelynRun" + fieldEnemyClass;
  $("feedback").textContent=stealMessage();
  if(has)setTimeout(stealObject,2350);
  setTimeout(()=>{$("ninja").className="char";scheduleNext(0);},4300);
