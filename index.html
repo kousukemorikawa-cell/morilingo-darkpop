@@ -1025,17 +1025,18 @@ const $=id=>document.getElementById(id);
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
 const GAS_URL="https://script.google.com/macros/s/AKfycbw0TQ0c4kv7GsAy-X9-2N__n6sq9T2YotzUgHhYztS00Hz6G02p-SBVzRmBR2heb9-C1g/exec";
-const ADMIN_NAMES=["Kosuke","kosuke","森林太郎"];
-if(new URLSearchParams(location.search).get("dev")==="1"){
- localStorage.setItem("morilingoDevMode","1");
-}
 function isAdmin(){
- const name=(state?.player?.name||"").trim();
- return localStorage.getItem("morilingoDevMode")==="1" || ADMIN_NAMES.includes(name);
+ const p = state?.player || {};
+ const name = String(p.name || "").trim();
+ const className = String(p.className || "").trim();
+ const number = String(p.number || "").trim();
+
+ return name === "Kosuke" && className === "" && number === "";
 }
+
 function updateDevAdminButton(){
- const btn=$("devAdminBtn");
- if(btn)btn.style.display=isAdmin()?"":"none";
+ const btn = $("devAdminBtn");
+ if(btn) btn.style.display = isAdmin() ? "block" : "none";
 }
 
 /*
