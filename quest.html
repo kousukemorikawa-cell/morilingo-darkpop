@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>モリリンゴ クエスト</title>
+<title>モリリンゴ クエスト UI調整版</title>
 
 <style>
 :root{
@@ -119,6 +119,35 @@ h1,h2,h3{margin:.35em 0}
   margin:10px 0;
 }
 
+.timer{
+  grid-column:1/-1;
+  background:#ffffffb8;
+  border-radius:18px;
+  padding:10px 12px;
+  font-weight:1000;
+}
+
+.timerTop{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:7px;
+}
+
+.trackbar{
+  height:16px;
+  background:#edf2f0;
+  border-radius:999px;
+  overflow:hidden;
+  border:2px solid #fff;
+}
+
+.fill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);
+  transition:width .25s linear;
+}
+
 .stat{
   text-align:center;
   background:#ffffffb8;
@@ -232,6 +261,45 @@ h1,h2,h3{margin:.35em 0}
   width:100%;
   height:100%;
   object-fit:contain;
+}
+
+.charHpGauge{
+  position:absolute;
+  left:50%;
+  top:-20px;
+  width:82px;
+  height:13px;
+  transform:translateX(-50%);
+  background:#edf2f0;
+  border:2px solid #fff;
+  border-radius:999px;
+  overflow:hidden;
+  box-shadow:0 3px 0 #0002;
+  z-index:12;
+}
+
+.charHpFill{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);
+  border-radius:999px;
+}
+
+.charHpText{
+  position:absolute;
+  left:50%;
+  top:-42px;
+  transform:translateX(-50%);
+  background:#111;
+  color:#fff;
+  border:2px solid #fff;
+  border-radius:999px;
+  padding:2px 8px;
+  font-size:11px;
+  font-weight:1000;
+  white-space:nowrap;
+  box-shadow:0 2px 0 #0003;
+  z-index:13;
 }
 
 .hero.walk{animation:hop .35s ease 2}
@@ -603,6 +671,27 @@ button{font-family:inherit}
     border-radius:12px;
   }
 
+  .timer{
+    padding:6px 8px;
+    border-radius:12px;
+    font-size:13px;
+  }
+
+  .timerTop{margin-bottom:4px}
+  .trackbar{height:12px}
+
+  .charHpGauge{
+    width:68px;
+    height:11px;
+    top:-15px;
+  }
+
+  .charHpText{
+    top:-35px;
+    font-size:10px;
+    padding:2px 7px;
+  }
+
   .world{
     height:34vh;
     min-height:215px;
@@ -724,9 +813,13 @@ button{font-family:inherit}
       <div class="stat" id="areaText">第1エリア</div>
       <div class="stat" id="phaseText">前進</div>
       <div class="stat" id="progressText">進行 0/3</div>
-      <div class="stat" id="enemyText">モグラなし</div>
-      <div class="stat" id="playerText">HP ❤️❤️❤️</div>
+      <div class="stat" id="enemyText">敵HP --</div>
+      <div class="stat" id="playerText">自分HP 3/3</div>
       <div class="stat" id="itemText">スキンなし</div>
+      <div class="timer">
+        <div class="timerTop"><span>残り時間</span><span><span id="timeText">20</span>秒</span></div>
+        <div class="trackbar"><div id="timeFill" class="fill"></div></div>
+      </div>
     </div>
 
     <div class="world" id="world">
@@ -743,9 +836,15 @@ button{font-family:inherit}
       </div>
 
       <div class="stageCap">草原クエスト</div>
-      <div class="hero" id="hero">🙂</div>
+      <div class="hero" id="hero">
+        <div class="charHpText" id="heroHpText">HP 3/3</div>
+        <div class="charHpGauge"><div class="charHpFill" id="heroHpFill"></div></div>
+        <span id="heroFallback">🙂</span>
+      </div>
 
       <div class="enemy" id="enemy">
+        <div class="charHpText" id="enemyHpText">HP 1/1</div>
+        <div class="charHpGauge"><div class="charHpFill" id="enemyHpFill"></div></div>
         <div class="enemyIcon" id="enemyIcon">🐹</div>
       </div>
 
@@ -797,6 +896,11 @@ const REWARD_SKIN_ID = "skin_hat_magician";
 const REWARD_SKIN_IMAGE = `assets/skins/${REWARD_SKIN_ID}.png`;
 const REWARD_SKIN_NAME = "魔法使いの帽子";
 
+// ステージ番号と敵HPを対応させる。
+// ステージ1なら敵HP1、ステージ2ならHP2……ステージ20ならHP20。
+const QUEST_STAGE_NUMBER = Number(QUEST_STAGE_NO);
+const MAX_TIME = 20;
+
 const questions = [
   {q:"『花咲きけり』の「けり」の意味は？", c:["詠嘆","推量","意志","打消"], a:0},
   {q:"『昔、男ありけり』の「けり」の意味は？", c:["過去","打消","可能","意志"], a:0},
@@ -826,7 +930,10 @@ let phase = "walk";
 let enemyHp = 0;
 let enemyMax = 0;
 let playerHp = 3;
+let playerMaxHp = 3;
 let score = 0;
+let timeLeft = MAX_TIME;
+let timerId = null;
 let qNow = null;
 let locked = false;
 let treasureCount = 0;
@@ -852,6 +959,13 @@ const track = document.getElementById("track");
 const magic = document.getElementById("magic");
 const burst = document.getElementById("burst");
 const scoreHudValue = document.getElementById("scoreHudValue");
+const timeText = document.getElementById("timeText");
+const timeFill = document.getElementById("timeFill");
+const heroHpText = document.getElementById("heroHpText");
+const heroHpFill = document.getElementById("heroHpFill");
+const enemyHpText = document.getElementById("enemyHpText");
+const enemyHpFill = document.getElementById("enemyHpFill");
+const heroFallback = document.getElementById("heroFallback");
 
 function setupImages(){
   const world = document.getElementById("world");
@@ -860,13 +974,12 @@ function setupImages(){
   world.style.backgroundPosition = "center bottom";
   world.style.backgroundRepeat = "no-repeat";
 
-  hero.innerHTML = `<img src="${ME_IMAGE}" alt="自分キャラ" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
+  heroFallback.innerHTML = `<img src="${ME_IMAGE}" alt="自分キャラ" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
 
   enemyIcon.innerHTML = `<img src="${ENEMY_IMAGE}" alt="敵キャラ" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
   chest.innerHTML = `<img src="${CHEST_CLOSED_IMAGE}" alt="閉じた宝箱" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
   skinReward.innerHTML = `<img src="${REWARD_SKIN_IMAGE}" alt="${REWARD_SKIN_NAME}" onerror="this.onerror=null;this.parentElement.textContent='🎩';">`;
 }
-
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -907,6 +1020,7 @@ function loadQuestion(){
 
   msg.textContent = "";
   nextBtn.style.display = "none";
+  startTimer();
   updateUI();
 }
 
@@ -923,9 +1037,49 @@ function markAnswer(selectedIndex){
   }
 }
 
+
+function startTimer(){
+  stopTimer();
+  if(phase==="finish" || phase==="gameover") return;
+  timeLeft = MAX_TIME;
+  updateTimerUI();
+  timerId = setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft <= 0){
+      timeOut();
+    }
+  },1000);
+}
+
+function stopTimer(){
+  if(timerId){
+    clearInterval(timerId);
+    timerId = null;
+  }
+}
+
+function updateTimerUI(){
+  timeText.textContent = Math.max(0,timeLeft);
+  timeFill.style.width = (Math.max(0,timeLeft) / MAX_TIME * 100) + "%";
+}
+
+function timeOut(){
+  if(locked || phase==="finish" || phase==="gameover") return;
+  locked = true;
+  stopTimer();
+
+  for(let i=0;i<4;i++){
+    document.getElementById("c"+i).disabled = true;
+  }
+
+  document.getElementById("c"+qNow.a).classList.add("correctChoice","answered");
+  takeDamage(false,"⏰ 時間切れ！こちらのHPが1減った！");
+}
 function choose(n){
   if(locked || phase==="finish" || phase==="gameover") return;
   locked = true;
+  stopTimer();
 
   const correct = n === qNow.a;
   markAnswer(n);
@@ -1008,7 +1162,7 @@ function playMagic(){
   setTimeout(()=>burst.classList.add("show"),380);
 }
 
-function takeDamage(enemyAttack){
+function takeDamage(enemyAttack, customMessage){
   playerHp--;
 
   if(enemyAttack && phase==="battle"){
@@ -1020,12 +1174,12 @@ function takeDamage(enemyAttack){
       void hero.offsetWidth;
       hero.classList.add("damaged");
     },280);
-    msg.textContent = "💥 不正解！モグラの体当たり！";
+    msg.textContent = customMessage || "💥 不正解！モグラの体当たり！";
   }else{
     hero.classList.remove("damaged");
     void hero.offsetWidth;
     hero.classList.add("damaged");
-    msg.textContent = "❌ 不正解！こちらに1ダメージ！";
+    msg.textContent = customMessage || "❌ 不正解！こちらに1ダメージ！";
   }
 
   updateUI();
@@ -1041,7 +1195,7 @@ function takeDamage(enemyAttack){
 
 function spawnEnemy(){
   phase = "battle";
-  enemyMax = area + 2;
+  enemyMax = QUEST_STAGE_NUMBER;
   enemyHp = enemyMax;
   enemy.style.display = "grid";
   msg.textContent = "🐹 モグラ出現！正解して魔法で攻撃しよう！";
@@ -1089,6 +1243,7 @@ function startTreasure(){
 }
 
 function finishQuest(){
+  stopTimer();
   phase = "finish";
   chest.innerHTML = `<img src="${CHEST_OPEN_IMAGE}" alt="開いた宝箱" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;
   skinReward.style.display = "block";
@@ -1116,6 +1271,7 @@ function finishQuest(){
 }
 
 function gameOver(){
+  stopTimer();
   phase = "gameover";
   questionText.innerHTML = `
     <div class="resultCard">
@@ -1146,12 +1302,24 @@ function hpHtml(){
 
 function playerHpText(){
   const hp = Math.max(0, playerHp);
-  return "HP " + "❤️".repeat(hp) + "🖤".repeat(3-hp);
+  return "自分HP " + hp + "/" + playerMaxHp;
+}
+
+function updateHpGauges(){
+  const hp = Math.max(0, playerHp);
+  heroHpText.textContent = "HP " + hp + "/" + playerMaxHp;
+  heroHpFill.style.width = (hp / playerMaxHp * 100) + "%";
+
+  const eHp = Math.max(0, enemyHp);
+  const eMax = Math.max(1, enemyMax || QUEST_STAGE_NUMBER);
+  enemyHpText.textContent = "HP " + eHp + "/" + eMax;
+  enemyHpFill.style.width = (eHp / eMax * 100) + "%";
 }
 
 function updateUI(){
   scoreHudValue.textContent = score;
   playerText.textContent = playerHpText();
+  updateHpGauges();
 
   if(phase === "treasure"){
     areaText.textContent = "宝箱";
@@ -1185,7 +1353,7 @@ function updateUI(){
   progressText.textContent = "進行 " + progress + "/3";
 
   if(phase === "battle"){
-    enemyText.innerHTML = "敵HP " + enemyHp + "/" + enemyMax + hpHtml();
+    enemyText.textContent = "敵HP " + enemyHp + "/" + enemyMax;
   }else{
     enemyText.textContent = "モグラなし";
   }
