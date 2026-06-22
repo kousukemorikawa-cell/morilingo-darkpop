@@ -1113,6 +1113,106 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+/* 2026-06-22 最終調整：宝箱下ラベル削除後の位置調整＋スマホ木中央固定 */
+.chestProgress{
+ display:none !important;
+}
+
+/* スロット内のオブジェクト幅を必ず親に合わせる。スマホで木が右下にズレる原因を防ぐ */
+.objSlot > .obj{
+ width:100% !important;
+ height:100% !important;
+ position:relative !important;
+}
+.objSlot.slotCenter{
+ left:50% !important;
+ transform:translateX(-50%) !important;
+}
+
+@media(min-width:561px){
+ /* PC版：宝箱下の数字を消したので、宝箱本体をさらに下げる */
+ body.gameMode .chestObj{
+  height:185px !important;
+ }
+ body.gameMode .chestImg{
+  width:140px !important;
+  bottom:-34px !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:62px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:48px !important;
+ }
+}
+
+@media(max-width:560px){
+ /* スマホ版：木・宝箱の土台エリアを画面内に固定 */
+ body.gameMode .treeArea{
+  left:0 !important;
+  right:0 !important;
+  bottom:8px !important;
+  min-height:178px !important;
+  overflow:visible !important;
+ }
+ body.gameMode .objSlot{
+  width:118px !important;
+  height:172px !important;
+  bottom:0 !important;
+ }
+ body.gameMode .objSlot.slotCenter{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+ }
+ body.gameMode .objSlot.slotLeft{
+  left:24% !important;
+  transform:translateX(-50%) !important;
+ }
+ body.gameMode .objSlot.slotRight{
+  left:76% !important;
+  transform:translateX(-50%) !important;
+ }
+
+ /* スマホ版：木をスロット中央に確実配置。右下ズレを止める */
+ body.gameMode .treeImg{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:118px !important;
+  bottom:-8px !important;
+ }
+ body.gameMode .saplingImg{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:76px !important;
+  bottom:2px !important;
+ }
+ body.gameMode .fruitImg{
+  width:24px !important;
+  height:24px !important;
+ }
+
+ /* スマホ版：宝箱の数字ラベルを消した分、画面内で下へ */
+ body.gameMode .chestObj{
+  height:158px !important;
+ }
+ body.gameMode .chestImg{
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  width:104px !important;
+  bottom:-30px !important;
+ }
+ body.gameMode .dropItemImg{
+  width:44px !important;
+  height:44px !important;
+  bottom:50px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:36px !important;
+  font-size:10px !important;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -1853,7 +1953,6 @@ function renderChestObject(n,idx){
    ${assetImg(chestImage,"chestImg",opened?"開いた宝箱":"閉じた宝箱")}
    ${drop}
    ${itemLabel}
-   <div class="chestProgress">${label}</div>
  </div>`;
 }
 function renderSnowman(n){
