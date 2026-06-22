@@ -746,6 +746,63 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+/* 追加微調整：PC敵は少し上へ、PCの木・宝箱とスマホ宝箱は低くする */
+@media(min-width:561px){
+ body.gameMode .treeArea{
+  bottom:22px !important;
+  min-height:225px !important;
+ }
+ body.gameMode .objSlot{
+  height:225px !important;
+ }
+ body.gameMode .treeImg{
+  bottom:-22px !important;
+ }
+ body.gameMode .saplingImg{
+  bottom:-4px !important;
+ }
+ body.gameMode .chestObj{
+  height:190px !important;
+ }
+ body.gameMode .chestImg{
+  bottom:-24px !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:66px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:48px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-44px !important;
+ }
+ body.gameMode .char{
+  bottom:68px !important;
+ }
+ body.gameMode .dragonFly{
+  bottom:100px !important;
+ }
+}
+
+@media(max-width:560px){
+ body.gameMode .chestImg{
+  bottom:-32px !important;
+ }
+ body.gameMode .dropItemImg{
+  bottom:42px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:32px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-48px !important;
+ }
+ body.gameMode .chestObj{
+  height:150px !important;
+ }
+}
+
 </style>
 </head>
 <body>
