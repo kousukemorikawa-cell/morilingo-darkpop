@@ -964,6 +964,75 @@ body.gameMode .answerPanel{padding-top:9px}
  }
 }
 
+
+/* ==========================================================
+   スマホ版だけ最終調整：PC版は変更しない
+   木は中央に戻す／宝箱は画面内に戻す／3つの間隔は見切れない範囲で広げる
+========================================================== */
+@media(max-width:560px){
+ body.gameMode .treeArea{
+  left:0 !important;
+  right:0 !important;
+  bottom:12px !important;
+  min-height:168px !important;
+  overflow:visible !important;
+ }
+ body.gameMode .objSlot{
+  width:112px !important;
+  height:168px !important;
+  bottom:0 !important;
+  transform:translateX(-50%) !important;
+ }
+ body.gameMode .objSlot.slotCenter{left:50% !important;}
+ body.gameMode .objSlot.slotLeft{left:25% !important;}
+ body.gameMode .objSlot.slotRight{left:75% !important;}
+
+ /* 木・苗：中央から右下にずれないように、スマホでは少し小さくして中央固定 */
+ body.gameMode .treeImg{
+  width:124px !important;
+  left:50% !important;
+  bottom:-10px !important;
+  transform:translateX(-50%) !important;
+ }
+ body.gameMode .saplingImg{
+  width:74px !important;
+  left:50% !important;
+  bottom:2px !important;
+  transform:translateX(-50%) !important;
+ }
+
+ /* 宝箱：下げすぎで画面外に消えていたので、スマホだけ画面内へ戻す */
+ body.gameMode .chestObj{
+  height:148px !important;
+ }
+ body.gameMode .chestImg{
+  width:104px !important;
+  left:50% !important;
+  bottom:-24px !important;
+  transform:translateX(-50%) !important;
+ }
+ body.gameMode .dropItemImg{
+  width:44px !important;
+  height:44px !important;
+  bottom:44px !important;
+ }
+ body.gameMode .chestLabel{
+  bottom:32px !important;
+  font-size:9px !important;
+ }
+ body.gameMode .chestProgress{
+  bottom:-48px !important;
+  font-size:10px !important;
+ }
+
+ /* 世界樹ステージは円形演出なので、通常スロット調整の影響を避ける */
+ body.gameMode .treeArea.worldtreeMode .objSlot{
+  left:50% !important;
+  width:100% !important;
+  height:100% !important;
+ }
+}
+
 </style>
 </head>
 <body>
