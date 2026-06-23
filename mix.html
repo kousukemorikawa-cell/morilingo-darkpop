@@ -1117,6 +1117,13 @@ const $=id=>document.getElementById(id);
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
 const GAS_URL="https://script.google.com/macros/s/AKfycbyBWdQt-Yv2d5Q3GeFcDUMDb1uP6wUsWlqJ7RO1he44-GmYczmYc0SGoRDhI-sYO-g/exec";
+
+// クエストの自キャラ設定。
+// assets/me/me_magician.png と assets/effects/effect_magician.png のように、同じ名前で連動します。
+// 例：musician に変えると me_musician.png / effect_musician.png を読み込みます。
+const PLAYER_CHARACTER="magician";
+const ASSET_VERSION="20260623-effect-bg-fix2";
+
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
