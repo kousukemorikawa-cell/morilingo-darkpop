@@ -1080,6 +1080,43 @@ body.gameMode .answerPanel{padding-top:9px}
   gap:6px;
  }
 }
+ .menuImageGrid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+ margin:10px 0 14px;
+}
+
+.imgBtn{
+ border:0;
+ background:transparent;
+ padding:0;
+ margin:0;
+ box-shadow:none;
+ border-radius:0;
+ cursor:pointer;
+ display:block;
+ width:100%;
+}
+
+.imgBtn:active{
+ transform:translateY(4px);
+}
+
+.imgBtn img{
+ display:block;
+ width:100%;
+ height:auto;
+ object-fit:contain;
+ filter:drop-shadow(0 6px 0 rgba(0,0,0,.18));
+}
+
+@media(max-width:560px){
+ .menuImageGrid{
+  grid-template-columns:1fr;
+  gap:10px;
+ }
+}
 </style>
 </head>
 <body>
