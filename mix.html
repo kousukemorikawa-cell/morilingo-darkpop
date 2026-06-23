@@ -900,8 +900,10 @@ body.gameMode .answerPanel{padding-top:9px}
 .itemCard{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:10px;font-weight:900}
 .itemIcon{font-size:32px;text-align:center}.itemName{font-weight:1000}.itemType{font-size:12px;color:#667085}.itemCount{font-size:20px;font-weight:1000;color:#2f8f57}
 .questWorld{position:relative;height:clamp(260px,38vh,350px);min-height:260px;max-height:350px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:#9ee8ff}
-.questBgTrack{position:absolute;inset:0;overflow:hidden;z-index:0}
-.questBgImg{position:absolute;left:0;bottom:0;height:100%;width:auto;min-width:100%;max-width:none;object-fit:contain;object-position:left bottom;transform:translateX(0);transition:transform 1.25s ease-in-out;will-change:transform;display:block}
+.questBgTrack{position:absolute;inset:0;overflow:hidden;z-index:0;background:#9ee8ff}
+.questBgImg{position:absolute;left:0;bottom:0;width:auto;height:auto;max-width:none;max-height:none;object-fit:initial;object-position:left bottom;transform:translateX(0);transition:transform 1.25s ease-in-out;will-change:transform;display:block}
+@media(min-width:561px){.questBgImg{transition-duration:1.35s}}
+@media(max-width:560px){.questBgImg{transition-duration:1.05s}}
 .questGround{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(#0000,#0002);z-index:1;pointer-events:none}.questCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.questHero,.questEnemy,.questChest{position:absolute;z-index:6;filter:drop-shadow(0 6px 2px #0003)}.questHero{left:110px;bottom:18px;width:86px;height:86px;display:grid;place-items:center;font-size:58px}.questHero img,.questEnemy img,.questChest img{width:100%;height:100%;object-fit:contain}.questEnemy{right:150px;bottom:18px;width:96px;height:96px;display:none}.questChest{right:142px;bottom:18px;width:94px;height:94px;display:none}.questHpText{position:absolute;left:50%;top:-42px;transform:translateX(-50%);background:#111;color:#fff;border:2px solid #fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:1000;white-space:nowrap;box-shadow:0 2px 0 #0003;z-index:13}.questHpGauge{position:absolute;left:50%;top:-20px;width:82px;height:13px;transform:translateX(-50%);background:#edf2f0;border:2px solid #fff;border-radius:999px;overflow:hidden;box-shadow:0 3px 0 #0002;z-index:12}.questHpFill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);border-radius:999px}.questHero.walk{animation:hop .35s ease 2}.questHero.damaged{animation:heroDamage .45s ease 1}.questEnemy.hit{animation:hit .35s ease 1}.questEnemy.tackle{animation:tackle .65s ease 1}.questMagic{position:absolute;left:174px;bottom:80px;width:36px;height:36px;display:none;z-index:9;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#9efcff 19% 48%,#715cff 49% 72%,transparent 73%);box-shadow:0 0 0 8px rgba(113,92,255,.15),0 0 18px rgba(113,92,255,.7)}.questMagic.fire{display:block;animation:magicShot .55s ease forwards}.questBurst{position:absolute;right:164px;bottom:86px;width:90px;height:90px;display:none;z-index:10;pointer-events:none}.questBurst.show{display:block;animation:burst .45s ease forwards}.questBurst:before,.questBurst:after{content:"✦";position:absolute;font-size:70px;font-weight:900;color:#fff77a;text-shadow:0 3px 0 #111}.questBurst:after{content:"✧";left:28px;top:20px;font-size:58px;color:#8fd6ff}.questControls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;transform:translateY(-8px)}.questControls .btn{padding:10px 10px;font-size:14px;border-radius:15px;min-height:44px}.questItemButton{background:linear-gradient(#caa9ff,#8e5cf7);color:#fff}.questModal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}.questModal.show{display:flex}.questModalCard{width:min(760px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:24px;border:4px solid #fff;padding:16px;box-shadow:0 18px 48px #0006}.questUseRow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;border:2px solid #edf2f0;border-radius:16px;padding:10px;margin:8px 0}.questUseBtn{border:0;border-radius:999px;padding:8px 12px;font-weight:1000;background:#32b85c;color:#fff}.questUseBtn:disabled{background:#d7dee2;color:#7b858b}.questPause{filter:blur(1px);opacity:.45;pointer-events:none}
 @media(max-width:560px){.itemList{grid-template-columns:1fr}.stageQuestBtns{grid-template-columns:1fr}.questWorld{height:34vh;min-height:215px;max-height:250px;border-radius:22px}.questHero{left:54px;bottom:4px;width:74px;height:74px}.questEnemy{right:72px;bottom:4px;width:82px;height:82px}.questChest{right:72px;bottom:4px;width:78px;height:78px}.questMagic{left:116px;bottom:64px}.questBurst{right:82px;bottom:64px}.questHpGauge{width:68px;height:11px;top:-15px}.questHpText{top:-35px;font-size:10px;padding:2px 7px}.questControls{grid-template-columns:1fr 1fr;gap:6px;margin-top:0;transform:translateY(-14px)}.questControls .btn{padding:7px 6px;font-size:12px;border-radius:12px;min-height:34px;line-height:1.1;white-space:nowrap}.questItemButton{font-size:12px!important}}
 
@@ -1600,9 +1602,9 @@ function loadRanking(period=currentRankingPeriod){
  const params=new URLSearchParams({
   action:"ranking",
   period:currentRankingPeriod,
-  className:p.className||"",
-  name:p.name||"",
-  number:p.number||"",
+  // ここで name / number / className を送ると、GAS側の実装によっては
+  // 「自分だけ」または「自分のクラスだけ」に絞り込まれることがある。
+  // ランキング表は全体を取得し、画面側で自分の行だけ強調する。
   callback,
   v:String(Date.now())
  });
@@ -2203,27 +2205,57 @@ function setupQuestWorld(){
  if(bgTrack)bgTrack.style.transform="none";
  if(bgImg){
   bgImg.style.transform="translateX(0px)";
-  bgImg.src=`${s.image}?v=20260623-questcam`;
+  bgImg.dataset.questRate="0";
+
+  // 通常背景を先に表示し、横長の _quest 画像があれば読み込み後に差し替える。
+  bgImg.onload=()=>{questFitBg();questMoveBg(Number(bgImg.dataset.questRate||0));};
+  bgImg.src=`${s.image}?v=20260623-questcam2`;
+
   const questBg=new Image();
   questBg.onload=()=>{
-   bgImg.src=`${bg}?v=20260623-questcam`;
-   setTimeout(()=>questMoveBg(0),30);
+   bgImg.src=`${bg}?v=20260623-questcam2`;
   };
-  questBg.src=bg+"?v=20260623-questcam";
+  questBg.src=bg+"?v=20260623-questcam2";
  }
  $("questHeroImg").innerHTML=`<img src="./assets/me/me_magician.png?v=20260622" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
  $("questEnemyImg").innerHTML=`<img src="${s.enemyImage}?v=20260622" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
  $("questChest").innerHTML=`<img src="${CHEST_CLOSED_IMAGE}?v=20260622" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
  $("questEnemy").style.display="none";$("questChest").style.display="none";questMoveBg(0);questUpdateUI();
 }
+function questFitBg(){
+ const world=$("questWorld");
+ const bgImg=$("questBgImg");
+ if(!world||!bgImg||!bgImg.naturalWidth||!bgImg.naturalHeight)return;
+
+ const worldW=world.clientWidth;
+ const worldH=world.clientHeight;
+ const imageRatio=bgImg.naturalWidth/bgImg.naturalHeight;
+
+ // PC版・スマホ版で画面サイズが違っても、必ず枠いっぱいを画像で覆う。
+ // まず高さ基準で表示し、横幅が足りない場合だけ幅基準に切り替える。
+ let renderW=worldH*imageRatio;
+ let renderH=worldH;
+ if(renderW<worldW){
+  renderW=worldW;
+  renderH=worldW/imageRatio;
+ }
+ bgImg.style.width=`${renderW}px`;
+ bgImg.style.height=`${renderH}px`;
+ bgImg.style.left="0px";
+ bgImg.style.bottom="0px";
+}
 function questMoveBg(rate){
  const r=Math.max(0,Math.min(1,rate));
  const world=$("questWorld");
  const bgImg=$("questBgImg");
  if(!world||!bgImg)return;
- const maxScroll=Math.max(0,bgImg.scrollWidth-world.clientWidth);
+ bgImg.dataset.questRate=String(r);
+ questFitBg();
+
+ const imgW=bgImg.getBoundingClientRect().width || bgImg.scrollWidth || world.clientWidth;
+ const maxScroll=Math.max(0,imgW-world.clientWidth);
  const x=maxScroll*r;
- // 画像を横に引き伸ばさず、横長画像をそのまま左端→右端へカメラ移動する。
+ // 画像自体は拡大・圧縮せず、表示窓だけを左端→右端へ移動させる。
  bgImg.style.transform=`translateX(-${x}px)`;
 }
 function quitQuest(){questStopTimer();quest=null;show("challenge");renderStages();}
@@ -2448,6 +2480,10 @@ function clearOriginalQuestions(){
  }
 }
 function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
+window.addEventListener("resize",()=>{
+ const bgImg=$("questBgImg");
+ if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
+});
 renderBadges();updatePlayerDisplay();updateDevAdminButton();loadRemoteQuestions();save();
 </script>
 </body>
