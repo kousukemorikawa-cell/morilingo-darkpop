@@ -952,8 +952,8 @@ body.gameMode .answerPanel{padding-top:9px}
     💌 開発者へのメッセージ
   </button>
 
-  <button id="devAdminBtn" class="btn ghost" style="display:none" onclick="showDevTools()">
-    🛠 開発者メニュー
+  <button id="devAdminBtn" class="btn danger" style="display:none" onclick="debugFullUnlockFromMenu()">
+    🛠 開発者全開放
   </button>
 </div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>表示中の称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
 
@@ -1325,19 +1325,39 @@ function showDevMessage(){
  show("devMessage");
 }
 function showDevTools(){
- if(!isAdmin()){
-  alert("開発者専用です");
-  show("menu");
-  return;
- }
- renderDevStageJump();
- show("devTools");
+ // 旧：開発者メニュー画面。現在はメニュー上の「開発者全開放」ボタンを使う。
+ debugFullUnlockFromMenu();
 }
 function renderDevStageJump(){
  if(!$("devStageJump"))return;
  $("devStageJump").innerHTML=STAGES.map((s,i)=>{
   return `<button class="btn ghost" onclick="debugJumpStage(${i})">${i+1}</button>`;
  }).join("");
+}
+function debugFullUnlockFromMenu(){
+ if(!isAdmin()){
+  alert("開発者専用です");
+  return;
+ }
+ state.unlocked=STAGES.length;
+ state.challengeClears??={};
+ state.questUnlocked??={};
+ state.items??={};
+ state.questClears??={};
+ STAGES.forEach(s=>{
+  state.challengeClears[s.id]=Math.max(3,Number(state.challengeClears[s.id]||0));
+  state.questUnlocked[s.id]=true;
+  state.items[itemKey(s)]=Math.max(99,Number(state.items[itemKey(s)]||0));
+ });
+ TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
+ cleanSelectedTitles();
+ save();
+ renderBadges();
+ renderStages();
+ renderItems();
+ renderZukan(state.zukanTab||"items");
+ alert("全ステージ・全クエスト・全アイテム・全称号を開放しました");
+ show("menu");
 }
 function unlockTitle(id){
  const t=titleById(id);
@@ -2270,26 +2290,29 @@ function questFitBg(){
  const imageRatio=bgImg.naturalWidth/bgImg.naturalHeight;
  const isPc=window.matchMedia("(min-width:561px)").matches;
 
- // クエスト背景は「横に進む」見せ方なので、PCでも必ず横スクロール幅を作る。
- // _quest画像が横長ならその比率を活かし、通常背景しかない場合も最低幅を確保する。
- const minScrollableWidth=worldW*(isPc ? 3.1 : 2.45);
- let renderW=worldH*imageRatio;
+ // PC版で背景の下側だけが見える問題を避けるため、縦は必ずクエスト枠の高さに合わせる。
+ // 横幅だけを広げてスクロール量を作るので、背景の上下が切れにくい。
+ const minScrollableWidth=worldW*(isPc ? 2.35 : 2.45);
  let renderH=worldH;
+ let renderW=worldH*imageRatio;
 
- if(renderW<worldW){
-  renderW=worldW;
-  renderH=worldW/imageRatio;
- }
- if(renderW<minScrollableWidth){
-  renderW=minScrollableWidth;
-  renderH=Math.max(worldH,renderW/imageRatio);
- }
+ // 画像が横長でない場合も、クエスト用に横移動できる最低幅を確保する。
+ renderW=Math.max(renderW,worldW,minScrollableWidth);
 
  bgImg.style.width=`${renderW}px`;
  bgImg.style.height=`${renderH}px`;
  bgImg.style.left="0px";
  bgImg.style.bottom="0px";
+ bgImg.style.objectFit="fill";
 }
+function questScrollRate(step){
+ const totalSteps=9;
+ const raw=Math.max(0,Math.min(1,step/totalSteps));
+ const isPc=window.matchMedia("(min-width:561px)").matches;
+ // PCは画面が広いので序盤の移動を少し抑え、最後は必ず1.0まで到達させる。
+ return isPc ? Math.pow(raw,.92) : raw;
+}
+
 function questMoveBg(rate){
  const r=Math.max(0,Math.min(1,rate));
  const world=$("questWorld");
@@ -2346,7 +2369,7 @@ function questAnswer(i){
  }
  quest.score+=10;
  if(quest.phase==="walk"){
-  quest.progress++;questMoveBg(((quest.area-1)*3+quest.progress)/9);
+  quest.progress++;questMoveBg(questScrollRate((quest.area-1)*3+quest.progress));
   $("questHero").classList.remove("walk");void $("questHero").offsetWidth;$("questHero").classList.add("walk");
   $("questFeedback").textContent="⭕ 正解！1マス前進！";
   if(quest.progress>=3){setTimeout(questSpawnEnemy,550);questUpdateUI();return;}
@@ -2374,7 +2397,7 @@ function questAutoNext(ms=900){
 }
 function questNextQuestion(){
  if(quest.phase==="battle" && quest.enemyHp<=0){
-  if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg((quest.area-1)/3);questLoadQuestion();return;}
+  if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg(questScrollRate((quest.area-1)*3));questLoadQuestion();return;}
   questFinish();return;
  }
  questLoadQuestion();
