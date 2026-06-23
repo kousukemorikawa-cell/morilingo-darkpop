@@ -301,7 +301,40 @@ body.gameMode .answerPanel{padding-top:9px}
  border-radius:999px;
  padding:6px 10px;
 }
+.rankingImageTabs{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:8px;
+}
 
+.imgRankBtn{
+ border:0;
+ background:transparent;
+ padding:0;
+ box-shadow:none;
+ border-radius:0;
+ cursor:pointer;
+}
+
+.imgRankBtn img{
+ display:block;
+ width:100%;
+ height:auto;
+ object-fit:contain;
+ filter:drop-shadow(0 4px 0 rgba(0,0,0,.15));
+}
+
+.imgRankBtn.active img{
+ transform:translateY(3px);
+ filter:drop-shadow(0 2px 0 rgba(0,0,0,.2)) brightness(1.08);
+}
+
+@media(max-width:560px){
+ .rankingImageTabs{
+  gap:6px;
+ }
+}
+ 
 .rankingTabs{
  display:grid;
  grid-template-columns:repeat(4,1fr);
@@ -1108,12 +1141,23 @@ body.gameMode .answerPanel{padding-top:9px}
         <span class="rankingMini" id="rankingClass">総合</span>
       </div>
 
-      <div class="rankingTabs">
-        <button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button>
-        <button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button>
-        <button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button>
-        <button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button>
-      </div>
+      <div class="rankingTabs rankingImageTabs">
+  <button id="rankTabTotal" class="rankingTab imgRankBtn active" onclick="loadRanking('total')">
+    <img src="assets/buttons/btn_rank_total.png" alt="総合">
+  </button>
+
+  <button id="rankTabDaily" class="rankingTab imgRankBtn" onclick="loadRanking('daily')">
+    <img src="assets/buttons/btn_rank_today.png" alt="今日">
+  </button>
+
+  <button id="rankTabWeekly" class="rankingTab imgRankBtn" onclick="loadRanking('weekly')">
+    <img src="assets/buttons/btn_rank_week.png" alt="今週">
+  </button>
+
+  <button id="rankTabMonthly" class="rankingTab imgRankBtn" onclick="loadRanking('monthly')">
+    <img src="assets/buttons/btn_rank_month.png" alt="今月">
+  </button>
+</div>
 
       <div class="rankingSummary">
         <div class="rankingCard">
