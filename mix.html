@@ -883,37 +883,25 @@ body.gameMode .answerPanel{padding-top:9px}
 .questBtn.locked{background:#e9eef1!important;color:#79858d!important;box-shadow:none!important;cursor:not-allowed;filter:grayscale(1)}
 .timeAttackBtn{background:linear-gradient(#8fd6ff,#3a9cff);color:#fff}
 .itemMenuBtn{background:linear-gradient(#caa9ff,#8e5cf7);color:#fff}
-.itemList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
-.itemCard{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:10px;font-weight:900}
-.itemIcon{font-size:32px;text-align:center}.itemName{font-weight:1000}.itemType{font-size:12px;color:#667085}.itemCount{font-size:20px;font-weight:1000;color:#2f8f57}
-.zukanBtn{background:linear-gradient(#b8f7ff,#4fc3f7);color:#06445c}
+.zukanBtn{background:linear-gradient(#b7f7ff,#34b6d8);color:#06404d}
 .zukanTabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
 .zukanTab{border:0;border-radius:14px;padding:10px 8px;font-weight:1000;background:#fff;box-shadow:0 4px 0 #0001;cursor:pointer}
 .zukanTab.active{background:linear-gradient(#8df08f,#32b85c);color:#fff}
 .zukanGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
 .zukanCard{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:10px;font-weight:900}
-.zukanCard.locked{opacity:.62;filter:grayscale(1)}
+.zukanCard.locked{opacity:.55;filter:grayscale(1)}
 .zukanIcon{width:58px;height:58px;display:grid;place-items:center;font-size:34px;background:#f4f7f6;border-radius:16px;overflow:hidden}
 .zukanIcon img{width:100%;height:100%;object-fit:contain}
 .zukanName{font-size:16px;font-weight:1000}
 .zukanMeta{font-size:12px;color:#667085;margin-top:3px}
 .zukanNote{margin-top:10px;background:#fffdf4;border:2px dashed #eadb96;border-radius:16px;padding:10px;font-size:13px;font-weight:900;color:#6b5a18}
 @media(max-width:560px){.zukanGrid{grid-template-columns:1fr}.zukanCard{grid-template-columns:56px 1fr}.zukanIcon{width:50px;height:50px}}
+.itemList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.itemCard{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:10px;font-weight:900}
+.itemIcon{font-size:32px;text-align:center}.itemName{font-weight:1000}.itemType{font-size:12px;color:#667085}.itemCount{font-size:20px;font-weight:1000;color:#2f8f57}
 .questWorld{position:relative;height:clamp(260px,38vh,350px);min-height:260px;max-height:350px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:#9ee8ff}
-.questBgTrack{
- position:absolute;
- left:0;
- top:0;
- width:100%;
- height:100%;
- background-size:auto 100%;
- background-position:left bottom;
- background-repeat:no-repeat;
- transform:none;
- transition:background-position 1.25s ease-in-out;
- z-index:0;
- will-change:background-position;
-}
+.questBgTrack{position:absolute;inset:0;overflow:hidden;z-index:0}
+.questBgImg{position:absolute;left:0;bottom:0;height:100%;width:auto;min-width:100%;max-width:none;object-fit:contain;object-position:left bottom;transform:translateX(0);transition:transform 1.25s ease-in-out;will-change:transform;display:block}
 .questGround{position:absolute;left:0;right:0;bottom:0;height:44px;background:linear-gradient(#0000,#0002);z-index:1;pointer-events:none}.questCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.questHero,.questEnemy,.questChest{position:absolute;z-index:6;filter:drop-shadow(0 6px 2px #0003)}.questHero{left:110px;bottom:18px;width:86px;height:86px;display:grid;place-items:center;font-size:58px}.questHero img,.questEnemy img,.questChest img{width:100%;height:100%;object-fit:contain}.questEnemy{right:150px;bottom:18px;width:96px;height:96px;display:none}.questChest{right:142px;bottom:18px;width:94px;height:94px;display:none}.questHpText{position:absolute;left:50%;top:-42px;transform:translateX(-50%);background:#111;color:#fff;border:2px solid #fff;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:1000;white-space:nowrap;box-shadow:0 2px 0 #0003;z-index:13}.questHpGauge{position:absolute;left:50%;top:-20px;width:82px;height:13px;transform:translateX(-50%);background:#edf2f0;border:2px solid #fff;border-radius:999px;overflow:hidden;box-shadow:0 3px 0 #0002;z-index:12}.questHpFill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);border-radius:999px}.questHero.walk{animation:hop .35s ease 2}.questHero.damaged{animation:heroDamage .45s ease 1}.questEnemy.hit{animation:hit .35s ease 1}.questEnemy.tackle{animation:tackle .65s ease 1}.questMagic{position:absolute;left:174px;bottom:80px;width:36px;height:36px;display:none;z-index:9;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#9efcff 19% 48%,#715cff 49% 72%,transparent 73%);box-shadow:0 0 0 8px rgba(113,92,255,.15),0 0 18px rgba(113,92,255,.7)}.questMagic.fire{display:block;animation:magicShot .55s ease forwards}.questBurst{position:absolute;right:164px;bottom:86px;width:90px;height:90px;display:none;z-index:10;pointer-events:none}.questBurst.show{display:block;animation:burst .45s ease forwards}.questBurst:before,.questBurst:after{content:"✦";position:absolute;font-size:70px;font-weight:900;color:#fff77a;text-shadow:0 3px 0 #111}.questBurst:after{content:"✧";left:28px;top:20px;font-size:58px;color:#8fd6ff}.questControls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;transform:translateY(-8px)}.questControls .btn{padding:10px 10px;font-size:14px;border-radius:15px;min-height:44px}.questItemButton{background:linear-gradient(#caa9ff,#8e5cf7);color:#fff}.questModal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}.questModal.show{display:flex}.questModalCard{width:min(760px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:24px;border:4px solid #fff;padding:16px;box-shadow:0 18px 48px #0006}.questUseRow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;border:2px solid #edf2f0;border-radius:16px;padding:10px;margin:8px 0}.questUseBtn{border:0;border-radius:999px;padding:8px 12px;font-weight:1000;background:#32b85c;color:#fff}.questUseBtn:disabled{background:#d7dee2;color:#7b858b}.questPause{filter:blur(1px);opacity:.45;pointer-events:none}
 @media(max-width:560px){.itemList{grid-template-columns:1fr}.stageQuestBtns{grid-template-columns:1fr}.questWorld{height:34vh;min-height:215px;max-height:250px;border-radius:22px}.questHero{left:54px;bottom:4px;width:74px;height:74px}.questEnemy{right:72px;bottom:4px;width:82px;height:82px}.questChest{right:72px;bottom:4px;width:78px;height:78px}.questMagic{left:116px;bottom:64px}.questBurst{right:82px;bottom:64px}.questHpGauge{width:68px;height:11px;top:-15px}.questHpText{top:-35px;font-size:10px;padding:2px 7px}.questControls{grid-template-columns:1fr 1fr;gap:6px;margin-top:0;transform:translateY(-14px)}.questControls .btn{padding:7px 6px;font-size:12px;border-radius:12px;min-height:34px;line-height:1.1;white-space:nowrap}.questItemButton{font-size:12px!important}}
 
@@ -966,6 +954,20 @@ body.gameMode .answerPanel{padding-top:9px}
     🛠 開発者メニュー
   </button>
 </div><div class="rankingBox"><div class="rankingHead"><h3 id="rankingTitle">ランキング</h3><span class="rankingMini" id="rankingClass">総合</span></div><div class="rankingTabs"><button id="rankTabTotal" class="rankingTab active" onclick="loadRanking('total')">総合</button><button id="rankTabDaily" class="rankingTab" onclick="loadRanking('daily')">今日</button><button id="rankTabWeekly" class="rankingTab" onclick="loadRanking('weekly')">今週</button><button id="rankTabMonthly" class="rankingTab" onclick="loadRanking('monthly')">今月</button></div><div class="rankingSummary"><div class="rankingCard"><div class="label" id="myBestLabel">獲得PT</div><div class="value" id="myBestScore">-- PT</div></div><div class="rankingCard"><div class="label" id="myRankLabel">あなたの順位</div><div class="value" id="myRank">-- 位</div></div></div><div id="rankingList" class="rankingEmpty">ランキング読み込み中...</div></div><h3>表示中の称号</h3><div id="badges" class="badges"></div><div class="toolbar"><button class="btn ghost" onclick="resetAll()">進捗リセット</button></div></div></section>
+
+  <section id="zukan" class="screen">
+    <div class="card">
+      <h2>📚 図鑑</h2>
+      <p class="muted">集めたアイテムと、出会った敵を確認できます。</p>
+      <div class="zukanTabs">
+        <button id="zukanTabItems" class="zukanTab active" onclick="renderZukan('items')">アイテム図鑑</button>
+        <button id="zukanTabEnemies" class="zukanTab" onclick="renderZukan('enemies')">敵図鑑</button>
+      </div>
+      <div id="zukanList" class="zukanGrid"></div>
+      <div class="zukanNote">アイテムは入手すると登録。敵はステージが解放されると登録されます。</div>
+      <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
+    </div>
+  </section>
 
   <section id="story" class="screen">
     <div class="card">
@@ -1069,20 +1071,6 @@ body.gameMode .answerPanel{padding-top:9px}
     </div>
   </section>
 
-  <section id="zukan" class="screen">
-    <div class="card">
-      <h2>📚 図鑑</h2>
-      <p class="muted">集めたアイテムと、出会った敵を確認できます。</p>
-      <div class="zukanTabs">
-        <button id="zukanTabItems" class="zukanTab active" onclick="renderZukan('items')">アイテム図鑑</button>
-        <button id="zukanTabEnemies" class="zukanTab" onclick="renderZukan('enemies')">敵図鑑</button>
-      </div>
-      <div id="zukanList" class="zukanGrid"></div>
-      <div class="zukanNote">図鑑はステージ解放・アイテム入手・クエストクリアに合わせて少しずつ埋まります。</div>
-      <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
-    </div>
-  </section>
-
   <section id="questGame" class="screen">
     <div class="card" id="questCard">
       <h2 id="questTitle">クエスト</h2>
@@ -1096,7 +1084,7 @@ body.gameMode .answerPanel{padding-top:9px}
         <div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="questTime">20</span>秒</span></div><div class="trackbar"><div id="questTimeFill" class="fill"></div></div></div>
       </div>
       <div class="questWorld" id="questWorld">
-        <div id="questBgTrack" class="questBgTrack"></div>
+        <div id="questBgTrack" class="questBgTrack"><img id="questBgImg" class="questBgImg" alt="クエスト背景"></div>
         <div class="questGround"></div>
         <div id="questCap" class="questCap">クエスト</div>
         <div id="questHero" class="questHero"><div id="questHeroHpText" class="questHpText">HP 3/3</div><div class="questHpGauge"><div id="questHeroHpFill" class="questHpFill"></div></div><span id="questHeroImg">🙂</span></div>
@@ -1284,7 +1272,7 @@ state.items??={};
 state.questClears??={};
 state.questUnlocked??={};
 state.timeAttackBests??={};
-state.zukanTab??='items';
+state.zukanTab??="items";
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -1515,7 +1503,7 @@ function renderTitles(){
 
 function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
 function show(id){
- document.body.classList.toggle("gameMode",id==="game");
+ document.body.classList.toggle("gameMode",id==="game" || id==="questGame");
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
  $(id).classList.add("active");
  $("answerPanel").style.display=id==="game"?"block":"none";
@@ -1715,7 +1703,7 @@ function timeAttackBestText(stageId){
 function saveTimeAttackBest(){
  if(!game || game.mode!=="timeAttack")return false;
  state.timeAttackBests??={};
-state.zukanTab??='items';
+state.zukanTab??="items";
  const old=state.timeAttackBests[game.stage.id];
  const record={score:game.score||0,correctCount:game.correctCount||0,answeredCount:Math.max(0,(game.qIndex||1)-1),date:new Date().toISOString()};
  const isBest=!old || record.score>Number(old.score||0) || (record.score===Number(old.score||0) && record.correctCount>Number(old.correctCount||0));
@@ -2127,6 +2115,41 @@ function questPassiveStats(){
  });
  return stats;
 }
+
+function showZukan(){
+ renderZukan(state.zukanTab||"items");
+ show("zukan");
+}
+function zukanImage(src,alt){
+ return `<img src="${src}" alt="${String(alt||"").replace(/"/g,"&quot;")}" onerror="this.style.display='none';this.parentElement.textContent='？';">`;
+}
+function renderZukan(tab="items"){
+ state.zukanTab=tab;
+ const itemsBtn=$("zukanTabItems"), enemiesBtn=$("zukanTabEnemies"), box=$("zukanList");
+ if(!box)return;
+ if(itemsBtn)itemsBtn.classList.toggle("active",tab==="items");
+ if(enemiesBtn)enemiesBtn.classList.toggle("active",tab==="enemies");
+ if(tab==="enemies"){
+  box.innerHTML=STAGES.map((s,i)=>{
+   const open=i<(state.unlocked||1);
+   const clear=state.questClears?.[s.id]||0;
+   const name=open?s.enemyName:"？？？？？";
+   const img=open?zukanImage(s.enemyImage,s.enemyName):"🔒";
+   const meta=open?`${s.name} / クエストクリア ${clear}回`:"未発見";
+   return `<div class="zukanCard ${open?"":"locked"}"><div class="zukanIcon">${img}</div><div><div class="zukanName">${name}</div><div class="zukanMeta">${meta}</div></div></div>`;
+  }).join("");
+  return;
+ }
+ box.innerHTML=STAGES.map(s=>{
+  const key=itemKey(s), count=state.items?.[key]||0, info=itemInfo(s), owned=count>0;
+  const name=owned?info.name:"？？？？？";
+  const img=owned?zukanImage(s.itemImage,info.name):"🔒";
+  const type=ITEM_TYPES[info.type]?.label||"素材";
+  const meta=owned?`${type} / 所持 ${count}個 / ${info.effect}`:"未入手";
+  return `<div class="zukanCard ${owned?"":"locked"}"><div class="zukanIcon">${img}</div><div><div class="zukanName">${name}</div><div class="zukanMeta">${meta}</div></div></div>`;
+ }).join("");
+}
+
 function showItems(){renderItems();show("items");}
 function renderItems(){
  const box=$("itemList"); if(!box)return;
@@ -2137,49 +2160,6 @@ function renderItems(){
   const effect=owned?info.effect:"未入手：効果は入手すると見られます";
   const icon=owned?info.icon:"🔒";
   return `<div class="itemCard ${owned?"":"locked"}"><div class="itemIcon">${icon}</div><div><div class="itemName">${name}</div><div class="itemType">${type.label}：${effect}</div></div><div class="itemCount">×${count}</div></div>`;
- }).join("");
-}
-
-function showZukan(){
- renderZukan(state.zukanTab||"items");
- show("zukan");
-}
-function zukanImage(src, fallback="？"){
- return `<img src="${src}" onerror="this.onerror=null;this.parentElement.textContent='${fallback}';">`;
-}
-function renderZukan(tab="items"){
- state.zukanTab=tab;
- save();
- const list=$("zukanList");
- if(!list)return;
- const itemTab=$("zukanTabItems");
- const enemyTab=$("zukanTabEnemies");
- if(itemTab)itemTab.classList.toggle("active",tab==="items");
- if(enemyTab)enemyTab.classList.toggle("active",tab==="enemies");
-
- if(tab==="enemies"){
-  list.innerHTML=STAGES.map((s,i)=>{
-   const met=Boolean(state.questClears?.[s.id]) || i < (state.unlocked||1);
-   const name=met ? (s.enemyName||"敵") : "？？？？？";
-   const meta=met
-    ? `${s.name} ／ クエストクリア ${state.questClears?.[s.id]||0}回`
-    : `未発見`;
-   const icon=met ? zukanImage(`${s.enemyImage}?v=20260623`,s.icon||"👾") : "🔒";
-   return `<div class="zukanCard ${met?"":"locked"}"><div class="zukanIcon">${icon}</div><div><div class="zukanName">${name}</div><div class="zukanMeta">${meta}</div></div></div>`;
-  }).join("");
-  return;
- }
-
- list.innerHTML=STAGES.map((s)=>{
-  const key=itemKey(s);
-  const count=state.items?.[key]||0;
-  const info=itemInfo(s);
-  const type=ITEM_TYPES[info.type]||ITEM_TYPES.material;
-  const owned=count>0;
-  const name=owned ? info.name : "？？？？？";
-  const meta=owned ? `${type.label}：${info.effect} ／ 所持 ${count}個` : "未入手";
-  const icon=owned ? (info.icon || zukanImage(`${s.itemImage}?v=20260623`,s.icon||"🎒")) : "🔒";
-  return `<div class="zukanCard ${owned?"":"locked"}"><div class="zukanIcon">${icon}</div><div><div class="zukanName">${name}</div><div class="zukanMeta">${meta}</div></div></div>`;
  }).join("");
 }
 function startTimeAttack(i){
@@ -2218,21 +2198,19 @@ function setupQuestWorld(){
  $("questTitle").textContent=s.name+" クエスト";
  $("questCap").textContent=s.name+" クエスト";
  const bg=s.image.replace(/\.png$/,"_quest.png");
+ const bgImg=$("questBgImg");
  const bgTrack=$("questBgTrack");
- bgTrack.style.transform="none";
- bgTrack.style.backgroundPosition="left bottom";
- bgTrack.style.backgroundSize="auto 100%";
- bgTrack.style.backgroundRepeat="no-repeat";
- bgTrack.style.backgroundImage=`url('${s.image}?v=20260623')`;
-
- // 横長クエスト専用画像があれば自動で差し替え。
- // 例：assets/backgrounds/01_field_quest.png
- const questBg=new Image();
- questBg.onload=()=>{
-  bgTrack.style.backgroundImage=`url('${bg}?v=20260623')`;
-  bgTrack.style.backgroundPosition="left bottom";
- };
- questBg.src=bg+"?v=20260623";
+ if(bgTrack)bgTrack.style.transform="none";
+ if(bgImg){
+  bgImg.style.transform="translateX(0px)";
+  bgImg.src=`${s.image}?v=20260623-questcam`;
+  const questBg=new Image();
+  questBg.onload=()=>{
+   bgImg.src=`${bg}?v=20260623-questcam`;
+   setTimeout(()=>questMoveBg(0),30);
+  };
+  questBg.src=bg+"?v=20260623-questcam";
+ }
  $("questHeroImg").innerHTML=`<img src="./assets/me/me_magician.png?v=20260622" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
  $("questEnemyImg").innerHTML=`<img src="${s.enemyImage}?v=20260622" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
  $("questChest").innerHTML=`<img src="${CHEST_CLOSED_IMAGE}?v=20260622" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
@@ -2240,15 +2218,13 @@ function setupQuestWorld(){
 }
 function questMoveBg(rate){
  const r=Math.max(0,Math.min(1,rate));
- const bgTrack=$("questBgTrack");
- if(!bgTrack)return;
-
- // 画像を横に引き伸ばさず、背景の表示位置だけを動かす。
- // 0/9：左端表示 → 9/9：右端表示。
- // 右へ進むほど右側が見え、左側は自然に画面外へ消える。
- bgTrack.style.transform="none";
- bgTrack.style.backgroundSize="auto 100%";
- bgTrack.style.backgroundPosition=`${r*100}% bottom`;
+ const world=$("questWorld");
+ const bgImg=$("questBgImg");
+ if(!world||!bgImg)return;
+ const maxScroll=Math.max(0,bgImg.scrollWidth-world.clientWidth);
+ const x=maxScroll*r;
+ // 画像を横に引き伸ばさず、横長画像をそのまま左端→右端へカメラ移動する。
+ bgImg.style.transform=`translateX(-${x}px)`;
 }
 function quitQuest(){questStopTimer();quest=null;show("challenge");renderStages();}
 function questStopTimer(){if(questTimerId){clearInterval(questTimerId);questTimerId=null;}}
@@ -2320,7 +2296,7 @@ function questAutoNext(ms=900){
 }
 function questNextQuestion(){
  if(quest.phase==="battle" && quest.enemyHp<=0){
-  if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg(((quest.area-1)*3+quest.progress)/9);questLoadQuestion();return;}
+  if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg((quest.area-1)/3);questLoadQuestion();return;}
   questFinish();return;
  }
  questLoadQuestion();
