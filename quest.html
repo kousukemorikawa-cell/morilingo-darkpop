@@ -1466,7 +1466,7 @@ body.goldTheme .answerPanel{
   <section id="skin" class="screen">
     <div class="card">
       <h2>🎨 キャラ・スキン変更</h2>
-      <p class="muted">クエストで使う自分のキャラと、攻撃時の技エフェクトを変更できます。</p>
+      <p class="muted">キャラを選ぶと、同じIDの技エフェクトが自動で対応します。</p>
 
       <div class="menuImageGrid skinMenuBox">
         <button class="imgBtn" onclick="openSkinPanel('me')">
@@ -1481,13 +1481,13 @@ body.goldTheme .answerPanel{
 
       <div id="skinPanelMe" class="skinPanel">
         <h3>キャラ変更</h3>
-        <p class="muted">クエストで表示される自分のキャラを選びます。</p>
+        <p class="muted">キャラを選びます。選んだIDと同じ技エフェクトが自動で使われます。</p>
         <div id="meSkinList" class="skinSelectGrid"></div>
       </div>
 
       <div id="skinPanelEffect" class="skinPanel">
         <h3>技変更</h3>
-        <p class="muted">クエストで正解したとき、敵に重なる攻撃エフェクトを選びます。</p>
+        <p class="muted">選択中キャラに対応する技エフェクトを確認できます。ここで選んでもキャラと技は同じIDにそろいます。</p>
         <div id="effectSkinList" class="skinSelectGrid"></div>
       </div>
 
@@ -1688,7 +1688,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbyBWdQt-Yv2d5Q3GeFcDUMDb1
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-skin-2tabs-menu-theme-clean";
+const ASSET_VERSION="20260624-skin-linked-id-enemy";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -1893,29 +1893,52 @@ function showDevMessage(){
  show("devMessage");
 }
 
-const ME_SKINS=[
- {id:"magician",name:"魔術師",src:"assets/me/me_magician.png"},
- {id:"knight",name:"騎士",src:"assets/me/me_knight.png"},
- {id:"archer",name:"弓使い",src:"assets/me/me_archer.png"},
- {id:"lancer",name:"槍使い",src:"assets/me/me_lancer.png"}
+const BASE_SKINS=[
+ {id:"magician",name:"魔術師"},
+ {id:"knight",name:"騎士"},
+ {id:"archer",name:"弓使い"},
+ {id:"lancer",name:"槍使い"}
 ];
-const EFFECT_SKINS=[
- {id:"magician",name:"魔法",src:"assets/effects/effect_magician.png"},
- {id:"sword",name:"剣撃",src:"assets/effects/effect_sword.png"},
- {id:"arrow",name:"弓矢",src:"assets/effects/effect_arrow.png"},
- {id:"lancer",name:"槍",src:"assets/effects/effect_lancer.png"},
- {id:"fire",name:"炎",src:"assets/effects/effect_fire.png"},
- {id:"thunder",name:"雷",src:"assets/effects/effect_thunder.png"},
- {id:"ice",name:"氷",src:"assets/effects/effect_ice.png"}
-];
+
+// 敵キャラも「me_enemy_ステージID.png」「effect_enemy_ステージID.png」で使える。
+// 例：assets/me/me_enemy_field.png / assets/effects/effect_enemy_field.png
+function enemySkinList(){
+ return STAGES.map(s=>({
+  id:`enemy_${s.id}`,
+  name:s.enemyName || s.name
+ }));
+}
+function allSkins(){
+ return [...BASE_SKINS,...enemySkinList()];
+}
+function skinAssets(id){
+ const skinId=id || DEFAULT_PLAYER_CHARACTER;
+ return {
+  me:`assets/me/me_${skinId}.png`,
+  effect:`assets/effects/effect_${skinId}.png`
+ };
+}
 function ensureSkinState(){
  state.skin??={};
- state.skin.me ||= DEFAULT_PLAYER_CHARACTER;
- state.skin.effect ||= DEFAULT_PLAYER_EFFECT;
+
+ // 旧データ対応：以前の {me:"magician", effect:"fire"} が残っていても、
+ // これからは skin.id だけを正とする。
+ if(!state.skin.id){
+  state.skin.id = state.skin.me || state.skin.effect || DEFAULT_PLAYER_CHARACTER;
+ }
+
+ state.skin.id ||= DEFAULT_PLAYER_CHARACTER;
+
+ // 互換用に残す。常に同じIDにそろえる。
+ state.skin.me = state.skin.id;
+ state.skin.effect = state.skin.id;
 }
-function selectedMe(){ensureSkinState();return state.skin.me||DEFAULT_PLAYER_CHARACTER;}
-function selectedEffect(){ensureSkinState();return state.skin.effect||DEFAULT_PLAYER_EFFECT;}
-function skinName(list,id){return list.find(x=>x.id===id)?.name || id;}
+function selectedSkin(){ensureSkinState();return state.skin.id||DEFAULT_PLAYER_CHARACTER;}
+function selectedMe(){return selectedSkin();}
+function selectedEffect(){return selectedSkin();}
+function skinName(id){
+ return allSkins().find(x=>x.id===id)?.name || id;
+}
 function hasQuestClearForGoldBackground(){
  const clears=state.questClears||{};
  return Object.values(clears).some(v=>Number(v||0)>0);
@@ -1946,28 +1969,38 @@ function openSkinPanel(kind){
 function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
- box.innerHTML=`現在：キャラ <b>${skinName(ME_SKINS,selectedMe())}</b> ／ 技 <b>${skinName(EFFECT_SKINS,selectedEffect())}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
+ const id=selectedSkin();
+ box.innerHTML=`現在：キャラ <b>${skinName(id)}</b> ／ 技 <b>${skinName(id)}</b> ／ 対応ID <b>${id}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
 }
-function renderSkinList(targetId,list,type,currentId){
+function renderSkinList(targetId,type,currentId){
  const box=$(targetId);if(!box)return;
+ const list=allSkins();
  box.innerHTML=list.map(item=>{
   const selected=item.id===currentId;
-  return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${type}','${item.id}')">
-    <div class="skinPreview"><img src="${item.src}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
+  const assets=skinAssets(item.id);
+  const previewSrc=type==="effect" ? assets.effect : assets.me;
+  const note=type==="effect"
+   ? `effect_${item.id}.png`
+   : `me_${item.id}.png`;
+  return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${item.id}')">
+    <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
     <div>${selected?"✅ ":""}${item.name}</div>
+    <div class="skinSmall">${note}</div>
   </button>`;
  }).join("");
 }
 function renderSkinLists(){
  ensureSkinState();
+ const id=selectedSkin();
  renderSkinCurrent();
- renderSkinList("meSkinList",ME_SKINS,"me",selectedMe());
- renderSkinList("effectSkinList",EFFECT_SKINS,"effect",selectedEffect());
+ renderSkinList("meSkinList","me",id);
+ renderSkinList("effectSkinList","effect",id);
 }
-function selectSkin(type,id){
+function selectSkin(id){
  ensureSkinState();
- if(type==="me")state.skin.me=id;
- if(type==="effect")state.skin.effect=id;
+ state.skin.id=id;
+ state.skin.me=id;
+ state.skin.effect=id;
  save();
  applySkinSettings();
  renderSkinLists();
