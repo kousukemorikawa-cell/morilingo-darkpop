@@ -912,6 +912,11 @@ body.gameMode .answerPanel{padding-top:9px}
    クエスト統合追加：チャレンジ内に「挑戦」「クエスト」
 ========================================================== */
 .stageQuestBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;grid-column:1/-1;margin-top:4px}
+ .stageQuestBtns .imgBtn[disabled]{
+ opacity:.4;
+ filter:grayscale(1);
+ pointer-events:none;
+}
 .questBtn{background:linear-gradient(#ffd76a,#ff9f35);color:#553700}
 .questBtn.locked{background:#e9eef1!important;color:#79858d!important;box-shadow:none!important;cursor:not-allowed;filter:grayscale(1)}
 .timeAttackBtn{background:linear-gradient(#8fd6ff,#3a9cff);color:#fff}
@@ -2012,12 +2017,29 @@ function renderStages(){
   return `<div class="stage ${open?"":"locked"}">
    <div class="stageIcon">${open?s.icon:"🔒"}</div>
    <div><h3>${s.name}</h3><div class="muted">${clearConditionText(s)}<br>挑戦クリア：${clears}/3　${questOpen?"⚔️ クエスト解放":"クエスト未解放"}<br>⏱️ ${timeAttackBestText(s.id)}</div></div>
-   <div class="stageQuestBtns">
-    <button class="btn ${open?"primary":"ghost"}" ${open?`onclick="startChallenge(${i})"`:"disabled"}>🌱 挑戦</button>
-    <button class="btn questBtn ${questOpen?"":"locked"}" ${questOpen?`onclick="startQuest(${i})"`:"disabled"}>⚔️ クエスト</button>
-    <button class="btn timeAttackBtn" ${open?`onclick="startTimeAttack(${i})"`:"disabled"}>⏱️ タイムアタック</button>
-    <button class="btn ghost" onclick="showItems()">🎒 アイテム</button>
-   </div>
+<div class="stageQuestBtns">
+
+  <button class="imgBtn"
+    ${open?`onclick="startChallenge(${i})"`:"disabled"}>
+    <img src="assets/btn/btn_recovery.png" alt="復興">
+  </button>
+
+  <button class="imgBtn"
+    ${questOpen?`onclick="startQuest(${i})"`:"disabled"}>
+    <img src="assets/btn/btn_quest.png" alt="クエスト">
+  </button>
+
+  <button class="imgBtn"
+    ${open?`onclick="startTimeAttack(${i})"`:"disabled"}>
+    <img src="assets/btn/btn_timeattack.png" alt="タイムアタック">
+  </button>
+
+  <button class="imgBtn"
+    onclick="showItems()">
+    <img src="assets/btn/btn_items.png" alt="アイテム">
+  </button>
+
+</div>
   </div>`;
  }).join("");
 }
