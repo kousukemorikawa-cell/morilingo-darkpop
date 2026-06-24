@@ -98,7 +98,58 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
  background:#ffffffaa;
 }
 .hero{text-align:center;padding:28px 10px}.big{font-size:72px}h1,h2,h3{margin:.35em 0}.muted{color:#667085;font-weight:800}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}.stageIcon{font-size:38px;text-align:center}.locked{filter:grayscale(1);opacity:.55}
+.stageList{display:grid;gap:10px}.stage{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:12px}
+/* ===== ステージ一覧調整 ===== */
+
+.stage{
+ grid-template-columns:56px minmax(220px,1fr) 260px;
+}
+
+.stage > div:nth-child(2){
+ min-width:220px;
+}
+
+.stage .muted{
+ white-space:normal;
+ word-break:keep-all;
+ line-height:1.6;
+}
+
+.imgBtn{
+ background:none;
+ border:0;
+ padding:0;
+ cursor:pointer;
+ justify-self:end;
+}
+
+.imgBtn img{
+ display:block;
+ width:240px;
+ max-width:100%;
+ height:auto;
+}
+
+/* スマホ */
+@media(max-width:560px){
+
+ .stage{
+  grid-template-columns:52px 1fr;
+  gap:10px;
+ }
+
+ .imgBtn{
+  grid-column:1 / -1;
+  justify-self:center;
+  margin-top:8px;
+ }
+
+ .imgBtn img{
+  width:min(92vw,340px);
+  height:auto;
+ }
+} 
+.stageIcon{font-size:38px;text-align:center}.locked{filter:grayscale(1);opacity:.55}
 .badges{display:flex;gap:8px;flex-wrap:wrap}.badge{background:#fff;border:2px solid #ecf1ee;border-radius:16px;padding:10px 12px;font-weight:900}
 .world{position:relative;height:66vh;min-height:360px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:linear-gradient(#9ee8ff 0 45%,#bdf2a1 45% 76%,#85d069 76%);background-size:cover;background-position:center bottom;background-repeat:no-repeat}
 .world.tropical{background:linear-gradient(#8ce9ff 0 40%,#b9f271 40% 72%,#54c96d 72%)}.world.snow{background:linear-gradient(#cfeeff 0 42%,#fbfeff 42% 74%,#e3f4ff 74%)}.world.volcano{background:linear-gradient(#5b5465 0 42%,#8b5d43 42% 74%,#3d3037 74%)}.world.mars{background:linear-gradient(#f6a56d 0 42%,#d76b45 42% 76%,#b94835 76%)}.world.school{background:linear-gradient(#bcecff 0 42%,#99d874 42% 66%,#c4834c 66% 100%)}
