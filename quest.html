@@ -2857,26 +2857,96 @@ const ITEM_TYPES={
  material:{label:"素材",desc:"今後の強化素材"}
 };
 const ITEM_MASTER={
- field:{name:"リンゴ",icon:"🍎",type:"heal",effect:"HPを1回復",heal:1},
- subtropical:{name:"バナナ",icon:"🍌",type:"heal",effect:"HPを1回復",heal:1},
- volcano:{name:"ブルーベリー",icon:"🫐",type:"heal",effect:"HPを1回復",heal:1},
- jungle:{name:"マンゴー",icon:"🥭",type:"heal",effect:"HPを2回復",heal:2},
- worldtree:{name:"黄金のリンゴ",icon:"🍏",type:"heal",effect:"HPを全回復",heal:99},
- desert:{name:"サボテン",icon:"🌵",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
- magicforest:{name:"魔法の葉",icon:"🍃",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
- thunder:{name:"雷の欠片",icon:"⚡",type:"attack",effect:"次の攻撃ダメージ+2",attack:2},
- haunted:{name:"魂火",icon:"🔥",type:"attack",effect:"次の攻撃ダメージ+2",attack:2},
- cave:{name:"水晶",icon:"💎",type:"equip",effect:"永続強化：タイマー+1秒",timerBonus:1},
- deepsea:{name:"真珠",icon:"🦪",type:"equip",effect:"永続強化：アイテム獲得率UP（表示用）",itemRateBonus:1},
- skyisland:{name:"天空の羽根",icon:"🪶",type:"equip",effect:"永続強化：タイマー+1秒",timerBonus:1},
- glacier:{name:"氷晶",icon:"💠",type:"equip",effect:"永続強化：攻撃力+1",attackPassive:1},
- snow:{name:"雪の結晶",icon:"❄️",type:"time",effect:"タイマーを5秒止める",freeze:5},
- machinecity:{name:"歯車",icon:"⚙️",type:"time",effect:"タイマーを8秒止める",freeze:8},
- timedimension:{name:"時の結晶",icon:"⏳",type:"time",effect:"タイマーを10秒止める",freeze:10},
- ruins:{name:"石板の欠片",icon:"🪨",type:"summon",effect:"ファラオ召喚：選択肢を1つ消す",removeChoices:1,summonName:"ファラオ"},
- dragonvalley:{name:"ドラゴンエッグ",icon:"🥚",type:"summon",effect:"ドラゴン召喚：選択肢を2つ消す",removeChoices:2,summonName:"ドラゴン"},
- moon:{name:"月の欠片",icon:"🌙",type:"summon",effect:"月の精霊召喚：時間を5秒止める",freeze:5,summonName:"月の精霊"},
- starsea:{name:"星の欠片",icon:"⭐",type:"summon",effect:"星の精霊召喚：1問だけミス無効",missGuard:true,summonName:"星の精霊"}
+
+ field:{name:"リンゴ",img:"assets/items/01_field_item.png",type:"heal",effect:"HPを1回復",heal:1},
+ subtropical:{name:"バナナ",img:"assets/items/02_subtropical_item.png",type:"heal",effect:"HPを1回復",heal:1},
+ volcano:{name:"ブルーベリー",img:"assets/items/04_volcano_item.png",type:"heal",effect:"HPを1回復",heal:1},
+ jungle:{name:"マンゴー",img:"assets/items/08_jungle_item.png",type:"heal",effect:"HPを2回復",heal:2},
+ worldtree:{name:"黄金のリンゴ",img:"assets/items/20_worldtree_item.png",type:"heal",effect:"HPを全回復",heal:99},
+
+ desert:{name:"サボテン",img:"assets/items/05_desert_item.png",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
+ magicforest:{name:"魔法の葉",img:"assets/items/10_magicforest_item.png",type:"attack",effect:"次の攻撃ダメージ+1",attack:1},
+ haunted:{name:"魂火",img:"assets/items/15_haunted_item.png",type:"attack",effect:"次の攻撃ダメージ+2",attack:2},
+
+ cave:{
+  name:"水晶",
+  img:"assets/items/06_cave_item.png",
+  type:"equip",
+  effect:"永続強化：敵回避率-5%",
+  dodgeDown:0.05
+ },
+
+ thunder:{
+  name:"雷の欠片",
+  img:"assets/items/12_thunder_item.png",
+  type:"equip",
+  effect:"永続強化：敵回避率-10%",
+  dodgeDown:0.10
+ },
+
+ glacier:{
+  name:"氷晶",
+  img:"assets/items/13_glacier_item.png",
+  type:"equip",
+  effect:"永続強化：敵回避率-15%",
+  dodgeDown:0.15
+ },
+
+ deepsea:{
+  name:"真珠",
+  img:"assets/items/07_deepsea_item.png",
+  type:"equip",
+  effect:"永続強化：アイテム獲得率UP",
+  itemRateBonus:1
+ },
+
+ skyisland:{
+  name:"天空の羽根",
+  img:"assets/items/11_skyisland_item.png",
+  type:"equip",
+  effect:"永続強化：クエスト最大HP+1",
+  hpBonus:1
+ },
+
+ snow:{name:"雪の結晶",img:"assets/items/03_snow_item.png",type:"time",effect:"タイマーを5秒止める",freeze:5},
+ machinecity:{name:"歯車",img:"assets/items/14_machinecity_item.png",type:"time",effect:"タイマーを8秒止める",freeze:8},
+ timedimension:{name:"時の結晶",img:"assets/items/19_timedimension_item.png",type:"time",effect:"タイマーを10秒止める",freeze:10},
+
+ ruins:{
+  name:"石板の欠片",
+  img:"assets/items/09_ruins_item.png",
+  type:"summon",
+  effect:"ファラオ召喚：選択肢を1つ消す",
+  removeChoices:1,
+  summonName:"ファラオ"
+ },
+
+ dragonvalley:{
+  name:"ドラゴンエッグ",
+  img:"assets/items/16_dragonvalley_item.png",
+  type:"summon",
+  effect:"ドラゴン召喚：選択肢を2つ消す",
+  removeChoices:2,
+  summonName:"ドラゴン"
+ },
+
+ moon:{
+  name:"月の欠片",
+  img:"assets/items/17_moon_item.png",
+  type:"summon",
+  effect:"月の精霊召喚：時間を5秒止める",
+  freeze:5,
+  summonName:"月の精霊"
+ },
+
+ starsea:{
+  name:"星の欠片",
+  img:"assets/items/18_starsea_item.png",
+  type:"summon",
+  effect:"星の精霊召喚：1問だけミス無効",
+  missGuard:true,
+  summonName:"星の精霊"
+ }
 };
 function itemInfo(stage){return ITEM_MASTER[stage?.id]||{name:stage?.growName||"アイテム",icon:stage?.icon||"🎒",type:"material",effect:"今後の強化素材"};}
 function itemKey(stage){return stage?.id || stage?.plant || "item";}
