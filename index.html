@@ -1560,6 +1560,71 @@ body.goldTheme .answerPanel{
  }
 }
 
+
+/* ==========================================================
+   2026-06-24 追加修正：スキン固定バー・ボタン横並び
+   名前と攻撃力だけを固定表示し、キャラ変更/技変更を常に2列にする
+========================================================== */
+#skin .skinCurrent{
+ position:sticky !important;
+ top:8px !important;
+ z-index:1000 !important;
+ margin:8px 0 10px !important;
+ padding:8px !important;
+ border-radius:16px !important;
+ background:#f0fff4 !important;
+ border:3px solid #b9efc8 !important;
+ box-shadow:0 8px 22px rgba(0,0,0,.16) !important;
+}
+#skin .skinCurrentTitle{display:none !important;}
+#skin .skinCurrentGrid{
+ display:grid !important;
+ grid-template-columns:1fr 1fr !important;
+ gap:6px !important;
+}
+#skin .skinCurrentItem{
+ background:#fff !important;
+ border:2px solid #e6f2eb !important;
+ border-radius:12px !important;
+ padding:7px 8px !important;
+ line-height:1.25 !important;
+ min-width:0 !important;
+}
+#skin .skinCurrentLabel{display:block !important;font-size:11px !important;color:#667085 !important;}
+#skin .skinCurrentValue{display:block !important;font-size:15px !important;font-weight:1000 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+#skin .skinCurrentValue small{font-size:11px !important;color:#667085 !important;margin-left:3px !important;}
+#skin .skinMenuBox{
+ display:grid !important;
+ grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+ gap:6px !important;
+ width:100% !important;
+ margin:8px 0 12px !important;
+}
+#skin .skinMenuBox .imgBtn{
+ display:block !important;
+ width:100% !important;
+ min-width:0 !important;
+ margin:0 !important;
+ padding:0 !important;
+ justify-self:stretch !important;
+ grid-column:auto !important;
+}
+#skin .skinMenuBox .imgBtn img{
+ display:block !important;
+ width:100% !important;
+ max-width:none !important;
+ height:auto !important;
+ margin:0 !important;
+ object-fit:contain !important;
+}
+@media(max-width:560px){
+ #skin .skinCurrent{top:6px !important;padding:7px !important;}
+ #skin .skinCurrentGrid{grid-template-columns:1fr 1fr !important;gap:5px !important;}
+ #skin .skinCurrentValue{font-size:13px !important;}
+ #skin .skinCurrentValue small{font-size:10px !important;}
+ #skin .skinMenuBox{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -2291,14 +2356,14 @@ function openSkinPanel(kind){
 function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
+ ensureSkinState();
  const id=selectedSkin();
  const bonus=questSkinDamageBonus();
+ const attack=1+bonus;
  box.innerHTML=`
-  <div class="skinCurrentTitle">選択中のキャラ情報</div>
   <div class="skinCurrentGrid">
    <div class="skinCurrentItem"><span class="skinCurrentLabel">名前</span><span class="skinCurrentValue">${skinName(id)}</span></div>
-   <div class="skinCurrentItem"><span class="skinCurrentLabel">技</span><span class="skinCurrentValue">effect_${effectIdForSkin(id)}</span></div>
-   <div class="skinCurrentItem"><span class="skinCurrentLabel">クエスト攻撃</span><span class="skinCurrentValue">${bonus>0?"+"+bonus:"±0"}</span></div>
+   <div class="skinCurrentItem"><span class="skinCurrentLabel">攻撃力</span><span class="skinCurrentValue">${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small></span></div>
   </div>`;
 }
 function renderSkinList(targetId,type,currentId){
