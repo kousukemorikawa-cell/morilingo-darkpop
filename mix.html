@@ -1350,7 +1350,34 @@ body.gameMode .answerPanel{padding-top:9px}
     </div>
   </section>
   <section id="challenge" class="screen"><div class="card"><h2>チャレンジ</h2><p class="muted">ステージをクリアすると次が開放されます。</p><div id="stageList" class="stageList"></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
+<section id="stageMenu" class="screen">
+  <div class="card">
+    <h2 id="stageMenuTitle">ステージ</h2>
+    <p class="muted" id="stageMenuInfo"></p>
 
+    <div class="menuImageGrid">
+      <button class="imgBtn" id="stageRecoveryBtn">
+        <img src="assets/btn/btn_recovery.png" alt="復興">
+      </button>
+
+      <button class="imgBtn" id="stageQuestBtn">
+        <img src="assets/btn/btn_quest.png" alt="クエスト">
+      </button>
+
+      <button class="imgBtn" id="stageTimeAttackBtn">
+        <img src="assets/btn/btn_timeattack.png" alt="タイムアタック">
+      </button>
+
+      <button class="imgBtn" onclick="showItems()">
+        <img src="assets/btn/btn_items.png" alt="アイテム">
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn ghost" onclick="openChallenge()">ステージ一覧へ戻る</button>
+    </div>
+  </div>
+</section>
   <section id="items" class="screen">
     <div class="card">
       <h2>🎒 アイテム</h2>
@@ -2028,39 +2055,56 @@ state.zukanTab??="items";
  }
  return isBest;
 }
+let selectedStageIndex=0;
+
 function renderStages(){
  $("stageList").innerHTML=STAGES.map((s,i)=>{
   const open=i<state.unlocked;
   const clears=state.challengeClears?.[s.id]||0;
   const questOpen=open && (clears>=3 || state.questUnlocked?.[s.id]);
+
   return `<div class="stage ${open?"":"locked"}">
    <div class="stageIcon">${open?s.icon:"🔒"}</div>
-   <div><h3>${s.name}</h3><div class="muted">${clearConditionText(s)}<br>挑戦クリア：${clears}/3　${questOpen?"⚔️ クエスト解放":"クエスト未解放"}<br>⏱️ ${timeAttackBestText(s.id)}</div></div>
-<div class="stageQuestBtns">
-
-  <button class="imgBtn"
-    ${open?`onclick="startChallenge(${i})"`:"disabled"}>
-    <img src="assets/btn/btn_recovery.png" alt="復興">
-  </button>
-
-  <button class="imgBtn"
-    ${questOpen?`onclick="startQuest(${i})"`:"disabled"}>
-    <img src="assets/btn/btn_quest.png" alt="クエスト">
-  </button>
-
-  <button class="imgBtn"
-    ${open?`onclick="startTimeAttack(${i})"`:"disabled"}>
-    <img src="assets/btn/btn_timeattack.png" alt="タイムアタック">
-  </button>
-
-  <button class="imgBtn"
-    onclick="showItems()">
-    <img src="assets/btn/btn_items.png" alt="アイテム">
-  </button>
-
-</div>
+   <div>
+    <h3>${s.name}</h3>
+    <div class="muted">
+     ${clearConditionText(s)}<br>
+     挑戦クリア：${clears}/3　
+     ${questOpen?"⚔️ クエスト解放":"クエスト未解放"}<br>
+     ⏱️ ${timeAttackBestText(s.id)}
+    </div>
+   </div>
+   <button class="btn ${open?"primary":"ghost"}"
+    ${open?`onclick="openStageMenu(${i})"`:"disabled"}>
+    このステージへ
+   </button>
   </div>`;
  }).join("");
+}
+
+function openStageMenu(i){
+ selectedStageIndex=i;
+
+ const s=STAGES[i];
+ const open=i<state.unlocked;
+ const clears=state.challengeClears?.[s.id]||0;
+ const questOpen=open && (clears>=3 || state.questUnlocked?.[s.id]);
+
+ $("stageMenuTitle").textContent=s.name;
+ $("stageMenuInfo").innerHTML=
+  `${clearConditionText(s)}<br>`+
+  `挑戦クリア：${clears}/3<br>`+
+  `${questOpen?"クエスト解放済み":"クエスト未解放：挑戦を3回クリアで解放"}<br>`+
+  `${timeAttackBestText(s.id)}`;
+
+ $("stageRecoveryBtn").onclick=()=>startChallenge(i);
+ $("stageTimeAttackBtn").onclick=()=>startTimeAttack(i);
+
+ const questBtn=$("stageQuestBtn");
+ questBtn.disabled=!questOpen;
+ questBtn.onclick=questOpen ? ()=>startQuest(i) : null;
+
+ show("stageMenu");
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
 
