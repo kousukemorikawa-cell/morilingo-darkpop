@@ -1299,7 +1299,7 @@ body.gameMode .answerPanel{padding-top:9px}
 /* ==========================================================
    キャラ・スキン変更
 ========================================================== */
-.skinMenuBox{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;margin-bottom:12px}
+.skinMenuBox{display:grid;gap:12px;margin-top:12px}
 .skinPanel{display:none;background:#fffdf4;border:3px solid #fff;border-radius:22px;padding:14px;box-shadow:0 10px 24px #0001}
 .skinPanel.active{display:block}
 .skinSelectGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
@@ -1309,15 +1309,8 @@ body.gameMode .answerPanel{padding-top:9px}
 .skinPreview{height:82px;display:grid;place-items:center;margin-bottom:6px}
 .skinPreview img{max-width:100%;max-height:82px;object-fit:contain;filter:drop-shadow(0 5px 2px #0003)}
 .skinSmall{color:#667085;font-size:12px;margin-top:4px;line-height:1.35}
-.skinCurrent{position:sticky;top:10px;z-index:80;background:#f0fff4;border:3px solid #b9efc8;border-radius:18px;padding:10px 12px;font-weight:1000;margin:10px 0 8px;box-shadow:0 8px 22px #0002}
-.skinCurrentTitle{font-size:13px;color:#2f8f57;margin-bottom:4px}
-.skinCurrentGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.skinCurrentItem{background:#fff;border:2px solid #e6f2eb;border-radius:12px;padding:7px 8px;line-height:1.25}
-.skinCurrentLabel{display:block;font-size:11px;color:#667085}
-.skinCurrentValue{display:block;font-size:14px}
-.skinMenuBox .imgBtn{width:100% !important;margin:0 !important;padding:0 !important}
-.skinMenuBox .imgBtn img{width:100% !important;max-width:none !important;display:block !important}
-@media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}.skinCurrent{top:6px;padding:8px}.skinCurrentGrid{grid-template-columns:1fr}.skinCurrentValue{font-size:13px}.skinMenuBox{grid-template-columns:1fr 1fr !important;gap:4px}}
+.skinCurrent{background:#f0fff4;border:2px dashed #b9efc8;border-radius:16px;padding:10px;font-weight:1000;margin-top:10px}
+@media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}}
 
 /* ==========================================================
    復興テーマ背景
@@ -1403,7 +1396,8 @@ body.goldTheme .question{
 body.goldTheme .answerPanel{
  background:rgba(255,251,224,.94);
 }
-
+.skinMenuBox{grid-template-columns:1fr 1fr !important}
+@media(max-width:560px){.skinMenuBox{grid-template-columns:1fr 1fr !important}}
 
 
 /* ==========================================================
@@ -1561,55 +1555,70 @@ body.goldTheme .answerPanel{
 }
 
 
+
 /* ==========================================================
-   2026-06-24 追加修正：スキン固定バー・ボタン横並び
-   名前と攻撃力だけを固定表示し、キャラ変更/技変更を常に2列にする
+   2026-06-24 強制修正：スキン固定バー・タブ横並び
+   ※このブロックは </style> 直前なので必ず最後に効く
 ========================================================== */
-#skin .skinCurrent{
+#skin .skinStatusBar{
  position:sticky !important;
  top:8px !important;
- z-index:1000 !important;
+ z-index:999999 !important;
+ display:grid !important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+ gap:8px !important;
  margin:8px 0 10px !important;
  padding:8px !important;
- border-radius:16px !important;
  background:#f0fff4 !important;
  border:3px solid #b9efc8 !important;
- box-shadow:0 8px 22px rgba(0,0,0,.16) !important;
+ border-radius:16px !important;
+ box-shadow:0 8px 22px rgba(0,0,0,.18) !important;
 }
-#skin .skinCurrentTitle{display:none !important;}
-#skin .skinCurrentGrid{
- display:grid !important;
- grid-template-columns:1fr 1fr !important;
- gap:6px !important;
-}
-#skin .skinCurrentItem{
+#skin .skinStatusItem{
+ min-width:0 !important;
  background:#fff !important;
  border:2px solid #e6f2eb !important;
  border-radius:12px !important;
- padding:7px 8px !important;
+ padding:7px 9px !important;
  line-height:1.25 !important;
- min-width:0 !important;
 }
-#skin .skinCurrentLabel{display:block !important;font-size:11px !important;color:#667085 !important;}
-#skin .skinCurrentValue{display:block !important;font-size:15px !important;font-weight:1000 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
-#skin .skinCurrentValue small{font-size:11px !important;color:#667085 !important;margin-left:3px !important;}
-#skin .skinMenuBox{
+#skin .skinStatusLabel{
+ display:block !important;
+ font-size:11px !important;
+ color:#667085 !important;
+ font-weight:1000 !important;
+}
+#skin .skinStatusItem b{
+ display:block !important;
+ margin-top:2px !important;
+ font-size:16px !important;
+ font-weight:1000 !important;
+ white-space:nowrap !important;
+ overflow:hidden !important;
+ text-overflow:ellipsis !important;
+}
+#skin .skinStatusItem small{
+ font-size:11px !important;
+ color:#667085 !important;
+ margin-left:3px !important;
+}
+#skin .skinTabGrid{
  display:grid !important;
  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
  gap:6px !important;
  width:100% !important;
  margin:8px 0 12px !important;
 }
-#skin .skinMenuBox .imgBtn{
+#skin .skinTabGrid .imgBtn{
  display:block !important;
  width:100% !important;
  min-width:0 !important;
  margin:0 !important;
  padding:0 !important;
- justify-self:stretch !important;
  grid-column:auto !important;
+ justify-self:stretch !important;
 }
-#skin .skinMenuBox .imgBtn img{
+#skin .skinTabGrid .imgBtn img{
  display:block !important;
  width:100% !important;
  max-width:none !important;
@@ -1618,11 +1627,11 @@ body.goldTheme .answerPanel{
  object-fit:contain !important;
 }
 @media(max-width:560px){
- #skin .skinCurrent{top:6px !important;padding:7px !important;}
- #skin .skinCurrentGrid{grid-template-columns:1fr 1fr !important;gap:5px !important;}
- #skin .skinCurrentValue{font-size:13px !important;}
- #skin .skinCurrentValue small{font-size:10px !important;}
- #skin .skinMenuBox{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important;}
+ #skin .skinStatusBar{top:6px !important;gap:5px !important;padding:7px !important;}
+ #skin .skinStatusItem{padding:6px 7px !important;}
+ #skin .skinStatusItem b{font-size:13px !important;}
+ #skin .skinStatusItem small{font-size:10px !important;}
+ #skin .skinTabGrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important;}
 }
 
 </style>
@@ -1739,9 +1748,12 @@ body.goldTheme .answerPanel{
       <h2>🎨 キャラ・スキン変更</h2>
       <p class="muted">キャラを選ぶと、同じIDの技エフェクトが自動で対応します。</p>
 
-      <div id="skinCurrent" class="skinCurrent">現在の設定を読み込み中...</div>
+      <div id="skinCurrent" class="skinCurrent skinStatusBar">
+        <div class="skinStatusItem"><span class="skinStatusLabel">名前</span><b id="skinCurrentName">読み込み中</b></div>
+        <div class="skinStatusItem"><span class="skinStatusLabel">攻撃力</span><b id="skinCurrentAttack">--</b></div>
+      </div>
 
-      <div class="skinMenuBox">
+      <div class="skinTabGrid">
         <button class="imgBtn" onclick="openSkinPanel('me')">
           <img src="assets/btn/btn_me_change.png" alt="キャラ変更">
         </button>
@@ -1961,7 +1973,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzYr6Qb9k2Gbo12ZDHqPbcyAk
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-evo-bonus-sticky-skin";
+const ASSET_VERSION="20260624-skinbar-force-v3";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2227,38 +2239,28 @@ const BASE_SKINS=[
  {id:"magician",name:"魔術師"},
  {id:"magician_evo",name:"進化魔術師"},
  {id:"knight",name:"騎士"},
- {id:"knight_evo",name:"進化騎士"},
  {id:"archer",name:"弓使い"},
- {id:"archer_evo",name:"進化弓使い"},
- {id:"lancer",name:"槍使い"},
- {id:"lancer_evo",name:"進化槍使い"}
+ {id:"lancer",name:"槍使い"}
 ];
 
-const QUEST_DAMAGE_BONUS_PLUS1_SKINS=[
- "enemy_skyisland",
- "enemy_thunder",
- "enemy_glacier",
- "enemy_machinecity",
- "enemy_haunted",
- "enemy_dragonvalley"
-];
 const QUEST_DAMAGE_BONUS_PLUS2_SKINS=[
  "enemy_moon",
  "enemy_starsea",
  "enemy_timedimension"
 ];
+
 const QUEST_DAMAGE_BONUS_PLUS3_SKINS=[
  "enemy_worldtree"
 ];
-function normalizeSkinId(id){
- return String(id||"").replace(/^me_/,"").replace(/^effect_/,"");
-}
-function questSkinDamageBonus(){
- const id=normalizeSkinId(selectedSkin());
+
+function questSkinDamageBonus(idOverride){
+ const id=idOverride || selectedSkin();
  if(QUEST_DAMAGE_BONUS_PLUS3_SKINS.includes(id))return 3;
  if(QUEST_DAMAGE_BONUS_PLUS2_SKINS.includes(id))return 2;
- if(QUEST_DAMAGE_BONUS_PLUS1_SKINS.includes(id))return 1;
- if(id.endsWith("_evo"))return 1;
+
+ // magician 以外も、ID末尾が _evo なら攻撃+1
+ if(/_evo$/.test(String(id||"")))return 1;
+
  return 0;
 }
 
@@ -2311,7 +2313,7 @@ function ensureSkinState(){
   state.skin.id = state.skin.me || state.skin.effect || DEFAULT_PLAYER_CHARACTER;
  }
 
- state.skin.id = normalizeSkinId(state.skin.id || DEFAULT_PLAYER_CHARACTER);
+ state.skin.id ||= DEFAULT_PLAYER_CHARACTER;
  if(!ownedSkinIds().includes(state.skin.id)){
   state.skin.id=DEFAULT_PLAYER_CHARACTER;
  }
@@ -2320,7 +2322,7 @@ function ensureSkinState(){
  state.skin.me = state.skin.id;
  state.skin.effect = effectIdForSkin(state.skin.id);
 }
-function selectedSkin(){ensureSkinState();return normalizeSkinId(state.skin.id||DEFAULT_PLAYER_CHARACTER);}
+function selectedSkin(){ensureSkinState();return state.skin.id||DEFAULT_PLAYER_CHARACTER;}
 function selectedMe(){return selectedSkin();}
 function selectedEffect(){return effectIdForSkin(selectedSkin());}
 function skinName(id){
@@ -2354,17 +2356,23 @@ function openSkinPanel(kind){
  renderSkinLists();
 }
 function renderSkinCurrent(){
- const box=$("skinCurrent");
- if(!box)return;
  ensureSkinState();
  const id=selectedSkin();
- const bonus=questSkinDamageBonus();
+ const bonus=questSkinDamageBonus(id);
  const attack=1+bonus;
- box.innerHTML=`
-  <div class="skinCurrentGrid">
-   <div class="skinCurrentItem"><span class="skinCurrentLabel">名前</span><span class="skinCurrentValue">${skinName(id)}</span></div>
-   <div class="skinCurrentItem"><span class="skinCurrentLabel">攻撃力</span><span class="skinCurrentValue">${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small></span></div>
-  </div>`;
+
+ const box=$("skinCurrent");
+ if(box){
+  box.innerHTML=`
+   <div class="skinStatusItem"><span class="skinStatusLabel">名前</span><b id="skinCurrentName">${skinName(id)}</b></div>
+   <div class="skinStatusItem"><span class="skinStatusLabel">攻撃力</span><b id="skinCurrentAttack">${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small></b></div>
+  `;
+ }
+
+ const nameEl=$("skinCurrentName");
+ if(nameEl)nameEl.textContent=skinName(id);
+ const attackEl=$("skinCurrentAttack");
+ if(attackEl)attackEl.innerHTML=`${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small>`;
 }
 function renderSkinList(targetId,type,currentId){
  const box=$(targetId);if(!box)return;
