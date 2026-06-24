@@ -63,9 +63,9 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
  #scoreHudValue{font-size:25px}
  .scoreUnit{font-size:13px}
 }
-#menuHud{
+ #menuHud{
  position:fixed;
- top:94px;
+ top:96px;
  right:12px;
  z-index:99999;
 
@@ -73,8 +73,8 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
  color:#fff;
  font-weight:1000;
 
- padding:9px 14px;
- border-radius:16px;
+ padding:10px 16px;
+ border-radius:18px;
  border:4px solid #fff;
 
  box-shadow:
@@ -82,35 +82,32 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
   0 6px 0 rgba(0,0,0,.35);
 
  cursor:pointer;
- min-width:118px;
- text-align:center;
- line-height:1.05;
 }
 
 #menuHud:active{
  transform:translateY(3px);
 }
 
+#menuHud.isHidden{
+ display:none;
+}
+
 @media(max-width:560px){
  #menuHud{
   top:76px;
   right:8px;
-  padding:7px 10px;
+  padding:8px 12px;
   border-width:3px;
   font-size:13px;
-  min-width:104px;
  }
 }
 
 body.gameMode #menuHud{
- top:86px;
+ top:96px;
 }
-
 @media(max-width:560px){
  body.gameMode #menuHud{
-  top:68px;
-  transform:scale(.86);
-  transform-origin:top right;
+  top:72px;
  }
 }
  .app{max-width:880px;margin:0 auto;min-height:100vh;padding:12px 12px 122px}
@@ -1018,6 +1015,11 @@ body.gameMode .answerPanel{padding-top:9px}
  filter:grayscale(1);
  pointer-events:none;
 }
+
+.imgBtn.isLocked{
+ opacity:.45;
+ filter:grayscale(1);
+}
  @media(max-width:560px){
 
  .stageQuestBtns{
@@ -1255,7 +1257,7 @@ body.gameMode .answerPanel{padding-top:9px}
   <div class="scoreLabel">TODAY SCORE</div>
   <div class="scoreMain"><span id="scoreHudValue">0</span><span class="scoreUnit">PT</span></div>
 </div>
-<button id="menuHud" onclick="show('menu')">
+<button id="menuHud" class="isHidden" onclick="show('menu')">
 ☰ メニュー
 </button>
 <div class="app">
@@ -1958,11 +1960,18 @@ function show(id){
  $(id).classList.add("active");
  $("answerPanel").style.display=id==="game"?"block":"none";
  const qPanel=$("questAnswerPanel"); if(qPanel)qPanel.style.display=id==="questGame"?"block":"none";
+
+ const menuHud=$("menuHud");
+ if(menuHud){
+  menuHud.classList.toggle("isHidden",id==="home" || id==="menu");
+ }
+
  renderBadges();
  renderTitles();
  updatePlayerDisplay();
  if(id==="menu")loadRanking();
 }
+
 
 function showProfile(){
  $("playerName").value=state.player.name||"";
@@ -2001,6 +2010,7 @@ function loadRemoteQuestions(){
  document.body.appendChild(script);
 }
 function submitResult(reason="clear"){
+ if(isAdmin())return;
  if(!GAS_URL||!game)return;
  const p=state.player||{};
  const data=new URLSearchParams({
@@ -2070,7 +2080,10 @@ function renderRanking(data){
  const myNumber=String(p.number||"");
 
  const list=Array.isArray(data.ranking)
-   ? data.ranking
+   ? data.ranking.filter(item=>{
+      const name=String(item.name||"").trim();
+      return name!=="Kosuke";
+    })
    : [];
 
  const me=list.find(x=>{
@@ -2195,8 +2208,8 @@ function openStageMenu(i){
 
  const s=STAGES[i];
  const open=i<state.unlocked;
- const clears=state.challengeClears?.[s.id]||0;
- const questOpen=open && (clears>=3 || state.questUnlocked?.[s.id]);
+ const clears=Number(state.challengeClears?.[s.id]||0);
+ const questOpen=open && (clears>=3 || !!state.questUnlocked?.[s.id]);
 
  $("stageMenuTitle").textContent=s.name;
  $("stageMenuInfo").innerHTML=
@@ -2208,11 +2221,31 @@ function openStageMenu(i){
  $("stageRecoveryBtn").onclick=()=>startChallenge(i);
  $("stageTimeAttackBtn").onclick=()=>startTimeAttack(i);
 
+ // クエストボタンは常に押せるようにする。
+ // 未解放ならアラート、解放済みなら必ず startQuest に渡す。
  const questBtn=$("stageQuestBtn");
- questBtn.disabled=!questOpen;
- questBtn.onclick=questOpen ? ()=>startQuest(i) : null;
+ questBtn.disabled=false;
+ questBtn.removeAttribute("disabled");
+ questBtn.classList.toggle("isLocked",!questOpen);
+ questBtn.onclick=()=>openQuestFromStageMenu(i);
 
  show("stageMenu");
+}
+
+function openQuestFromStageMenu(i){
+ const s=STAGES[i];
+ if(!s){alert("ステージ情報が見つかりません");return;}
+ state.challengeClears??={};
+ state.questUnlocked??={};
+ const open=i<state.unlocked;
+ const clears=Number(state.challengeClears?.[s.id]||0);
+ const questOpen=open && (clears>=3 || !!state.questUnlocked?.[s.id]);
+
+ if(!questOpen){
+  alert(`このステージの挑戦を3回クリアするとクエストが解放される！\n現在：${clears}/3`);
+  return;
+ }
+ startQuest(i);
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
 
