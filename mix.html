@@ -917,6 +917,25 @@ body.gameMode .answerPanel{padding-top:9px}
  filter:grayscale(1);
  pointer-events:none;
 }
+ @media(max-width:560px){
+
+ .stageQuestBtns{
+  gap:2px;
+  margin-top:0;
+ }
+
+ .stageQuestBtns .imgBtn{
+  margin:0;
+  padding:0;
+ }
+
+ .stageQuestBtns .imgBtn img{
+  display:block;
+  width:100%;
+  height:auto;
+ }
+
+}
 .questBtn{background:linear-gradient(#ffd76a,#ff9f35);color:#553700}
 .questBtn.locked{background:#e9eef1!important;color:#79858d!important;box-shadow:none!important;cursor:not-allowed;filter:grayscale(1)}
 .timeAttackBtn{background:linear-gradient(#8fd6ff,#3a9cff);color:#fff}
