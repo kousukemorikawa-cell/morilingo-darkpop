@@ -1197,9 +1197,26 @@ body.gameMode .answerPanel{padding-top:9px}
  .questEffect.heroTarget{width:98px;height:98px}
  .questHpGauge{width:68px;height:11px;top:-15px}
  .questHpText{top:-35px;font-size:10px;padding:2px 7px}
- .questControls{grid-template-columns:1fr 1fr;gap:6px;margin-top:0;transform:translateY(-14px)}
+ .questControls{
+  position:fixed;
+  left:8px;
+  right:8px;
+  bottom:calc(112px + env(safe-area-inset-bottom));
+  z-index:46;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:0;
+  transform:none;
+  background:rgba(255,255,255,.86);
+  border:2px solid rgba(255,255,255,.95);
+  border-radius:16px;
+  padding:5px;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+  backdrop-filter:blur(8px);
+ }
  .questControls .btn{padding:7px 6px;font-size:12px;border-radius:12px;min-height:34px;line-height:1.1;white-space:nowrap}
  .questItemButton{font-size:12px!important}
+ body.gameMode #questGame .card{padding-bottom:56px}
 }
  .rankingImageTabs{
  display:grid;
@@ -2417,6 +2434,7 @@ function show(id){
  document.body.classList.toggle("gameMode",id==="game" || id==="questGame");
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
  $(id).classList.add("active");
+ requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:"auto"}));
  $("answerPanel").style.display=id==="game"?"block":"none";
  const qPanel=$("questAnswerPanel"); if(qPanel)qPanel.style.display=id==="questGame"?"block":"none";
  if(id!=="game" && id!=="questGame")resetScoreHud();
@@ -3413,6 +3431,7 @@ function startQuest(i){
    baseAttack:1+passive.attackPassive,maxTime,time:maxTime,
    timeFrozen:0,missGuard:false,enemyDodgeDebuff:0,pendingEnemyDodgeDebuff:0,extraDrops:0,passive
   };
+  questUsedQueue=[];
 
   show("questGame");
   document.body.classList.add("gameMode");
@@ -3508,7 +3527,25 @@ function questMoveBg(rate){
  // 背景画像を左へずらすことで、画面としては右へ進んでいるように見せる。
  bgImg.style.transform=`translate3d(-${x}px,0,0)`;
 }
-function quitQuest(){questStopTimer();quest=null;show("challenge");renderStages();}
+function restoreQuestUsedItems(){
+ if(!questUsedQueue.length)return;
+ state.items??={};
+ questUsedQueue.forEach(entry=>{
+  if(!entry||!entry.key)return;
+  state.items[entry.key]=(state.items[entry.key]||0)+(entry.count||1);
+ });
+ questUsedQueue=[];
+ save();
+}
+function quitQuest(){
+ const shouldRestore=!!quest && quest.phase!=="gameover" && quest.phase!=="finish";
+ questStopTimer();
+ if(shouldRestore)restoreQuestUsedItems();
+ else questUsedQueue=[];
+ quest=null;
+ show("challenge");
+ renderStages();
+}
 function questStopTimer(){if(questTimerId){clearInterval(questTimerId);questTimerId=null;}}
 function questStartTimer(){
  questStopTimer();quest.time=quest.maxTime||QUEST_MAX_TIME;questUpdateUI();
@@ -3717,6 +3754,7 @@ async function questFinish(){
  questUpdateUI();
 
  await questRewardSequence();
+ questUsedQueue=[];
 
  quest=null;
  document.body.classList.remove("gameMode");
@@ -3724,7 +3762,7 @@ async function questFinish(){
  show("challenge");
 }
 function questGameOver(){
- questStopTimer();quest.phase="gameover";$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
+ questStopTimer();quest.phase="gameover";questUsedQueue=[];$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
 }
 function questUpdateUI(){
  if(!quest)return;
@@ -3840,7 +3878,7 @@ function useQuestItem(stageId){
  const key=itemKey(s), info=itemInfo(s);if((state.items[key]||0)<=0)return;
  if(info.type==="equip"||info.type==="material"){alert("このアイテムは持っているだけで効果があります");return;}
  // 回避率ダウン系は、戦闘中なら現在の敵へ、前進中なら次に出る敵へ予約して使える。
- state.items[key]--;let text="";
+ state.items[key]--;questUsedQueue.push({key,count:1});let text="";
  if(info.heal){quest.playerHp=Math.min(quest.playerMaxHp||QUEST_PLAYER_MAX_HP,quest.playerHp+info.heal);text=`${info.icon||"🎒"} ${info.name}を使った！HPが回復！`;}
  else if(info.attack){quest.attackBoost=(quest.attackBoost||1)+info.attack;text=`${info.icon||"🎒"} ${info.name}を使った！次の攻撃が強くなる！`;}
  else if(info.dodgeDown){
@@ -3859,7 +3897,7 @@ function useQuestItem(stageId){
  else if(info.freeze){quest.timeFrozen=Math.max(quest.timeFrozen||0,info.freeze);text=`${info.icon||"🎒"} ${info.name}を使った！時間が${info.freeze}秒止まる！`;}
  else if(info.removeChoices){removeWrongQuestChoices(info.removeChoices);text=`${info.icon||"🎒"} ${info.summonName}召喚！選択肢を${info.removeChoices}つ消した！`;}
  else if(info.missGuard){quest.missGuard=true;text=`${info.icon||"🎒"} ${info.summonName}召喚！次のミスを1回無効にする！`;}
- else {state.items[key]++;alert("このアイテムはまだ使用効果がありません");return;}
+ else {state.items[key]++;questUsedQueue.pop();alert("このアイテムはまだ使用効果がありません");return;}
  save();
  closeQuestItemModal();
  centerFx(info.img||s.itemImage,1800,"",info.name);
