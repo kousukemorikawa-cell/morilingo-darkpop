@@ -1890,7 +1890,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzYr6Qb9k2Gbo12ZDHqPbcyAk
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-skin-damage-devtest";
+const ASSET_VERSION="20260624-skin-devfix-menu2col";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2130,7 +2130,13 @@ const ENEMY_EFFECT_MAP={
  enemy_worldtree:"kiru_dark"
 };
 function effectIdForSkin(id){
- return ENEMY_EFFECT_MAP[id] || id || DEFAULT_PLAYER_EFFECT;
+ // キャラIDと技エフェクトIDは基本的に同じ名前で対応させる。
+ // 例：me_enemy_skyisland.png → effect_enemy_skyisland.png
+ if(String(id||"").startsWith("enemy_"))return id;
+ return id || DEFAULT_PLAYER_EFFECT;
+}
+function genericEnemyEffectIdForSkin(id){
+ return ENEMY_EFFECT_MAP[id] || "dageki";
 }
 function ownedSkinIds(){
  state.skins??={};
@@ -2179,6 +2185,7 @@ function unlockAllSkinsForAdmin(){
  allSkins().forEach(sk=>{state.skins[sk.id]=true;});
  ensureSkinState();
  save();
+ renderSkinLists();
  return true;
 }
 
@@ -2190,15 +2197,26 @@ function enemySkinList(){
   name:s.enemyName || s.name
  }));
 }
+function stageByEnemySkinId(id){
+ const stageId=String(id||"").replace(/^enemy_/,"");
+ return STAGES.find(s=>s.id===stageId);
+}
+function enemyFallbackImage(id){
+ const s=stageByEnemySkinId(id);
+ return s?.enemyImage || "assets/enemies/gobelyn.png";
+}
 function allSkins(){
  return [...BASE_SKINS,...enemySkinList()];
 }
 function skinAssets(id){
  const skinId=id || DEFAULT_PLAYER_CHARACTER;
  const effectId=effectIdForSkin(skinId);
+ const genericEffectId=genericEnemyEffectIdForSkin(skinId);
  return {
   me:`assets/me/me_${skinId}.png`,
-  effect:`assets/effects/effect_${effectId}.png`
+  meFallback:skinId.startsWith("enemy_") ? enemyFallbackImage(skinId) : "",
+  effect:`assets/effects/effect_${effectId}.png`,
+  effectFallback:skinId.startsWith("enemy_") ? `assets/effects/effect_${genericEffectId}.png` : ""
  };
 }
 function ensureSkinState(){
@@ -2266,8 +2284,10 @@ function renderSkinList(targetId,type,currentId){
   const selected=item.id===currentId;
   const assets=skinAssets(item.id);
   const previewSrc=type==="effect" ? assets.effect : assets.me;
+  const fallbackSrc=type==="effect" ? assets.effectFallback : assets.meFallback;
+  const fallbackAttr=fallbackSrc ? `data-fallback="${fallbackSrc}?v=${ASSET_VERSION}"` : "";
   return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${item.id}')">
-    <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
+    <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" ${fallbackAttr} alt="${item.name}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.style.display='none';this.parentElement.textContent='画像なし';}"></div>
     <div>${selected?"✅ ":""}${item.name}</div>
   </button>`;
  }).join("") || `<div class="muted">まだ使えるスキンがありません</div>`;
@@ -2317,8 +2337,7 @@ function debugFullUnlockFromMenu(){
   state.questUnlocked[s.id]=true;
   state.items[itemKey(s)]=Math.max(99,Number(state.items[itemKey(s)]||0));
  });
- state.skins??={};
- allSkins().forEach(sk=>{state.skins[sk.id]=true;});
+ unlockAllSkinsForAdmin();
  TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
  cleanSelectedTitles();
  save();
@@ -2326,7 +2345,7 @@ function debugFullUnlockFromMenu(){
  renderStages();
  renderItems();
  renderZukan(state.zukanTab||"items");
- alert("全ステージ・全クエスト・全アイテム・全称号を開放しました");
+ alert("全ステージ・全クエスト・全アイテム・全スキン・全称号を開放しました");
  show("menu");
 }
 function unlockTitle(id){
@@ -2422,12 +2441,10 @@ function debugGiveAllItems(){
 }
 function debugUnlockAllSkins(){
  if(!isAdmin())return;
- state.skins??={};
- allSkins().forEach(sk=>{state.skins[sk.id]=true;});
- ensureSkinState();
- save();
+ unlockAllSkinsForAdmin();
  alert("全スキンを解放しました");
  renderSkinLists();
+ showSkin();
 }
 function debugUnlockAllTitles(){
  if(!isAdmin())return;
@@ -2554,10 +2571,7 @@ function saveProfileAndMenu(){
 function updatePlayerDisplay(){
  if($("devAdminBtn"))$("devAdminBtn").style.display=isAdmin()?"block":"none";
  if(isAdmin()){
-  state.skins??={};
-  allSkins().forEach(sk=>{state.skins[sk.id]=true;});
-  ensureSkinState();
-  save();
+  unlockAllSkinsForAdmin();
  }
  if(!$("playerDisplay"))return;
  const p=state.player||{};
@@ -3554,7 +3568,8 @@ function setupQuestWorld(){
 
  const meId=selectedMe();
  const flip=meId.startsWith("enemy_") ? "transform:scaleX(-1);" : "";
- $("questHeroImg").innerHTML=`<img src="./assets/me/me_${meId}.png?v=${ASSET_VERSION}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;${flip}" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
+ const meFallback=meId.startsWith("enemy_") ? enemyFallbackImage(meId) : "";
+ $("questHeroImg").innerHTML=`<img src="./assets/me/me_${meId}.png?v=${ASSET_VERSION}" data-fallback="${meFallback?meFallback+`?v=${ASSET_VERSION}`:""}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;${flip}" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.onerror=null;this.parentElement.textContent='🙂';}">`;
  $("questEnemyImg").innerHTML=`<img src="${s.enemyImage}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
  $("questChest").innerHTML=`<img src="${CHEST_CLOSED_IMAGE}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
 
@@ -3821,12 +3836,25 @@ function questPlayMagic(){
   if(magic){magic.classList.remove("fire");void magic.offsetWidth;magic.classList.add("fire");}
   if(burst){burst.classList.remove("show");setTimeout(()=>burst.classList.add("show"),380);}
  }
+ function fallbackEnemySkinEffect(){
+  const id=selectedSkin();
+  if(id.startsWith("enemy_")){
+   questShowEffectOn(
+    "questEnemy",
+    `assets/effects/effect_${genericEnemyEffectIdForSkin(id)}.png?v=${ASSET_VERSION}-${Date.now()}`,
+    "enemyTarget",
+    fallbackMagic
+   );
+  }else{
+   fallbackMagic();
+  }
+ }
 
  questShowEffectOn(
   "questEnemy",
   `assets/effects/effect_${selectedEffect()}.png?v=${ASSET_VERSION}-${Date.now()}`,
   "enemyTarget",
-  fallbackMagic
+  fallbackEnemySkinEffect
  );
 }
 async function questFinish(){
