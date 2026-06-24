@@ -1299,7 +1299,7 @@ body.gameMode .answerPanel{padding-top:9px}
 /* ==========================================================
    キャラ・スキン変更
 ========================================================== */
-.skinMenuBox{display:grid;gap:12px;margin-top:12px}
+.skinMenuBox{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;margin-bottom:12px}
 .skinPanel{display:none;background:#fffdf4;border:3px solid #fff;border-radius:22px;padding:14px;box-shadow:0 10px 24px #0001}
 .skinPanel.active{display:block}
 .skinSelectGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
@@ -1309,8 +1309,15 @@ body.gameMode .answerPanel{padding-top:9px}
 .skinPreview{height:82px;display:grid;place-items:center;margin-bottom:6px}
 .skinPreview img{max-width:100%;max-height:82px;object-fit:contain;filter:drop-shadow(0 5px 2px #0003)}
 .skinSmall{color:#667085;font-size:12px;margin-top:4px;line-height:1.35}
-.skinCurrent{background:#f0fff4;border:2px dashed #b9efc8;border-radius:16px;padding:10px;font-weight:1000;margin-top:10px}
-@media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}}
+.skinCurrent{position:sticky;top:10px;z-index:80;background:#f0fff4;border:3px solid #b9efc8;border-radius:18px;padding:10px 12px;font-weight:1000;margin:10px 0 8px;box-shadow:0 8px 22px #0002}
+.skinCurrentTitle{font-size:13px;color:#2f8f57;margin-bottom:4px}
+.skinCurrentGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.skinCurrentItem{background:#fff;border:2px solid #e6f2eb;border-radius:12px;padding:7px 8px;line-height:1.25}
+.skinCurrentLabel{display:block;font-size:11px;color:#667085}
+.skinCurrentValue{display:block;font-size:14px}
+.skinMenuBox .imgBtn{width:100% !important;margin:0 !important;padding:0 !important}
+.skinMenuBox .imgBtn img{width:100% !important;max-width:none !important;display:block !important}
+@media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}.skinCurrent{top:6px;padding:8px}.skinCurrentGrid{grid-template-columns:1fr}.skinCurrentValue{font-size:13px}.skinMenuBox{grid-template-columns:1fr 1fr !important;gap:4px}}
 
 /* ==========================================================
    復興テーマ背景
@@ -1396,8 +1403,7 @@ body.goldTheme .question{
 body.goldTheme .answerPanel{
  background:rgba(255,251,224,.94);
 }
-.skinMenuBox{grid-template-columns:1fr 1fr !important}
-@media(max-width:560px){.skinMenuBox{grid-template-columns:1fr 1fr !important}}
+
 
 
 /* ==========================================================
@@ -1668,7 +1674,9 @@ body.goldTheme .answerPanel{
       <h2>🎨 キャラ・スキン変更</h2>
       <p class="muted">キャラを選ぶと、同じIDの技エフェクトが自動で対応します。</p>
 
-      <div class="menuImageGrid skinMenuBox">
+      <div id="skinCurrent" class="skinCurrent">現在の設定を読み込み中...</div>
+
+      <div class="skinMenuBox">
         <button class="imgBtn" onclick="openSkinPanel('me')">
           <img src="assets/btn/btn_me_change.png" alt="キャラ変更">
         </button>
@@ -1676,8 +1684,6 @@ body.goldTheme .answerPanel{
           <img src="assets/btn/btn_effect_change.png" alt="技変更">
         </button>
       </div>
-
-      <div id="skinCurrent" class="skinCurrent">現在の設定を読み込み中...</div>
 
       <div id="skinPanelMe" class="skinPanel">
         <h3>キャラ変更</h3>
@@ -1890,7 +1896,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzYr6Qb9k2Gbo12ZDHqPbcyAk
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-skin-devfix-menu2col";
+const ASSET_VERSION="20260624-evo-bonus-sticky-skin";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2156,27 +2162,39 @@ const BASE_SKINS=[
  {id:"magician",name:"魔術師"},
  {id:"magician_evo",name:"進化魔術師"},
  {id:"knight",name:"騎士"},
+ {id:"knight_evo",name:"進化騎士"},
  {id:"archer",name:"弓使い"},
- {id:"lancer",name:"槍使い"}
+ {id:"archer_evo",name:"進化弓使い"},
+ {id:"lancer",name:"槍使い"},
+ {id:"lancer_evo",name:"進化槍使い"}
 ];
 
-const QUEST_DAMAGE_BONUS_SKINS=[
- "magician_evo",
+const QUEST_DAMAGE_BONUS_PLUS1_SKINS=[
  "enemy_skyisland",
  "enemy_thunder",
  "enemy_glacier",
  "enemy_machinecity",
  "enemy_haunted",
- "enemy_dragonvalley",
+ "enemy_dragonvalley"
+];
+const QUEST_DAMAGE_BONUS_PLUS2_SKINS=[
  "enemy_moon",
  "enemy_starsea",
- "enemy_timedimension",
+ "enemy_timedimension"
+];
+const QUEST_DAMAGE_BONUS_PLUS3_SKINS=[
  "enemy_worldtree"
 ];
-
+function normalizeSkinId(id){
+ return String(id||"").replace(/^me_/,"").replace(/^effect_/,"");
+}
 function questSkinDamageBonus(){
- const id=selectedSkin();
- return QUEST_DAMAGE_BONUS_SKINS.includes(id) ? 1 : 0;
+ const id=normalizeSkinId(selectedSkin());
+ if(QUEST_DAMAGE_BONUS_PLUS3_SKINS.includes(id))return 3;
+ if(QUEST_DAMAGE_BONUS_PLUS2_SKINS.includes(id))return 2;
+ if(QUEST_DAMAGE_BONUS_PLUS1_SKINS.includes(id))return 1;
+ if(id.endsWith("_evo"))return 1;
+ return 0;
 }
 
 function unlockAllSkinsForAdmin(){
@@ -2228,7 +2246,7 @@ function ensureSkinState(){
   state.skin.id = state.skin.me || state.skin.effect || DEFAULT_PLAYER_CHARACTER;
  }
 
- state.skin.id ||= DEFAULT_PLAYER_CHARACTER;
+ state.skin.id = normalizeSkinId(state.skin.id || DEFAULT_PLAYER_CHARACTER);
  if(!ownedSkinIds().includes(state.skin.id)){
   state.skin.id=DEFAULT_PLAYER_CHARACTER;
  }
@@ -2237,7 +2255,7 @@ function ensureSkinState(){
  state.skin.me = state.skin.id;
  state.skin.effect = effectIdForSkin(state.skin.id);
 }
-function selectedSkin(){ensureSkinState();return state.skin.id||DEFAULT_PLAYER_CHARACTER;}
+function selectedSkin(){ensureSkinState();return normalizeSkinId(state.skin.id||DEFAULT_PLAYER_CHARACTER);}
 function selectedMe(){return selectedSkin();}
 function selectedEffect(){return effectIdForSkin(selectedSkin());}
 function skinName(id){
@@ -2274,7 +2292,14 @@ function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
  const id=selectedSkin();
- box.innerHTML=`現在：キャラ <b>${skinName(id)}</b> ／ 技 <b>effect_${effectIdForSkin(id)}</b> ／ クエスト攻撃 <b>+${questSkinDamageBonus()}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
+ const bonus=questSkinDamageBonus();
+ box.innerHTML=`
+  <div class="skinCurrentTitle">選択中のキャラ情報</div>
+  <div class="skinCurrentGrid">
+   <div class="skinCurrentItem"><span class="skinCurrentLabel">名前</span><span class="skinCurrentValue">${skinName(id)}</span></div>
+   <div class="skinCurrentItem"><span class="skinCurrentLabel">技</span><span class="skinCurrentValue">effect_${effectIdForSkin(id)}</span></div>
+   <div class="skinCurrentItem"><span class="skinCurrentLabel">クエスト攻撃</span><span class="skinCurrentValue">${bonus>0?"+"+bonus:"±0"}</span></div>
+  </div>`;
 }
 function renderSkinList(targetId,type,currentId){
  const box=$(targetId);if(!box)return;
