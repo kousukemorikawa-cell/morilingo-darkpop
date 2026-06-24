@@ -1453,6 +1453,51 @@ body.goldTheme .answerPanel{
  .questCenterFxText{font-size:12px;top:calc(50% + 142px)}
 }
 
+
+/* ==========================================================
+   2026-06-24 追加修正
+   ・スマホ版クエスト上部タグ非表示
+   ・メニュー画像ボタンの隙間ゼロ
+========================================================== */
+.menuImageGrid{
+ column-gap:0 !important;
+ row-gap:0 !important;
+ gap:0 !important;
+}
+.menuImageGrid .imgBtn{
+ margin:0 !important;
+ padding:0 !important;
+}
+.menuImageGrid .imgBtn img{
+ display:block !important;
+ margin:0 !important;
+}
+
+@media(max-width:560px){
+ #questAreaText,
+ #questPhaseText,
+ #questProgressText,
+ #questCap{
+  display:none !important;
+ }
+
+ .menuImageGrid{
+  column-gap:0 !important;
+  row-gap:0 !important;
+  gap:0 !important;
+ }
+
+ .menuImageGrid .imgBtn{
+  margin:0 !important;
+  padding:0 !important;
+ }
+
+ .menuImageGrid .imgBtn img{
+  display:block !important;
+  margin:0 !important;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -1788,7 +1833,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzYr6Qb9k2Gbo12ZDHqPbcyAk
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-quest-reward-skins-timeattack";
+const ASSET_VERSION="20260624-quest-fixes-enemyfx";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -3239,6 +3284,34 @@ function percentText(value){
  return `${Math.round((Number(value)||0)*100)}%`;
 }
 
+const QUEST_ENEMY_ATTACK_EFFECTS=[
+ "effect_dageki",
+ "effect_dageki",
+ "effect_dageki",
+ "effect_fire",
+ "effect_tume",
+ "effect_dageki",
+ "effect_magic",
+ "effect_dageki",
+ "effect_dageki",
+ "effect_magic",
+ "effect_fire",
+ "effect_tume",
+ "effect_tume",
+ "effect_dageki",
+ "effect_magic",
+ "effect_fire",
+ "effect_kiru",
+ "effect_magic",
+ "effect_kiru",
+ "effect_kiru_dark"
+];
+
+function questEnemyAttackEffectName(){
+ const idx=Number(quest?.stageIndex||0);
+ return QUEST_ENEMY_ATTACK_EFFECTS[idx] || "effect_dageki";
+}
+
 function showZukan(){
  renderZukan(state.zukanTab||"items");
  show("zukan");
@@ -3338,7 +3411,7 @@ function startQuest(i){
    area:1,progress:0,phase:"walk",enemyHp:0,enemyMax:0,
    playerHp:playerMaxHp,playerMaxHp:playerMaxHp,score:0,attackBoost:1,
    baseAttack:1+passive.attackPassive,maxTime,time:maxTime,
-   timeFrozen:0,missGuard:false,enemyDodgeDebuff:0,extraDrops:0,passive
+   timeFrozen:0,missGuard:false,enemyDodgeDebuff:0,pendingEnemyDodgeDebuff:0,extraDrops:0,passive
   };
 
   show("questGame");
@@ -3523,7 +3596,8 @@ function questNextQuestion(){
 }
 function questSpawnEnemy(){
  quest.phase="battle";
- quest.enemyDodgeDebuff=0;
+ quest.enemyDodgeDebuff=Math.max(0,Number(quest.pendingEnemyDodgeDebuff||0));
+ quest.pendingEnemyDodgeDebuff=0;
  quest.enemyMax=Math.max(1,quest.stageIndex+1);
  quest.enemyHp=quest.enemyMax;
  $("questEnemy").style.display="block";
@@ -3594,10 +3668,18 @@ function questShowEffectOn(targetId,src,modeClass,onError){
  effect.src=src;
 }
 function questPlayHeroDamageEffect(){
+ const effectName=questEnemyAttackEffectName();
  questShowEffectOn(
   "questHero",
-  `assets/effects/effect_enemy.png?v=${ASSET_VERSION}-${Date.now()}`,
-  "heroTarget"
+  `assets/effects/${effectName}.png?v=${ASSET_VERSION}-${Date.now()}`,
+  "heroTarget",
+  ()=>{
+   questShowEffectOn(
+    "questHero",
+    `assets/effects/effect_enemy.png?v=${ASSET_VERSION}-${Date.now()}`,
+    "heroTarget"
+   );
+  }
  );
 }
 function questPlayMagic(){
@@ -3658,7 +3740,7 @@ function questUpdateUI(){
  if(quest.phase==="finish"){$("questAreaText").textContent="クリア";$("questPhaseText").textContent="終了";$("questProgressText").textContent="冒険成功";return;}
  if(quest.phase==="gameover"){$("questAreaText").textContent="敗北";$("questPhaseText").textContent="終了";$("questProgressText").textContent="HP0";return;}
  $("questAreaText").textContent=`第${quest.area}エリア`;$("questPhaseText").textContent=quest.phase==="walk"?"前進":"戦闘";$("questProgressText").textContent=`進行 ${quest.progress}/3`;
- $("questItemText").textContent=`攻撃${quest.baseAttack||1} 回避低下${percentText(quest.enemyDodgeDebuff||0)} 報酬+${Math.max(0,Number(quest.extraDrops||0))}`;
+ $("questItemText").textContent=`攻撃${quest.baseAttack||1} 回避低下${percentText((quest.enemyDodgeDebuff||0)+(quest.pendingEnemyDodgeDebuff||0))} 報酬+${Math.max(0,Number(quest.extraDrops||0))}`;
 }
 function openQuestItemModal(){
  if(!quest||quest.phase==="finish"||quest.phase==="gameover")return;
@@ -3669,7 +3751,7 @@ function renderQuestModalItems(){
  const box=$("questModalItems");
  box.innerHTML=STAGES.map(s=>{
   const key=itemKey(s), count=state.items?.[key]||0, info=itemInfo(s), type=ITEM_TYPES[info.type]||ITEM_TYPES.material;
-  const usable=count>0 && info.type!=="equip" && info.type!=="material" && (!info.dodgeDown || quest.phase==="battle");
+  const usable=count>0 && info.type!=="equip" && info.type!=="material";
   const name=count>0?info.name:"？？？？？";
   const effect=count>0?info.effect:"未入手：効果は入手すると見られます";
   const icon=count>0
@@ -3757,13 +3839,18 @@ function useQuestItem(stageId){
  const s=STAGES.find(x=>x.id===stageId);if(!s)return;
  const key=itemKey(s), info=itemInfo(s);if((state.items[key]||0)<=0)return;
  if(info.type==="equip"||info.type==="material"){alert("このアイテムは持っているだけで効果があります");return;}
- if(info.dodgeDown && quest.phase!=="battle"){alert("回避率ダウンは敵が出ている戦闘中だけ使えます");return;}
+ // 回避率ダウン系は、戦闘中なら現在の敵へ、前進中なら次に出る敵へ予約して使える。
  state.items[key]--;let text="";
  if(info.heal){quest.playerHp=Math.min(quest.playerMaxHp||QUEST_PLAYER_MAX_HP,quest.playerHp+info.heal);text=`${info.icon||"🎒"} ${info.name}を使った！HPが回復！`;}
  else if(info.attack){quest.attackBoost=(quest.attackBoost||1)+info.attack;text=`${info.icon||"🎒"} ${info.name}を使った！次の攻撃が強くなる！`;}
  else if(info.dodgeDown){
-  quest.enemyDodgeDebuff=Math.max(quest.enemyDodgeDebuff||0,info.dodgeDown);
-  text=`${info.name}を使った！この敵の回避率が${percentText(info.dodgeDown)}下がった！`;
+  if(quest.phase==="battle"){
+   quest.enemyDodgeDebuff=Math.max(quest.enemyDodgeDebuff||0,info.dodgeDown);
+   text=`${info.name}を使った！この敵の回避率が${percentText(info.dodgeDown)}下がった！`;
+  }else{
+   quest.pendingEnemyDodgeDebuff=Math.max(quest.pendingEnemyDodgeDebuff||0,info.dodgeDown);
+   text=`${info.name}を使った！次に出る敵の回避率が${percentText(info.dodgeDown)}下がる！`;
+  }
  }
  else if(info.extraDrop){
   quest.extraDrops=(quest.extraDrops||0)+info.extraDrop;
