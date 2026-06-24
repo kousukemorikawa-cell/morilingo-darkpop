@@ -76,20 +76,18 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
  top:96px;
  right:12px;
  z-index:99999;
-
  background:#2f8f57;
  color:#fff;
  font-weight:1000;
-
- padding:10px 16px;
+ padding:8px 16px 10px;
  border-radius:18px;
  border:4px solid #fff;
-
- box-shadow:
-  0 0 0 4px #2f8f57,
-  0 6px 0 rgba(0,0,0,.35);
-
+ box-shadow:0 0 0 4px #2f8f57,0 6px 0 rgba(0,0,0,.35);
+ text-align:center;
+ line-height:1.05;
+ min-width:118px;
  cursor:pointer;
+ font-size:16px;
 }
 
 #menuHud:active{
@@ -104,8 +102,9 @@ body{margin:0;min-height:100vh;font-family:"Hiragino Maru Gothic ProN","Yu Gothi
  #menuHud{
   top:76px;
   right:8px;
-  padding:8px 12px;
+  padding:7px 12px 8px;
   border-width:3px;
+  min-width:104px;
   font-size:13px;
  }
 }
@@ -1383,6 +1382,77 @@ body.goldTheme .answerPanel{
 .skinMenuBox{grid-template-columns:1fr 1fr !important}
 @media(max-width:560px){.skinMenuBox{grid-template-columns:1fr 1fr !important}}
 
+
+/* ==========================================================
+   クエスト演出オーバーレイ・報酬演出
+========================================================== */
+.questCenterFx{
+ position:fixed;
+ inset:0;
+ z-index:100001;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ pointer-events:none;
+ background:rgba(0,0,0,0);
+}
+.questCenterFx.show{display:flex}
+.questCenterFx img{
+ max-width:min(58vw,360px);
+ max-height:min(42vh,300px);
+ object-fit:contain;
+ filter:drop-shadow(0 10px 6px rgba(0,0,0,.45));
+ animation:centerFxPop .35s ease-out both;
+}
+.questCenterFx.clearFx img{
+ max-width:min(70vw,520px);
+ max-height:min(48vh,360px);
+ transform:rotate(20deg);
+ animation:clearFxPop 2s ease-in-out both;
+}
+.questCenterFx.chestFx img{
+ max-width:min(58vw,380px);
+ max-height:min(45vh,320px);
+}
+.questCenterFx.dropFx img{
+ max-width:min(46vw,260px);
+ max-height:min(36vh,240px);
+ animation:dropRewardPop 1.2s ease-out both;
+}
+.questCenterFxText{
+ position:absolute;
+ left:50%;
+ top:calc(50% + min(24vh,190px));
+ transform:translateX(-50%);
+ background:#111;
+ color:#fff;
+ border:3px solid #fff;
+ border-radius:999px;
+ padding:8px 14px;
+ font-weight:1000;
+ box-shadow:0 5px 0 rgba(0,0,0,.35);
+ white-space:nowrap;
+}
+@keyframes centerFxPop{
+ from{opacity:0;transform:scale(.45)}
+ to{opacity:1;transform:scale(1)}
+}
+@keyframes clearFxPop{
+ 0%{opacity:0;transform:rotate(20deg) scale(.45)}
+ 15%{opacity:1;transform:rotate(20deg) scale(1.12)}
+ 80%{opacity:1;transform:rotate(20deg) scale(1)}
+ 100%{opacity:0;transform:rotate(20deg) scale(.96)}
+}
+@keyframes dropRewardPop{
+ 0%{opacity:0;transform:translateY(-40px) scale(.45)}
+ 45%{opacity:1;transform:translateY(0) scale(1.18)}
+ 100%{opacity:1;transform:translateY(0) scale(1)}
+}
+@media(max-width:560px){
+ .questCenterFx img{max-width:min(72vw,300px)}
+ .questCenterFxText{font-size:12px;top:calc(50% + 142px)}
+}
+
 </style>
 </head>
 <body>
@@ -1700,12 +1770,13 @@ body.goldTheme .answerPanel{
   <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
 書くの未然形は？,書か,書き,書く,書け,1
 けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea><input type="file" id="csvFile" accept=".csv,text/csv"></div><div class="toolbar"><button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button><button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button><button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button><button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button><button class="btn ghost" onclick="show('original')">戻る</button></div></div></section>
-  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span>残り時間</span><span><span id="time">20</span>秒</span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="assets/enemies/01_field_enemy.png" onerror="this.onerror=null;this.src='assets/enemies/gobelyn.png';">
+  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span id="timeLabel">残り時間</span><span><span id="time">20</span><span id="timeUnit">秒</span></span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="assets/enemies/01_field_enemy.png" onerror="this.onerror=null;this.src='assets/enemies/gobelyn.png';">
 <img id="dragon" class="char" src="assets/enemies/dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
 </div>
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <div id="questAnswerPanel" class="answerPanel" style="display:none"><div id="questAnswers" class="answers"></div></div>
 <div id="questItemModal" class="questModal"><div class="questModalCard"><h2>🎒 アイテムを使う</h2><p class="muted">問題画面を隠して、所持アイテムから選べます。</p><div id="questModalItems"></div><div class="toolbar"><button class="btn ghost" onclick="closeQuestItemModal()">閉じる</button></div></div></div>
+<div id="questCenterFx" class="questCenterFx"><img id="questCenterFxImg" alt="演出"><div id="questCenterFxText" class="questCenterFxText" style="display:none"></div></div>
 <script>
 const $=id=>document.getElementById(id);
 
@@ -1716,7 +1787,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbyBWdQt-Yv2d5Q3GeFcDUMDb1
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-skin-linked-id-enemy";
+const ASSET_VERSION="20260624-quest-reward-skins-timeattack";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -1876,6 +1947,8 @@ state.questUnlocked??={};
 state.timeAttackBests??={};
 state.zukanTab??="items";
 state.skin??={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
+state.skins??={};
+state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -1921,6 +1994,46 @@ function showDevMessage(){
  show("devMessage");
 }
 
+
+const ENEMY_EFFECT_MAP={
+ enemy_field:"dageki",
+ enemy_subtropical:"dageki",
+ enemy_snow:"dageki",
+ enemy_volcano:"fire",
+ enemy_desert:"tume",
+ enemy_cave:"dageki",
+ enemy_deepsea:"magic",
+ enemy_jungle:"dageki",
+ enemy_ruins:"dageki",
+ enemy_magicforest:"magic",
+ enemy_skyisland:"fire",
+ enemy_thunder:"tume",
+ enemy_glacier:"tume",
+ enemy_machinecity:"dageki",
+ enemy_haunted:"magic",
+ enemy_dragonvalley:"fire",
+ enemy_moon:"kiru",
+ enemy_starsea:"magic",
+ enemy_timedimension:"kiru",
+ enemy_worldtree:"kiru_dark"
+};
+function effectIdForSkin(id){
+ return ENEMY_EFFECT_MAP[id] || id || DEFAULT_PLAYER_EFFECT;
+}
+function ownedSkinIds(){
+ state.skins??={};
+ state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+ return allSkins().map(x=>x.id).filter(id=>!!state.skins[id]);
+}
+function unlockSkin(id){
+ if(!id)return false;
+ state.skins??={};
+ const already=!!state.skins[id];
+ state.skins[id]=true;
+ save();
+ return !already;
+}
+
 const BASE_SKINS=[
  {id:"magician",name:"魔術師"},
  {id:"knight",name:"騎士"},
@@ -1941,9 +2054,10 @@ function allSkins(){
 }
 function skinAssets(id){
  const skinId=id || DEFAULT_PLAYER_CHARACTER;
+ const effectId=effectIdForSkin(skinId);
  return {
   me:`assets/me/me_${skinId}.png`,
-  effect:`assets/effects/effect_${skinId}.png`
+  effect:`assets/effects/effect_${effectId}.png`
  };
 }
 function ensureSkinState(){
@@ -1956,14 +2070,17 @@ function ensureSkinState(){
  }
 
  state.skin.id ||= DEFAULT_PLAYER_CHARACTER;
+ if(!ownedSkinIds().includes(state.skin.id)){
+  state.skin.id=DEFAULT_PLAYER_CHARACTER;
+ }
 
  // 互換用に残す。常に同じIDにそろえる。
  state.skin.me = state.skin.id;
- state.skin.effect = state.skin.id;
+ state.skin.effect = effectIdForSkin(state.skin.id);
 }
 function selectedSkin(){ensureSkinState();return state.skin.id||DEFAULT_PLAYER_CHARACTER;}
 function selectedMe(){return selectedSkin();}
-function selectedEffect(){return selectedSkin();}
+function selectedEffect(){return effectIdForSkin(selectedSkin());}
 function skinName(id){
  return allSkins().find(x=>x.id===id)?.name || id;
 }
@@ -1998,24 +2115,21 @@ function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
  const id=selectedSkin();
- box.innerHTML=`現在：キャラ <b>${skinName(id)}</b> ／ 技 <b>${skinName(id)}</b> ／ 対応ID <b>${id}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
+ box.innerHTML=`現在：キャラ <b>${skinName(id)}</b> ／ 技 <b>effect_${effectIdForSkin(id)}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
 }
 function renderSkinList(targetId,type,currentId){
  const box=$(targetId);if(!box)return;
- const list=allSkins();
+ const owned=new Set(ownedSkinIds());
+ const list=allSkins().filter(item=>owned.has(item.id));
  box.innerHTML=list.map(item=>{
   const selected=item.id===currentId;
   const assets=skinAssets(item.id);
   const previewSrc=type==="effect" ? assets.effect : assets.me;
-  const note=type==="effect"
-   ? `effect_${item.id}.png`
-   : `me_${item.id}.png`;
   return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${item.id}')">
     <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
     <div>${selected?"✅ ":""}${item.name}</div>
-    <div class="skinSmall">${note}</div>
   </button>`;
- }).join("");
+ }).join("") || `<div class="muted">まだ使えるスキンがありません</div>`;
 }
 function renderSkinLists(){
  ensureSkinState();
@@ -2026,9 +2140,13 @@ function renderSkinLists(){
 }
 function selectSkin(id){
  ensureSkinState();
+ if(!ownedSkinIds().includes(id)){
+  alert("このスキンはまだ入手していません");
+  return;
+ }
  state.skin.id=id;
  state.skin.me=id;
- state.skin.effect=id;
+ state.skin.effect=effectIdForSkin(id);
  save();
  applySkinSettings();
  renderSkinLists();
@@ -2058,6 +2176,7 @@ function debugFullUnlockFromMenu(){
   state.questUnlocked[s.id]=true;
   state.items[itemKey(s)]=Math.max(99,Number(state.items[itemKey(s)]||0));
  });
+ allSkins().forEach(sk=>{state.skins[sk.id]=true;});
  TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
  cleanSelectedTitles();
  save();
@@ -2448,15 +2567,17 @@ function completedObjectCount(){
 function timeAttackBestText(stageId){
  const best=state.timeAttackBests?.[stageId];
  if(!best)return "自己ベスト：--";
+ if(best.elapsedSec!==undefined)return `自己ベスト：${Number(best.elapsedSec).toFixed(2)}秒`;
  return `自己ベスト：${best.score}PT / ${best.correctCount||0}問`;
 }
 function saveTimeAttackBest(){
  if(!game || game.mode!=="timeAttack")return false;
  state.timeAttackBests??={};
-state.zukanTab??="items";
+ state.zukanTab??="items";
+ const elapsedSec=Number(game.elapsedSec||0);
  const old=state.timeAttackBests[game.stage.id];
- const record={score:game.score||0,correctCount:game.correctCount||0,answeredCount:Math.max(0,(game.qIndex||1)-1),date:new Date().toISOString()};
- const isBest=!old || record.score>Number(old.score||0) || (record.score===Number(old.score||0) && record.correctCount>Number(old.correctCount||0));
+ const record={elapsedSec,correctCount:game.correctCount||0,answeredCount:Math.max(0,(game.qIndex||1)-1),date:new Date().toISOString()};
+ const isBest=!old || old.elapsedSec===undefined || elapsedSec<Number(old.elapsedSec||999999);
  if(isBest){
   state.timeAttackBests[game.stage.id]=record;
   save();
@@ -2541,6 +2662,8 @@ function startChallenge(i){
  game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name;
+ if($("timeLabel"))$("timeLabel").textContent="残り時間";
+ if($("timeUnit"))$("timeUnit").textContent="秒";
  startGame();
 }
 function startOriginal(){
@@ -2549,6 +2672,8 @@ function startOriginal(){
  game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(qs)};
  setupWorld(s.cls,s.sun,"オリジナル");
  $("modeTitle").textContent=s.name;
+ if($("timeLabel"))$("timeLabel").textContent="残り時間";
+ if($("timeUnit"))$("timeUnit").textContent="秒";
  startGame();
 }
 function setupWorld(cls,sun,label,image,enemyImage){
@@ -2594,7 +2719,14 @@ function nextQuestion(){
  const colors=["red","blue","green","yellow"], labels=["A","B","C","D"];
  $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${x}</button>`).join("");
  updateStats();
- timerId=setInterval(()=>{game.time--;updateStats();if(game.time<=0)answer(-1);},1000);
+ if(game.mode==="timeAttack"){
+  timerId=setInterval(()=>{
+   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
+   updateStats();
+  },50);
+ }else{
+  timerId=setInterval(()=>{game.time--;updateStats();if(game.time<=0)answer(-1);},1000);
+ }
 }
 function markAnswer(selectedIndex){
  const buttons=[...document.querySelectorAll("#answers .ans")];
@@ -2614,7 +2746,12 @@ function answer(i){
  markAnswer(i);
  const ok=i===game.current.c;
  if(ok){
-  game.score+=game.time>=15?15:10;
+  if(game.mode==="timeAttack"){
+   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
+   game.score=0;
+  }else{
+   game.score+=game.time>=15?15:10;
+  }
   game.streak++;
   game.correctCount++;
   if(game.correctCount>=10)addBadge("correct_10");
@@ -2644,10 +2781,12 @@ function checkClear(){
  canAnswer=false;
 
  if(game.mode==="timeAttack"){
+  game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
+  game.score=0;
   const isBest=saveTimeAttackBest();
   submitResult("timeAttackClear");
   const bestMsg=isBest ? " 自己ベスト更新！" : "";
-  $("feedback").textContent=`⏱️ タイムアタッククリア！ 正解数：${game.correctCount}　スコア：${game.score}PT${bestMsg}`;
+  $("feedback").textContent=`⏱️ タイムアタッククリア！ ${game.elapsedSec.toFixed(2)}秒${bestMsg}`;
   setTimeout(openChallenge,1800);
   return true;
  }
@@ -2665,10 +2804,16 @@ function checkClear(){
  return true;
 }
 function updateStats(){
- $("score").textContent=game?game.score:0;
- if($("scoreHudValue")) $("scoreHudValue").textContent=game?game.score:0;
+ $("score").textContent=game?(game.mode==="timeAttack" ? 0 : game.score):0;
+ if($("scoreHudValue")) $("scoreHudValue").textContent=game?(game.mode==="timeAttack" ? 0 : game.score):0;
  $("streak").textContent=game?game.streak:0;
  $("miss").textContent=game?game.miss:0;
+ if(game?.mode==="timeAttack"){
+  const elapsed=Number(game.elapsedSec||0);
+  $("time").textContent=elapsed.toFixed(2);
+  $("timeFill").style.width="100%";
+  return;
+ }
  const maxTime=game?.timeLimit || 20;
  $("time").textContent=game?game.time:maxTime;
  $("timeFill").style.width=(game?Math.max(0,game.time/maxTime*100):100)+"%";
@@ -2871,6 +3016,8 @@ function dragonEvent(){
 const ITEM_TYPES={
  heal:{label:"回復系",desc:"HPを回復する"},
  attack:{label:"攻撃系",desc:"敵へのダメージを増やす"},
+ debuff:{label:"弱体系",desc:"その敵の回避率を下げる"},
+ drop:{label:"報酬系",desc:"クエストクリア時のドロップ個数を増やす"},
  equip:{label:"装備系",desc:"持っているだけで永続強化"},
  time:{label:"時間操作系",desc:"タイマーを止める"},
  summon:{label:"召喚系",desc:"特別な助けを呼ぶ"},
@@ -2891,33 +3038,33 @@ const ITEM_MASTER={
  cave:{
   name:"水晶",
   img:"assets/items/06_cave_item.png",
-  type:"equip",
-  effect:"永続強化：敵回避率-5%",
+  type:"debuff",
+  effect:"その敵の回避率-5%（重ね掛け不可）",
   dodgeDown:0.05
  },
 
  thunder:{
   name:"雷の欠片",
   img:"assets/items/12_thunder_item.png",
-  type:"equip",
-  effect:"永続強化：敵回避率-10%",
+  type:"debuff",
+  effect:"その敵の回避率-10%（重ね掛け不可）",
   dodgeDown:0.10
  },
 
  glacier:{
   name:"氷晶",
   img:"assets/items/13_glacier_item.png",
-  type:"equip",
-  effect:"永続強化：敵回避率-15%",
+  type:"debuff",
+  effect:"その敵の回避率-15%（重ね掛け不可）",
   dodgeDown:0.15
  },
 
  deepsea:{
   name:"真珠",
   img:"assets/items/07_deepsea_item.png",
-  type:"equip",
-  effect:"永続強化：アイテム獲得率UP",
-  itemRateBonus:1
+  type:"drop",
+  effect:"このクエストのクリア報酬ドロップ+1",
+  extraDrop:1
  },
 
  skyisland:{
@@ -2978,7 +3125,7 @@ function giveStageClearReward(stage){
  state.items[key]=(state.items[key]||0)+1;
 }
 function questPassiveStats(){
- const stats={timerBonus:0,attackPassive:0,itemRateBonus:0,dodgeDown:0,hpBonus:0};
+ const stats={timerBonus:0,attackPassive:0,itemRateBonus:0,hpBonus:0};
  STAGES.forEach(s=>{
   const count=state.items?.[itemKey(s)]||0;
   if(count<=0)return;
@@ -2986,7 +3133,6 @@ function questPassiveStats(){
   stats.timerBonus+=Math.min(5,count*(info.timerBonus||0));
   stats.attackPassive+=Math.min(5,count*(info.attackPassive||0));
   stats.itemRateBonus+=Math.min(5,count*(info.itemRateBonus||0));
-  stats.dodgeDown+=Math.min(.30,count*(info.dodgeDown||0));
   stats.hpBonus+=Math.min(3,count*(info.hpBonus||0));
  });
  return stats;
@@ -3002,7 +3148,7 @@ function enemyBaseDodgeRate(stageIndex){
 function questEnemyDodgeRate(){
  if(!quest)return 0;
  const base=enemyBaseDodgeRate(quest.stageIndex);
- const down=quest.passive?.dodgeDown||0;
+ const down=quest.enemyDodgeDebuff||0;
  return Math.max(0,base-down);
 }
 function percentText(value){
@@ -3059,14 +3205,20 @@ function renderItems(){
 }
 function startTimeAttack(i){
  const s=STAGES[i];
- game={mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:10,timeLimit:10,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
+ game={
+  mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,
+  time:0,timeLimit:0,elapsedSec:0,startMs:performance.now(),
+  qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,
+  unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))
+ };
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name+" タイムアタック";
+ if($("timeLabel"))$("timeLabel").textContent="経過時間";
+ if($("timeUnit"))$("timeUnit").textContent="秒";
  show("game");addBadge("first");renderObjects();updateStats();
- $("feedback").textContent=`⏱️ タイムアタック！クリア条件は通常の挑戦と同じです。${timeAttackBestText(s.id)}`;
+ $("feedback").textContent=`⏱️ タイムアタック！クリアまでの秒数を測ります。${timeAttackBestText(s.id)}`;
  nextQuestion();
 }
-
 const QUEST_MAX_TIME=20;
 const QUEST_PLAYER_MAX_HP=3;
 let quest=null;
@@ -3101,7 +3253,7 @@ function startQuest(i){
    area:1,progress:0,phase:"walk",enemyHp:0,enemyMax:0,
    playerHp:playerMaxHp,playerMaxHp:playerMaxHp,score:0,attackBoost:1,
    baseAttack:1+passive.attackPassive,maxTime,time:maxTime,
-   timeFrozen:0,missGuard:false,passive
+   timeFrozen:0,missGuard:false,enemyDodgeDebuff:0,extraDrops:0,passive
   };
 
   show("questGame");
@@ -3138,7 +3290,9 @@ function setupQuestWorld(){
   bgImg.src=`${bg}?v=${ASSET_VERSION}`;
  }
 
- $("questHeroImg").innerHTML=`<img src="./assets/me/me_${selectedMe()}.png?v=${ASSET_VERSION}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
+ const meId=selectedMe();
+ const flip=meId.startsWith("enemy_") ? "transform:scaleX(-1);" : "";
+ $("questHeroImg").innerHTML=`<img src="./assets/me/me_${meId}.png?v=${ASSET_VERSION}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;${flip}" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
  $("questEnemyImg").innerHTML=`<img src="${s.enemyImage}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
  $("questChest").innerHTML=`<img src="${CHEST_CLOSED_IMAGE}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
 
@@ -3283,7 +3437,13 @@ function questNextQuestion(){
  questLoadQuestion();
 }
 function questSpawnEnemy(){
- quest.phase="battle";quest.enemyMax=Math.max(1,quest.stageIndex+1);quest.enemyHp=quest.enemyMax;$("questEnemy").style.display="block";$("questFeedback").textContent=`${quest.stage.enemyName}出現！戦闘開始！`;questShowNext("戦う");questUpdateUI();questAutoNext(900);
+ quest.phase="battle";
+ quest.enemyDodgeDebuff=0;
+ quest.enemyMax=Math.max(1,quest.stageIndex+1);
+ quest.enemyHp=quest.enemyMax;
+ $("questEnemy").style.display="block";
+ $("questFeedback").textContent=`${quest.stage.enemyName}出現！戦闘開始！`;
+ questShowNext("戦う");questUpdateUI();questAutoNext(900);
 }
 function questTakeDamage(enemyAttack,customMessage){
  quest.playerHp--;
@@ -3371,12 +3531,30 @@ function questPlayMagic(){
   fallbackMagic
  );
 }
-function questFinish(){
- questStopTimer();quest.phase="finish";$("questEnemy").style.display="none";$("questChest").style.display="block";$("questChest").innerHTML=`<img src="${CHEST_OPEN_IMAGE}" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;questMoveBg(1);
- state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();applySkinSettings();applyWorldTheme("questGame");
- $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">チャレンジ画面に戻ります。</div></div>`;
- $("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="🎉 クエストクリア！";questUpdateUI();
- setTimeout(()=>{quest=null;document.body.classList.remove("gameMode");renderStages();show("challenge");},1500);
+async function questFinish(){
+ questStopTimer();
+ quest.phase="finish";
+ $("questEnemy").style.display="none";
+ $("questChest").style.display="none";
+ questMoveBg(1);
+
+ state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
+ save();
+ applySkinSettings();
+ applyWorldTheme("questGame");
+
+ $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">報酬を獲得します。</div></div>`;
+ $("questAnswers").innerHTML="";
+ $("questNextBtn").style.display="none";
+ $("questFeedback").textContent="🎉 クエストクリア！";
+ questUpdateUI();
+
+ await questRewardSequence();
+
+ quest=null;
+ document.body.classList.remove("gameMode");
+ renderStages();
+ show("challenge");
 }
 function questGameOver(){
  questStopTimer();quest.phase="gameover";$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
@@ -3395,7 +3573,7 @@ function questUpdateUI(){
  if(quest.phase==="finish"){$("questAreaText").textContent="クリア";$("questPhaseText").textContent="終了";$("questProgressText").textContent="冒険成功";return;}
  if(quest.phase==="gameover"){$("questAreaText").textContent="敗北";$("questPhaseText").textContent="終了";$("questProgressText").textContent="HP0";return;}
  $("questAreaText").textContent=`第${quest.area}エリア`;$("questPhaseText").textContent=quest.phase==="walk"?"前進":"戦闘";$("questProgressText").textContent=`進行 ${quest.progress}/3`;
- $("questItemText").textContent=`攻撃${quest.baseAttack||1} 回避低下${percentText(quest.passive?.dodgeDown||0)}`;
+ $("questItemText").textContent=`攻撃${quest.baseAttack||1} 回避低下${percentText(quest.enemyDodgeDebuff||0)} 報酬+${Math.max(0,Number(quest.extraDrops||0))}`;
 }
 function openQuestItemModal(){
  if(!quest||quest.phase==="finish"||quest.phase==="gameover")return;
@@ -3406,7 +3584,7 @@ function renderQuestModalItems(){
  const box=$("questModalItems");
  box.innerHTML=STAGES.map(s=>{
   const key=itemKey(s), count=state.items?.[key]||0, info=itemInfo(s), type=ITEM_TYPES[info.type]||ITEM_TYPES.material;
-  const usable=count>0 && info.type!=="equip" && info.type!=="material";
+  const usable=count>0 && info.type!=="equip" && info.type!=="material" && (!info.dodgeDown || quest.phase==="battle");
   const name=count>0?info.name:"？？？？？";
   const effect=count>0?info.effect:"未入手：効果は入手すると見られます";
   const icon=count>0
@@ -3420,18 +3598,101 @@ function removeWrongQuestChoices(num){
  const wrong=buttons.map((btn,idx)=>({btn,idx})).filter(x=>x.idx!==quest.current.c && x.btn.style.visibility!=="hidden");
  shuffle(wrong).slice(0,num).forEach(x=>{x.btn.style.visibility="hidden";x.btn.disabled=true;});
 }
+
+function centerFx(src,ms=1800,cls="",text=""){
+ const wrap=$("questCenterFx"),img=$("questCenterFxImg"),label=$("questCenterFxText");
+ if(!wrap||!img)return Promise.resolve();
+ wrap.className=`questCenterFx show ${cls||""}`.trim();
+ img.style.display="block";
+ img.src=src;
+ if(label){
+  label.textContent=text||"";
+  label.style.display=text?"block":"none";
+ }
+ return new Promise(resolve=>{
+  setTimeout(()=>{
+   wrap.className="questCenterFx";
+   img.removeAttribute("src");
+   if(label)label.style.display="none";
+   resolve();
+  },ms);
+ });
+}
+function questRewardPool(){
+ const baseSkins=BASE_SKINS.map(x=>x.id);
+ return {baseSkins};
+}
+function randomQuestReward(stage){
+ const r=Math.random();
+ if(r<0.70){
+  return {kind:"item",stageId:stage.id,name:itemDisplayName(stage),src:itemInfo(stage).img||stage.itemImage};
+ }
+ if(r<0.90){
+  const ids=BASE_SKINS.map(x=>x.id);
+  const id=ids[Math.floor(Math.random()*ids.length)];
+  return {kind:"skin",skinId:id,name:skinName(id),src:`assets/me/me_${id}.png`};
+ }
+ const enemyId=`enemy_${stage.id}`;
+ return {kind:"skin",skinId:enemyId,name:skinName(enemyId),src:`assets/me/me_${enemyId}.png`};
+}
+function grantQuestReward(reward){
+ if(!reward)return "";
+ if(reward.kind==="item"){
+  const s=STAGES.find(x=>x.id===reward.stageId)||quest?.stage;
+  const key=itemKey(s);
+  state.items??={};
+  state.items[key]=(state.items[key]||0)+1;
+  save();
+  return `${reward.name}を手に入れた！`;
+ }
+ if(reward.kind==="skin"){
+  const isNew=unlockSkin(reward.skinId);
+  return isNew ? `${reward.name}のスキンを入手！` : `${reward.name}のスキンは入手済み！`;
+ }
+ return "";
+}
+async function questRewardSequence(){
+ const stage=quest.stage;
+ const dropCount=1+Math.max(0,Number(quest.extraDrops||0));
+ await centerFx("assets/effects/effect_clear.png",2000,"clearFx");
+ await centerFx("assets/effects/effect_chest.png",2000,"chestFx");
+ await centerFx(CHEST_CLOSED_IMAGE,1000,"chestFx");
+ await centerFx(CHEST_OPEN_IMAGE,900,"chestFx");
+ for(let n=0;n<dropCount;n++){
+  const reward=randomQuestReward(stage);
+  const msg=grantQuestReward(reward);
+  await centerFx(reward.src,2000,"dropFx",dropCount>1?`${msg}（${n+1}/${dropCount}）`:msg);
+ }
+ renderItems();
+ renderSkinLists();
+ renderZukan(state.zukanTab||"items");
+}
+
 function useQuestItem(stageId){
  const s=STAGES.find(x=>x.id===stageId);if(!s)return;
  const key=itemKey(s), info=itemInfo(s);if((state.items[key]||0)<=0)return;
  if(info.type==="equip"||info.type==="material"){alert("このアイテムは持っているだけで効果があります");return;}
+ if(info.dodgeDown && quest.phase!=="battle"){alert("回避率ダウンは敵が出ている戦闘中だけ使えます");return;}
  state.items[key]--;let text="";
  if(info.heal){quest.playerHp=Math.min(quest.playerMaxHp||QUEST_PLAYER_MAX_HP,quest.playerHp+info.heal);text=`${info.icon||"🎒"} ${info.name}を使った！HPが回復！`;}
  else if(info.attack){quest.attackBoost=(quest.attackBoost||1)+info.attack;text=`${info.icon||"🎒"} ${info.name}を使った！次の攻撃が強くなる！`;}
+ else if(info.dodgeDown){
+  quest.enemyDodgeDebuff=Math.max(quest.enemyDodgeDebuff||0,info.dodgeDown);
+  text=`${info.name}を使った！この敵の回避率が${percentText(info.dodgeDown)}下がった！`;
+ }
+ else if(info.extraDrop){
+  quest.extraDrops=(quest.extraDrops||0)+info.extraDrop;
+  text=`${info.name}を使った！クリア時のドロップが+${info.extraDrop}個になる！`;
+ }
  else if(info.freeze){quest.timeFrozen=Math.max(quest.timeFrozen||0,info.freeze);text=`${info.icon||"🎒"} ${info.name}を使った！時間が${info.freeze}秒止まる！`;}
  else if(info.removeChoices){removeWrongQuestChoices(info.removeChoices);text=`${info.icon||"🎒"} ${info.summonName}召喚！選択肢を${info.removeChoices}つ消した！`;}
  else if(info.missGuard){quest.missGuard=true;text=`${info.icon||"🎒"} ${info.summonName}召喚！次のミスを1回無効にする！`;}
  else {state.items[key]++;alert("このアイテムはまだ使用効果がありません");return;}
- save();closeQuestItemModal();$("questFeedback").textContent=text;questUpdateUI();
+ save();
+ closeQuestItemModal();
+ centerFx(info.img||s.itemImage,1800,"",info.name);
+ $("questFeedback").textContent=text;
+ questUpdateUI();
 }
 function parseCSV(text){
  const rows=[];
