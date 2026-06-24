@@ -1268,6 +1268,16 @@ body.gameMode .answerPanel{padding-top:9px}
 .skinCurrent{background:#f0fff4;border:2px dashed #b9efc8;border-radius:16px;padding:10px;font-weight:1000;margin-top:10px}
 @media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}}
 
+/* ホーム背景：クエスト未クリアは黒、クエストクリア後は黄金 */
+.homeHero.homeDark{
+ background:radial-gradient(circle at 50% 42%,#2c2c2c 0 16%,#101010 42%,#000 100%) !important;
+}
+.homeHero.homeGold{
+ background:radial-gradient(circle at 50% 38%,#fff7a8 0 12%,#f6c945 34%,#b77912 70%,#4a2b05 100%) !important;
+}
+.skinMenuBox{grid-template-columns:1fr 1fr !important}
+@media(max-width:560px){.skinMenuBox{grid-template-columns:1fr 1fr !important}}
+
 </style>
 </head>
 <body>
@@ -1379,14 +1389,11 @@ body.gameMode .answerPanel{padding-top:9px}
   <section id="skin" class="screen">
     <div class="card">
       <h2>🎨 キャラ・スキン変更</h2>
-      <p class="muted">クエストで使う自分のキャラ、ホーム背景、攻撃時の技エフェクトを変更できます。</p>
+      <p class="muted">クエストで使う自分のキャラと、攻撃時の技エフェクトを変更できます。</p>
 
       <div class="menuImageGrid skinMenuBox">
         <button class="imgBtn" onclick="openSkinPanel('me')">
           <img src="assets/btn/btn_me_change.png" alt="キャラ変更">
-        </button>
-        <button class="imgBtn" onclick="openSkinPanel('background')">
-          <img src="assets/btn/btn_backgrounds_change.png" alt="ホーム背景変更">
         </button>
         <button class="imgBtn" onclick="openSkinPanel('effect')">
           <img src="assets/btn/btn_effect_change.png" alt="技変更">
@@ -1399,12 +1406,6 @@ body.gameMode .answerPanel{padding-top:9px}
         <h3>キャラ変更</h3>
         <p class="muted">クエストで表示される自分のキャラを選びます。</p>
         <div id="meSkinList" class="skinSelectGrid"></div>
-      </div>
-
-      <div id="skinPanelBackground" class="skinPanel">
-        <h3>ホーム背景変更</h3>
-        <p class="muted">最初のホーム画面の背景を選びます。</p>
-        <div id="backgroundSkinList" class="skinSelectGrid"></div>
       </div>
 
       <div id="skinPanelEffect" class="skinPanel">
@@ -1611,8 +1612,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbyBWdQt-Yv2d5Q3GeFcDUMDb1
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const DEFAULT_HOME_BACKGROUND="home";
-const ASSET_VERSION="20260623-skin-change";
+const ASSET_VERSION="20260624-skin-2tabs-gold";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -1771,7 +1771,7 @@ state.questClears??={};
 state.questUnlocked??={};
 state.timeAttackBests??={};
 state.zukanTab??="items";
-state.skin??={me:DEFAULT_PLAYER_CHARACTER,background:DEFAULT_HOME_BACKGROUND,effect:DEFAULT_PLAYER_EFFECT};
+state.skin??={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -1823,13 +1823,6 @@ const ME_SKINS=[
  {id:"archer",name:"弓使い",src:"assets/me/me_archer.png"},
  {id:"lancer",name:"槍使い",src:"assets/me/me_lancer.png"}
 ];
-const HOME_BACKGROUNDS=[
- {id:"home",name:"通常",src:"home.png"},
- {id:"bg01",name:"背景1",src:"assets/home/bg01.png"},
- {id:"bg02",name:"背景2",src:"assets/home/bg02.png"},
- {id:"bg03",name:"背景3",src:"assets/home/bg03.png"},
- {id:"bg04",name:"背景4",src:"assets/home/bg04.png"}
-];
 const EFFECT_SKINS=[
  {id:"magician",name:"魔法",src:"assets/effects/effect_magician.png"},
  {id:"sword",name:"剣撃",src:"assets/effects/effect_sword.png"},
@@ -1842,22 +1835,22 @@ const EFFECT_SKINS=[
 function ensureSkinState(){
  state.skin??={};
  state.skin.me ||= DEFAULT_PLAYER_CHARACTER;
- state.skin.background ||= DEFAULT_HOME_BACKGROUND;
  state.skin.effect ||= DEFAULT_PLAYER_EFFECT;
 }
 function selectedMe(){ensureSkinState();return state.skin.me||DEFAULT_PLAYER_CHARACTER;}
 function selectedEffect(){ensureSkinState();return state.skin.effect||DEFAULT_PLAYER_EFFECT;}
-function selectedHomeBackground(){ensureSkinState();return state.skin.background||DEFAULT_HOME_BACKGROUND;}
 function skinName(list,id){return list.find(x=>x.id===id)?.name || id;}
+function hasQuestClearForGoldBackground(){
+ const clears=state.questClears||{};
+ return Object.values(clears).some(v=>Number(v||0)>0);
+}
 function applySkinSettings(){
  ensureSkinState();
- const bg=HOME_BACKGROUNDS.find(x=>x.id===selectedHomeBackground()) || HOME_BACKGROUNDS[0];
  const hero=document.querySelector(".homeHero");
  if(hero){
-  hero.style.backgroundImage=`url('${bg.src}?v=${ASSET_VERSION}')`;
-  hero.style.backgroundSize="cover";
-  hero.style.backgroundPosition="center center";
-  hero.style.backgroundRepeat="no-repeat";
+  const gold=hasQuestClearForGoldBackground();
+  hero.classList.toggle("homeGold",gold);
+  hero.classList.toggle("homeDark",!gold);
  }
 }
 function showSkin(){
@@ -1867,7 +1860,7 @@ function showSkin(){
  show("skin");
 }
 function openSkinPanel(kind){
- const map={me:"skinPanelMe",background:"skinPanelBackground",effect:"skinPanelEffect"};
+ const map={me:"skinPanelMe",effect:"skinPanelEffect"};
  Object.values(map).forEach(id=>{const el=$(id);if(el)el.classList.remove("active");});
  const target=$(map[kind]||map.me);
  if(target)target.classList.add("active");
@@ -1876,7 +1869,7 @@ function openSkinPanel(kind){
 function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
- box.innerHTML=`現在：キャラ <b>${skinName(ME_SKINS,selectedMe())}</b> ／ ホーム背景 <b>${skinName(HOME_BACKGROUNDS,selectedHomeBackground())}</b> ／ 技 <b>${skinName(EFFECT_SKINS,selectedEffect())}</b>`;
+ box.innerHTML=`現在：キャラ <b>${skinName(ME_SKINS,selectedMe())}</b> ／ 技 <b>${skinName(EFFECT_SKINS,selectedEffect())}</b> ／ 背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
 }
 function renderSkinList(targetId,list,type,currentId){
  const box=$(targetId);if(!box)return;
@@ -1893,13 +1886,11 @@ function renderSkinLists(){
  ensureSkinState();
  renderSkinCurrent();
  renderSkinList("meSkinList",ME_SKINS,"me",selectedMe());
- renderSkinList("backgroundSkinList",HOME_BACKGROUNDS,"background",selectedHomeBackground());
  renderSkinList("effectSkinList",EFFECT_SKINS,"effect",selectedEffect());
 }
 function selectSkin(type,id){
  ensureSkinState();
  if(type==="me")state.skin.me=id;
- if(type==="background")state.skin.background=id;
  if(type==="effect")state.skin.effect=id;
  save();
  applySkinSettings();
@@ -2126,6 +2117,7 @@ function show(id){
  renderBadges();
  renderTitles();
  updatePlayerDisplay();
+ applySkinSettings();
  applySkinSettings();
  if(id==="menu")loadRanking();
 }
@@ -3140,7 +3132,7 @@ function questPlayMagic(){
 }
 function questFinish(){
  questStopTimer();quest.phase="finish";$("questEnemy").style.display="none";$("questChest").style.display="block";$("questChest").innerHTML=`<img src="${CHEST_OPEN_IMAGE}" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;questMoveBg(1);
- state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();
+ state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();applySkinSettings();
  $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat(QUEST_PLAYER_MAX_HP-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">チャレンジ画面に戻ります。</div></div>`;
  $("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="🎉 クエストクリア！";questUpdateUI();
  setTimeout(()=>{quest=null;document.body.classList.remove("gameMode");renderStages();show("challenge");},1500);
