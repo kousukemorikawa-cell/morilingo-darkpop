@@ -1268,12 +1268,89 @@ body.gameMode .answerPanel{padding-top:9px}
 .skinCurrent{background:#f0fff4;border:2px dashed #b9efc8;border-radius:16px;padding:10px;font-weight:1000;margin-top:10px}
 @media(max-width:560px){.skinSelectGrid{grid-template-columns:1fr 1fr;gap:8px}.skinPreview{height:66px}.skinPreview img{max-height:66px}}
 
-/* ホーム背景：クエスト未クリアは黒、クエストクリア後は黄金 */
-.homeHero.homeDark{
- background:radial-gradient(circle at 50% 42%,#2c2c2c 0 16%,#101010 42%,#000 100%) !important;
+/* ==========================================================
+   復興テーマ背景
+   ※一番最初のスタート画面 home は通常背景のまま。
+   ※メニュー・チャレンジ・ゲーム画面などだけ黒→黄金に切り替える。
+========================================================== */
+body.darkTheme{
+ background:
+  radial-gradient(circle at 50% 18%,rgba(255,255,255,.08) 0 9%,transparent 28%),
+  linear-gradient(160deg,#151515,#050505 68%,#000);
+ color:#fff;
 }
-.homeHero.homeGold{
- background:radial-gradient(circle at 50% 38%,#fff7a8 0 12%,#f6c945 34%,#b77912 70%,#4a2b05 100%) !important;
+body.goldTheme{
+ background:
+  radial-gradient(circle at 50% 14%,#fff7a8 0 10%,transparent 32%),
+  linear-gradient(160deg,#fff0a8,#f6c945 48%,#9b650f);
+ color:#2d2105;
+}
+body.darkTheme .card,
+body.darkTheme .rankingBox,
+body.darkTheme .titleBox,
+body.darkTheme .skinPanel,
+body.darkTheme .storyPage{
+ background:rgba(22,22,22,.94);
+ color:#fff;
+ border-color:#333;
+ box-shadow:0 16px 38px #0008;
+}
+body.darkTheme .stage,
+body.darkTheme .itemCard,
+body.darkTheme .zukanCard,
+body.darkTheme .rankingCard,
+body.darkTheme .titleCard,
+body.darkTheme .skinCard,
+body.darkTheme .skinCurrent,
+body.darkTheme .feedback,
+body.darkTheme .question{
+ background:#222;
+ color:#fff;
+ border-color:#3a3a3a;
+}
+body.darkTheme .muted,
+body.darkTheme .skinSmall,
+body.darkTheme .itemType,
+body.darkTheme .zukanMeta,
+body.darkTheme .titleDesc{
+ color:#c9c9c9;
+}
+body.darkTheme .rankingEmpty,
+body.darkTheme .badges.empty,
+body.darkTheme .devNote,
+body.darkTheme .storyNote,
+body.darkTheme .zukanNote,
+body.darkTheme .titleHint{
+ background:#191919;
+ color:#e7dca5;
+ border-color:#6b5a18;
+}
+body.darkTheme .answerPanel{
+ background:rgba(12,12,12,.94);
+}
+body.goldTheme .card,
+body.goldTheme .rankingBox,
+body.goldTheme .titleBox,
+body.goldTheme .skinPanel,
+body.goldTheme .storyPage{
+ background:rgba(255,252,232,.94);
+ border-color:#fff4b8;
+ box-shadow:0 16px 38px rgba(93,58,0,.28);
+}
+body.goldTheme .stage,
+body.goldTheme .itemCard,
+body.goldTheme .zukanCard,
+body.goldTheme .rankingCard,
+body.goldTheme .titleCard,
+body.goldTheme .skinCard,
+body.goldTheme .skinCurrent,
+body.goldTheme .feedback,
+body.goldTheme .question{
+ background:#fffdf1;
+ border-color:#f4d66a;
+}
+body.goldTheme .answerPanel{
+ background:rgba(255,251,224,.94);
 }
 .skinMenuBox{grid-template-columns:1fr 1fr !important}
 @media(max-width:560px){.skinMenuBox{grid-template-columns:1fr 1fr !important}}
@@ -1470,7 +1547,6 @@ body.gameMode .answerPanel{padding-top:9px}
         </div>
       </div>
 
-      <div class="storyNote">画像ファイル：<b>01_story.png</b>・<b>02_story.png</b>・<b>03_story.png</b>（assets/story フォルダ）</div>
 
       <div class="toolbar">
         <button class="btn primary" onclick="openChallenge()">冒険へ進む</button>
@@ -1612,7 +1688,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbyBWdQt-Yv2d5Q3GeFcDUMDb1
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-skin-2tabs-gold";
+const ASSET_VERSION="20260624-skin-2tabs-menu-theme-clean";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -1846,12 +1922,13 @@ function hasQuestClearForGoldBackground(){
 }
 function applySkinSettings(){
  ensureSkinState();
- const hero=document.querySelector(".homeHero");
- if(hero){
-  const gold=hasQuestClearForGoldBackground();
-  hero.classList.toggle("homeGold",gold);
-  hero.classList.toggle("homeDark",!gold);
- }
+}
+function applyWorldTheme(screenId){
+ // スタート画面だけは黒・黄金テーマを当てない。home.png のまま表示する。
+ const isHome=screenId==="home";
+ const gold=hasQuestClearForGoldBackground();
+ document.body.classList.toggle("darkTheme",!isHome && !gold);
+ document.body.classList.toggle("goldTheme",!isHome && gold);
 }
 function showSkin(){
  ensureSkinState();
@@ -1869,7 +1946,7 @@ function openSkinPanel(kind){
 function renderSkinCurrent(){
  const box=$("skinCurrent");
  if(!box)return;
- box.innerHTML=`現在：キャラ <b>${skinName(ME_SKINS,selectedMe())}</b> ／ 技 <b>${skinName(EFFECT_SKINS,selectedEffect())}</b> ／ 背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
+ box.innerHTML=`現在：キャラ <b>${skinName(ME_SKINS,selectedMe())}</b> ／ 技 <b>${skinName(EFFECT_SKINS,selectedEffect())}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
 }
 function renderSkinList(targetId,list,type,currentId){
  const box=$(targetId);if(!box)return;
@@ -1878,7 +1955,6 @@ function renderSkinList(targetId,list,type,currentId){
   return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${type}','${item.id}')">
     <div class="skinPreview"><img src="${item.src}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
     <div>${selected?"✅ ":""}${item.name}</div>
-    <div class="skinSmall">${item.src}</div>
   </button>`;
  }).join("");
 }
@@ -2118,7 +2194,7 @@ function show(id){
  renderTitles();
  updatePlayerDisplay();
  applySkinSettings();
- applySkinSettings();
+ applyWorldTheme(id);
  if(id==="menu")loadRanking();
 }
 
@@ -3132,7 +3208,7 @@ function questPlayMagic(){
 }
 function questFinish(){
  questStopTimer();quest.phase="finish";$("questEnemy").style.display="none";$("questChest").style.display="block";$("questChest").innerHTML=`<img src="${CHEST_OPEN_IMAGE}" onerror="this.onerror=null;this.parentElement.textContent='✨';">`;questMoveBg(1);
- state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();applySkinSettings();
+ state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;save();applySkinSettings();applyWorldTheme("questGame");
  $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat(QUEST_PLAYER_MAX_HP-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">チャレンジ画面に戻ります。</div></div>`;
  $("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="🎉 クエストクリア！";questUpdateUI();
  setTimeout(()=>{quest=null;document.body.classList.remove("gameMode");renderStages();show("challenge");},1500);
