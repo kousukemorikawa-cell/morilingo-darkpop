@@ -2074,10 +2074,10 @@ function renderStages(){
      ⏱️ ${timeAttackBestText(s.id)}
     </div>
    </div>
-   <button class="btn ${open?"primary":"ghost"}"
-    ${open?`onclick="openStageMenu(${i})"`:"disabled"}>
-    このステージへ
-   </button>
+<button class="imgBtn"
+ ${open?`onclick="openStageMenu(${i})"`:"disabled"}>
+ <img src="assets/btn/btn_nextstage.png" alt="このステージへ">
+</button>
   </div>`;
  }).join("");
 }
