@@ -1515,6 +1515,292 @@ body.goldTheme .answerPanel{
  }
 }
 
+
+/* ==========================================================
+   2026-06-24 追加修正
+   スマホ版：最初のメニューだけ画像ボタンを2列配置
+   ※ステージメニュー・スキンメニュー等には影響させない
+========================================================== */
+@media(max-width:560px){
+ #menu .menuImageGrid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  column-gap:4px !important;
+  row-gap:4px !important;
+  gap:4px !important;
+  width:100% !important;
+ }
+
+ #menu .menuImageGrid .imgBtn{
+  grid-column:auto !important;
+  justify-self:stretch !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+ }
+
+ #menu .menuImageGrid .imgBtn img{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  height:auto !important;
+  margin:0 !important;
+ }
+
+ #menu .menuImageGrid #devAdminBtn{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  margin-top:6px !important;
+ }
+}
+
+
+
+
+/* skin status bar and two-column tabs */
+#skin .skinStatusBar{
+ position:sticky !important;
+ top:8px !important;
+ z-index:999999 !important;
+ display:grid !important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+ gap:8px !important;
+ margin:8px 0 10px !important;
+ padding:8px !important;
+ background:#f0fff4 !important;
+ border:3px solid #b9efc8 !important;
+ border-radius:16px !important;
+ box-shadow:0 8px 22px rgba(0,0,0,.18) !important;
+}
+#skin .skinStatusItem{
+ min-width:0 !important;
+ background:#fff !important;
+ border:2px solid #e6f2eb !important;
+ border-radius:12px !important;
+ padding:7px 9px !important;
+ line-height:1.25 !important;
+}
+#skin .skinStatusLabel{
+ display:block !important;
+ font-size:11px !important;
+ color:#667085 !important;
+ font-weight:1000 !important;
+}
+#skin .skinStatusItem b{
+ display:block !important;
+ margin-top:2px !important;
+ font-size:16px !important;
+ font-weight:1000 !important;
+ white-space:nowrap !important;
+ overflow:hidden !important;
+ text-overflow:ellipsis !important;
+}
+#skin .skinStatusItem small{
+ font-size:11px !important;
+ color:#667085 !important;
+ margin-left:3px !important;
+}
+#skin .skinTabGrid{
+ display:grid !important;
+ grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+ gap:6px !important;
+ width:100% !important;
+ margin:8px 0 12px !important;
+}
+#skin .skinTabGrid .imgBtn{
+ display:block !important;
+ width:100% !important;
+ min-width:0 !important;
+ margin:0 !important;
+ padding:0 !important;
+ grid-column:auto !important;
+ justify-self:stretch !important;
+}
+#skin .skinTabGrid .imgBtn img{
+ display:block !important;
+ width:100% !important;
+ max-width:none !important;
+ height:auto !important;
+ margin:0 !important;
+ object-fit:contain !important;
+}
+@media(max-width:560px){
+ #skin .skinStatusBar{top:6px !important;gap:5px !important;padding:7px !important;}
+ #skin .skinStatusItem{padding:6px 7px !important;}
+ #skin .skinStatusItem b{font-size:13px !important;}
+ #skin .skinStatusItem small{font-size:10px !important;}
+ #skin .skinTabGrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important;}
+}
+
+
+/* ==========================================================
+   2026-06-25 追加：メニュー上部の称号・開発者お知らせ
+========================================================== */
+.menuTopStatus{
+ display:grid;
+ gap:10px;
+ margin:8px 0 12px;
+}
+.menuTitleCard{
+ background:linear-gradient(135deg,#fff7b8,#ffd65a 52%,#c98a12);
+ border:3px solid #fff2a8;
+ border-radius:20px;
+ padding:12px;
+ box-shadow:0 8px 18px rgba(93,58,0,.24);
+ color:#3b2700;
+}
+.menuTitleHead{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ font-weight:1000;
+ margin-bottom:8px;
+}
+.menuTitleMini{
+ background:#111;
+ color:#fff;
+ border-radius:999px;
+ padding:4px 9px;
+ font-size:11px;
+ font-weight:1000;
+}
+.menuTitleChips{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+}
+.menuTitleChip{
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+ background:#fffdf0;
+ border:2px solid rgba(255,255,255,.85);
+ border-radius:999px;
+ padding:6px 9px;
+ font-size:13px;
+ font-weight:1000;
+ box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.menuTitleEmpty{
+ background:rgba(255,255,255,.74);
+ border:2px dashed rgba(104,78,0,.32);
+ border-radius:14px;
+ padding:9px 10px;
+ font-size:13px;
+ font-weight:900;
+}
+.devNewsCard{
+ display:grid;
+ grid-template-columns:1fr auto;
+ gap:8px;
+ align-items:center;
+ background:#fff;
+ border:3px solid #e7f0ff;
+ border-radius:18px;
+ padding:10px 12px;
+ box-shadow:0 7px 16px rgba(0,0,0,.10);
+ cursor:pointer;
+ text-align:left;
+}
+.devNewsCard:active{transform:translateY(3px)}
+.devNewsTitle{
+ font-weight:1000;
+ font-size:15px;
+}
+.devNewsLatest{
+ margin-top:3px;
+ font-size:12px;
+ font-weight:900;
+ color:#667085;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ max-width:100%;
+}
+.devNewsBadge{
+ display:none;
+ background:#ff3333;
+ color:#fff;
+ border-radius:999px;
+ padding:5px 9px;
+ font-size:11px;
+ font-weight:1000;
+ box-shadow:0 3px 0 rgba(0,0,0,.18);
+}
+.devNewsCard.hasNew .devNewsBadge{display:inline-block}
+.devNewsModal{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.45);
+ z-index:100002;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
+}
+.devNewsModal.show{display:flex}
+.devNewsModalCard{
+ width:min(720px,100%);
+ max-height:82vh;
+ overflow:auto;
+ background:#fff;
+ border:4px solid #fff;
+ border-radius:24px;
+ padding:16px;
+ box-shadow:0 18px 48px rgba(0,0,0,.45);
+ color:#263238;
+}
+.devNewsItem{
+ background:#f8fbff;
+ border:2px solid #e7f0ff;
+ border-radius:18px;
+ padding:12px;
+ margin:10px 0;
+}
+.devNewsDate{
+ display:inline-block;
+ background:#111;
+ color:#fff;
+ border-radius:999px;
+ padding:3px 9px;
+ font-size:12px;
+ font-weight:1000;
+ margin-bottom:6px;
+}
+.devNewsItemTitle{
+ font-size:16px;
+ font-weight:1000;
+ margin-bottom:4px;
+}
+.devNewsBody{
+ font-size:14px;
+ font-weight:900;
+ line-height:1.6;
+ white-space:pre-wrap;
+}
+body.darkTheme .menuTitleCard{
+ background:linear-gradient(135deg,#4b3a10,#9b7011 52%,#e3bd44);
+ color:#fff6c7;
+ border-color:#8f6d1d;
+}
+body.darkTheme .devNewsCard,
+body.darkTheme .devNewsModalCard,
+body.darkTheme .devNewsItem{
+ background:#202020;
+ color:#fff;
+ border-color:#3a3a3a;
+}
+body.darkTheme .devNewsLatest{color:#c9c9c9}
+@media(max-width:560px){
+ .menuTopStatus{gap:8px;margin:6px 0 10px}
+ .menuTitleCard{padding:10px;border-radius:17px}
+ .menuTitleChip{font-size:12px;padding:5px 8px}
+ .devNewsTitle{font-size:14px}
+ .devNewsLatest{font-size:11px}
+ .devNewsModalCard{padding:12px;border-radius:20px}
+}
+
 </style>
 </head>
 <body>
@@ -1542,6 +1828,24 @@ body.goldTheme .answerPanel{
   <div class="card">
     <h2>メニュー</h2>
     <p class="muted" id="playerDisplay"></p>
+
+    <div class="menuTopStatus">
+      <div class="menuTitleCard">
+        <div class="menuTitleHead">
+          <span>👑 表示中の称号</span>
+          <span class="menuTitleMini" id="menuTitleCount">0 / 3</span>
+        </div>
+        <div id="menuTopTitles" class="menuTitleChips"></div>
+      </div>
+
+      <button id="devNewsCard" class="devNewsCard" onclick="openDevNews()">
+        <div>
+          <div class="devNewsTitle">🔔 開発者からのお知らせ</div>
+          <div id="devNewsLatest" class="devNewsLatest">お知らせを読み込み中...</div>
+        </div>
+        <span id="devNewsBadge" class="devNewsBadge">NEW</span>
+      </button>
+    </div>
 
     <div class="menuImageGrid">
       <button class="imgBtn" onclick="openChallenge()">
@@ -1629,7 +1933,12 @@ body.goldTheme .answerPanel{
       <h2>🎨 キャラ・スキン変更</h2>
       <p class="muted">キャラを選ぶと、同じIDの技エフェクトが自動で対応します。</p>
 
-      <div class="menuImageGrid skinMenuBox">
+      <div id="skinCurrent" class="skinCurrent skinStatusBar">
+        <div class="skinStatusItem"><span class="skinStatusLabel">名前</span><b id="skinCurrentName">読み込み中</b></div>
+        <div class="skinStatusItem"><span class="skinStatusLabel">攻撃力</span><b id="skinCurrentAttack">--</b></div>
+      </div>
+
+      <div class="skinTabGrid">
         <button class="imgBtn" onclick="openSkinPanel('me')">
           <img src="assets/btn/btn_me_change.png" alt="キャラ変更">
         </button>
@@ -1637,8 +1946,6 @@ body.goldTheme .answerPanel{
           <img src="assets/btn/btn_effect_change.png" alt="技変更">
         </button>
       </div>
-
-      <div id="skinCurrent" class="skinCurrent">現在の設定を読み込み中...</div>
 
       <div id="skinPanelMe" class="skinPanel">
         <h3>キャラ変更</h3>
@@ -1753,6 +2060,7 @@ body.goldTheme .answerPanel{
         <button class="btn primary" onclick="debugUnlockAllStages()">全ステージ解放</button>
         <button class="btn questBtn" onclick="debugUnlockAllQuests()">全クエスト開放</button>
         <button class="btn itemMenuBtn" onclick="debugGiveAllItems()">全アイテム入手</button>
+        <button class="btn secondary" onclick="debugUnlockAllSkins()">全スキン解放</button>
         <button class="btn secondary" onclick="debugUnlockAllTitles()">全称号解放</button>
         <button class="btn info" onclick="debugGiveScore()">テストPT加算</button>
         <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
@@ -1839,6 +2147,8 @@ body.goldTheme .answerPanel{
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <div id="questAnswerPanel" class="answerPanel" style="display:none"><div id="questAnswers" class="answers"></div></div>
 <div id="questItemModal" class="questModal"><div class="questModalCard"><h2>🎒 アイテムを使う</h2><p class="muted">問題画面を隠して、所持アイテムから選べます。</p><div id="questModalItems"></div><div class="toolbar"><button class="btn ghost" onclick="closeQuestItemModal()">閉じる</button></div></div></div>
+
+<div id="devNewsModal" class="devNewsModal"><div class="devNewsModalCard"><h2>🔔 開発者からのお知らせ</h2><div id="devNewsList"><div class="muted">お知らせを読み込み中...</div></div><div class="toolbar"><button class="btn ghost" onclick="closeDevNews()">閉じる</button></div></div></div>
 <div id="questCenterFx" class="questCenterFx"><img id="questCenterFxImg" alt="演出"><div id="questCenterFxText" class="questCenterFxText" style="display:none"></div></div>
 <script>
 const $=id=>document.getElementById(id);
@@ -1850,7 +2160,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbzYr6Qb9k2Gbo12ZDHqPbcyAk
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260624-quest-fixes-enemyfx";
+const ASSET_VERSION="20260625-news-title-evo-v1";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2051,6 +2361,102 @@ function titleChipHtml(id){
  const t=titleById(id);
  return t?`<span class="rankTitleChip">🏅 ${t.name}</span>`:"";
 }
+
+const DEV_NEWS_MASTER=[
+ {id:"20260625_evo_news",date:"2026/06/25",title:"進化スキンを追加",body:"騎士・弓使い・槍使いの進化スキンを追加しました。進化スキンはクエスト攻撃力+1です。"},
+ {id:"20260625_menu_update",date:"2026/06/25",title:"メニュー表示を更新",body:"メニュー上部に称号表示と、開発者からのお知らせ通知を追加しました。"}
+];
+let devNewsCache=[];
+function normalizeNewsItems(items){
+ return (Array.isArray(items)?items:[]).map((x,i)=>({
+  id:String(x.id||x.newsId||`${x.date||"news"}_${x.title||i}`),
+  date:String(x.date||x.createdAt||""),
+  title:String(x.title||x.headline||"お知らせ"),
+  body:String(x.body||x.message||x.text||"")
+ })).filter(x=>x.title||x.body);
+}
+function latestNewsId(){
+ return devNewsCache[0]?.id || "";
+}
+function isDevNewsUnread(){
+ const latest=latestNewsId();
+ if(!latest)return false;
+ return localStorage.getItem("morilingoLastReadDevNewsId")!==latest;
+}
+function renderMenuTopTitles(){
+ const box=$("menuTopTitles");
+ if(!box)return;
+ cleanSelectedTitles();
+ const selected=state.selectedMenuTitles||[];
+ const countEl=$("menuTitleCount");
+ if(countEl)countEl.textContent=`${selected.length} / 3`;
+ if(!selected.length){
+  box.innerHTML=`<div class="menuTitleEmpty">称号が未設定です。「称号を見る」から3つまで選べます。</div>`;
+  return;
+ }
+ box.innerHTML=selected.map(id=>{
+  const t=titleById(id);
+  return t?`<span class="menuTitleChip">🏅 ${t.name}</span>`:"";
+ }).join("");
+}
+function renderDevNews(){
+ const card=$("devNewsCard");
+ const latest=$("devNewsLatest");
+ const badge=$("devNewsBadge");
+ const list=$("devNewsList");
+ const items=devNewsCache.length?devNewsCache:DEV_NEWS_MASTER;
+ devNewsCache=items;
+ if(latest){
+  const top=items[0];
+  latest.textContent=top?`${top.date?top.date+"：":""}${top.title}`:"お知らせはまだありません";
+ }
+ const unread=isDevNewsUnread();
+ if(card)card.classList.toggle("hasNew",unread);
+ if(badge)badge.style.display=unread?"inline-block":"none";
+ if(list){
+  list.innerHTML=items.length?items.map(n=>`
+   <div class="devNewsItem">
+    <span class="devNewsDate">${n.date||"お知らせ"}</span>
+    <div class="devNewsItemTitle">${n.title}</div>
+    <div class="devNewsBody">${n.body}</div>
+   </div>`).join(""):`<div class="muted">お知らせはまだありません</div>`;
+ }
+}
+function loadDevNews(){
+ devNewsCache=DEV_NEWS_MASTER.slice();
+ renderDevNews();
+ if(!GAS_URL)return;
+ const callback="morilingoNewsCallback_"+Date.now();
+ window[callback]=data=>{
+  try{
+   const remote=normalizeNewsItems(data?.news||data?.items||data?.messages);
+   if(remote.length)devNewsCache=remote;
+   renderDevNews();
+  }finally{
+   delete window[callback];
+   script.remove();
+  }
+ };
+ const script=document.createElement("script");
+ script.src=GAS_URL+`?action=news&callback=${callback}&v=${Date.now()}`;
+ script.onerror=()=>{delete window[callback];script.remove();renderDevNews();};
+ document.body.appendChild(script);
+}
+function openDevNews(){
+ if(!devNewsCache.length)devNewsCache=DEV_NEWS_MASTER.slice();
+ renderDevNews();
+ const latest=latestNewsId();
+ if(latest)localStorage.setItem("morilingoLastReadDevNewsId",latest);
+ renderDevNews();
+ const modal=$("devNewsModal");
+ if(modal)modal.classList.add("show");
+}
+function closeDevNews(){
+ const modal=$("devNewsModal");
+ if(modal)modal.classList.remove("show");
+ renderDevNews();
+}
+
 function showTitles(){
  renderTitles();
  show("titles");
@@ -2090,7 +2496,13 @@ const ENEMY_EFFECT_MAP={
  enemy_worldtree:"kiru_dark"
 };
 function effectIdForSkin(id){
- return ENEMY_EFFECT_MAP[id] || id || DEFAULT_PLAYER_EFFECT;
+ // キャラIDと技エフェクトIDは基本的に同じ名前で対応させる。
+ // 例：me_enemy_skyisland.png → effect_enemy_skyisland.png
+ if(String(id||"").startsWith("enemy_"))return id;
+ return id || DEFAULT_PLAYER_EFFECT;
+}
+function genericEnemyEffectIdForSkin(id){
+ return ENEMY_EFFECT_MAP[id] || "dageki";
 }
 function ownedSkinIds(){
  state.skins??={};
@@ -2108,10 +2520,53 @@ function unlockSkin(id){
 
 const BASE_SKINS=[
  {id:"magician",name:"魔術師"},
+ {id:"magician_evo",name:"進化魔術師"},
  {id:"knight",name:"騎士"},
+ {id:"knight_evo",name:"進化騎士"},
  {id:"archer",name:"弓使い"},
- {id:"lancer",name:"槍使い"}
+ {id:"archer_evo",name:"進化弓使い"},
+ {id:"lancer",name:"槍使い"},
+ {id:"lancer_evo",name:"進化槍使い"}
 ];
+
+const QUEST_DAMAGE_BONUS_PLUS1_SKINS=[
+ "magician_evo",
+ "knight_evo",
+ "archer_evo",
+ "lancer_evo"
+];
+
+const QUEST_DAMAGE_BONUS_PLUS2_SKINS=[
+ "enemy_moon",
+ "enemy_starsea",
+ "enemy_timedimension"
+];
+
+const QUEST_DAMAGE_BONUS_PLUS3_SKINS=[
+ "enemy_worldtree"
+];
+
+function questSkinDamageBonus(idOverride){
+ const id=idOverride || selectedSkin();
+ if(QUEST_DAMAGE_BONUS_PLUS3_SKINS.includes(id))return 3;
+ if(QUEST_DAMAGE_BONUS_PLUS2_SKINS.includes(id))return 2;
+ if(QUEST_DAMAGE_BONUS_PLUS1_SKINS.includes(id))return 1;
+
+ // 今後追加する進化スキンも、ID末尾が _evo なら自動で攻撃+1
+ if(/_evo$/.test(String(id||"")))return 1;
+
+ return 0;
+}
+
+function unlockAllSkinsForAdmin(){
+ if(!isAdmin())return false;
+ state.skins??={};
+ allSkins().forEach(sk=>{state.skins[sk.id]=true;});
+ ensureSkinState();
+ save();
+ renderSkinLists();
+ return true;
+}
 
 // 敵キャラも「me_enemy_ステージID.png」「effect_enemy_ステージID.png」で使える。
 // 例：assets/me/me_enemy_field.png / assets/effects/effect_enemy_field.png
@@ -2121,15 +2576,26 @@ function enemySkinList(){
   name:s.enemyName || s.name
  }));
 }
+function stageByEnemySkinId(id){
+ const stageId=String(id||"").replace(/^enemy_/,"");
+ return STAGES.find(s=>s.id===stageId);
+}
+function enemyFallbackImage(id){
+ const s=stageByEnemySkinId(id);
+ return s?.enemyImage || "assets/enemies/gobelyn.png";
+}
 function allSkins(){
  return [...BASE_SKINS,...enemySkinList()];
 }
 function skinAssets(id){
  const skinId=id || DEFAULT_PLAYER_CHARACTER;
  const effectId=effectIdForSkin(skinId);
+ const genericEffectId=genericEnemyEffectIdForSkin(skinId);
  return {
   me:`assets/me/me_${skinId}.png`,
-  effect:`assets/effects/effect_${effectId}.png`
+  meFallback:skinId.startsWith("enemy_") ? enemyFallbackImage(skinId) : "",
+  effect:`assets/effects/effect_${effectId}.png`,
+  effectFallback:skinId.startsWith("enemy_") ? `assets/effects/effect_${genericEffectId}.png` : ""
  };
 }
 function ensureSkinState(){
@@ -2184,10 +2650,23 @@ function openSkinPanel(kind){
  renderSkinLists();
 }
 function renderSkinCurrent(){
- const box=$("skinCurrent");
- if(!box)return;
+ ensureSkinState();
  const id=selectedSkin();
- box.innerHTML=`現在：キャラ <b>${skinName(id)}</b> ／ 技 <b>effect_${effectIdForSkin(id)}</b> ／ メニュー/ゲーム背景 <b>${hasQuestClearForGoldBackground()?"黄金":"黒"}</b>`;
+ const bonus=questSkinDamageBonus(id);
+ const attack=1+bonus;
+
+ const box=$("skinCurrent");
+ if(box){
+  box.innerHTML=`
+   <div class="skinStatusItem"><span class="skinStatusLabel">名前</span><b id="skinCurrentName">${skinName(id)}</b></div>
+   <div class="skinStatusItem"><span class="skinStatusLabel">攻撃力</span><b id="skinCurrentAttack">${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small></b></div>
+  `;
+ }
+
+ const nameEl=$("skinCurrentName");
+ if(nameEl)nameEl.textContent=skinName(id);
+ const attackEl=$("skinCurrentAttack");
+ if(attackEl)attackEl.innerHTML=`${attack}<small>（${bonus>0?"+"+bonus:"±0"}）</small>`;
 }
 function renderSkinList(targetId,type,currentId){
  const box=$(targetId);if(!box)return;
@@ -2197,8 +2676,10 @@ function renderSkinList(targetId,type,currentId){
   const selected=item.id===currentId;
   const assets=skinAssets(item.id);
   const previewSrc=type==="effect" ? assets.effect : assets.me;
+  const fallbackSrc=type==="effect" ? assets.effectFallback : assets.meFallback;
+  const fallbackAttr=fallbackSrc ? `data-fallback="${fallbackSrc}?v=${ASSET_VERSION}"` : "";
   return `<button class="skinCard ${selected?"selected":""}" onclick="selectSkin('${item.id}')">
-    <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" alt="${item.name}" onerror="this.style.display='none';this.parentElement.textContent='画像なし';"></div>
+    <div class="skinPreview"><img src="${previewSrc}?v=${ASSET_VERSION}" ${fallbackAttr} alt="${item.name}" onerror="if(this.dataset.fallback && this.src!==this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.style.display='none';this.parentElement.textContent='画像なし';}"></div>
     <div>${selected?"✅ ":""}${item.name}</div>
   </button>`;
  }).join("") || `<div class="muted">まだ使えるスキンがありません</div>`;
@@ -2248,7 +2729,7 @@ function debugFullUnlockFromMenu(){
   state.questUnlocked[s.id]=true;
   state.items[itemKey(s)]=Math.max(99,Number(state.items[itemKey(s)]||0));
  });
- allSkins().forEach(sk=>{state.skins[sk.id]=true;});
+ unlockAllSkinsForAdmin();
  TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
  cleanSelectedTitles();
  save();
@@ -2256,7 +2737,7 @@ function debugFullUnlockFromMenu(){
  renderStages();
  renderItems();
  renderZukan(state.zukanTab||"items");
- alert("全ステージ・全クエスト・全アイテム・全称号を開放しました");
+ alert("全ステージ・全クエスト・全アイテム・全スキン・全称号を開放しました");
  show("menu");
 }
 function unlockTitle(id){
@@ -2350,6 +2831,13 @@ function debugGiveAllItems(){
  alert("全アイテムを99個ずつ入手しました");
  renderItems();
 }
+function debugUnlockAllSkins(){
+ if(!isAdmin())return;
+ unlockAllSkinsForAdmin();
+ alert("全スキンを解放しました");
+ renderSkinLists();
+ showSkin();
+}
 function debugUnlockAllTitles(){
  if(!isAdmin())return;
  TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
@@ -2385,7 +2873,7 @@ function toggleMenuTitle(id){
   if(arr.length>=3){alert("メニューに表示できる称号は3つまでです");return;}
   state.selectedMenuTitles=[...arr,id];
  }
- save();renderTitles();renderBadges();
+ save();renderTitles();renderBadges();renderMenuTopTitles();
 }
 function toggleRankingTitle(id){
  cleanSelectedTitles();
@@ -2396,7 +2884,7 @@ function toggleRankingTitle(id){
   if(arr.length>=2){alert("ランキング名の横に表示できる称号は2つまでです");return;}
   state.selectedRankingTitles=[...arr,id];
  }
- save();renderTitles();loadRanking(currentRankingPeriod);
+ save();renderTitles();renderMenuTopTitles();loadRanking(currentRankingPeriod);
 }
 function renderTitles(){
  if(!$("titleList"))return;
@@ -2446,6 +2934,8 @@ function show(id){
 
  renderBadges();
  renderTitles();
+ renderMenuTopTitles();
+ renderDevNews();
  updatePlayerDisplay();
  applySkinSettings();
  applyWorldTheme(id);
@@ -2474,6 +2964,9 @@ function saveProfileAndMenu(){
 }
 function updatePlayerDisplay(){
  if($("devAdminBtn"))$("devAdminBtn").style.display=isAdmin()?"block":"none";
+ if(isAdmin()){
+  unlockAllSkinsForAdmin();
+ }
  if(!$("playerDisplay"))return;
  const p=state.player||{};
  $("playerDisplay").textContent=p.name?`プレイヤー：${p.className||"クラス未入力"} ${p.number? p.number+"番 " : ""}${p.name}`:"プレイヤー未登録";
@@ -3469,7 +3962,8 @@ function setupQuestWorld(){
 
  const meId=selectedMe();
  const flip=meId.startsWith("enemy_") ? "transform:scaleX(-1);" : "";
- $("questHeroImg").innerHTML=`<img src="./assets/me/me_${meId}.png?v=${ASSET_VERSION}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;${flip}" onerror="this.onerror=null;this.parentElement.textContent='🙂';">`;
+ const meFallback=meId.startsWith("enemy_") ? enemyFallbackImage(meId) : "";
+ $("questHeroImg").innerHTML=`<img src="./assets/me/me_${meId}.png?v=${ASSET_VERSION}" data-fallback="${meFallback?meFallback+`?v=${ASSET_VERSION}`:""}" alt="育樹師" style="display:block;width:100%;height:100%;object-fit:contain;${flip}" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.onerror=null;this.parentElement.textContent='🙂';}">`;
  $("questEnemyImg").innerHTML=`<img src="${s.enemyImage}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🐹';">`;
  $("questChest").innerHTML=`<img src="${CHEST_CLOSED_IMAGE}?v=${ASSET_VERSION}" onerror="this.onerror=null;this.parentElement.textContent='🎁';">`;
 
@@ -3597,7 +4091,7 @@ function questAnswer(i){
   questPlayMagic();setTimeout(()=>{
    const dodgeRate=questEnemyDodgeRate();
    const dodged=Math.random()<dodgeRate;
-   const damage=(quest.baseAttack||1)+(quest.attackBoost||1)-1;
+   const damage=(quest.baseAttack||1)+(quest.attackBoost||1)-1+questSkinDamageBonus();
    quest.attackBoost=1;
 
    if(dodged){
@@ -3609,7 +4103,12 @@ function questAnswer(i){
    quest.enemyHp=Math.max(0,quest.enemyHp-damage);
    $("questEnemy").classList.remove("hit");void $("questEnemy").offsetWidth;$("questEnemy").classList.add("hit");
    $("questFeedback").textContent=`✨ 攻撃！敵に${damage}ダメージ！`;
-   if(quest.enemyHp<=0){$("questFeedback").textContent=quest.area<3?"🎉 敵を撃破！次のエリアへ進む！":"🎉 敵を撃破！クリア！";questShowNext(quest.area<3?"次のエリアへ":"クリア");questUpdateUI();questAutoNext(1200);return;}
+   if(quest.enemyHp<=0){
+    const clearNow=isAdmin() || quest.area>=3;
+    $("questFeedback").textContent=clearNow?"🎉 敵を撃破！クリア！":"🎉 敵を撃破！次のエリアへ進む！";
+    questShowNext(clearNow?"クリア":"次のエリアへ");
+    questUpdateUI();questAutoNext(1200);return;
+   }
    questShowNext("次へ");questUpdateUI();questAutoNext(950);
   },420);
  }
@@ -3626,6 +4125,10 @@ function questAutoNext(ms=900){
 }
 function questNextQuestion(){
  if(quest.phase==="battle" && quest.enemyHp<=0){
+  if(isAdmin()){
+   questFinish();
+   return;
+  }
   if(quest.area<3){quest.area++;quest.progress=0;quest.phase="walk";$("questEnemy").style.display="none";questMoveBg(questScrollRate((quest.area-1)*3));questLoadQuestion();return;}
   questFinish();return;
  }
@@ -3727,12 +4230,25 @@ function questPlayMagic(){
   if(magic){magic.classList.remove("fire");void magic.offsetWidth;magic.classList.add("fire");}
   if(burst){burst.classList.remove("show");setTimeout(()=>burst.classList.add("show"),380);}
  }
+ function fallbackEnemySkinEffect(){
+  const id=selectedSkin();
+  if(id.startsWith("enemy_")){
+   questShowEffectOn(
+    "questEnemy",
+    `assets/effects/effect_${genericEnemyEffectIdForSkin(id)}.png?v=${ASSET_VERSION}-${Date.now()}`,
+    "enemyTarget",
+    fallbackMagic
+   );
+  }else{
+   fallbackMagic();
+  }
+ }
 
  questShowEffectOn(
   "questEnemy",
   `assets/effects/effect_${selectedEffect()}.png?v=${ASSET_VERSION}-${Date.now()}`,
   "enemyTarget",
-  fallbackMagic
+  fallbackEnemySkinEffect
  );
 }
 async function questFinish(){
@@ -3778,7 +4294,7 @@ function questUpdateUI(){
  if(quest.phase==="finish"){$("questAreaText").textContent="クリア";$("questPhaseText").textContent="終了";$("questProgressText").textContent="冒険成功";return;}
  if(quest.phase==="gameover"){$("questAreaText").textContent="敗北";$("questPhaseText").textContent="終了";$("questProgressText").textContent="HP0";return;}
  $("questAreaText").textContent=`第${quest.area}エリア`;$("questPhaseText").textContent=quest.phase==="walk"?"前進":"戦闘";$("questProgressText").textContent=`進行 ${quest.progress}/3`;
- $("questItemText").textContent=`攻撃${quest.baseAttack||1} 回避低下${percentText((quest.enemyDodgeDebuff||0)+(quest.pendingEnemyDodgeDebuff||0))} 報酬+${Math.max(0,Number(quest.extraDrops||0))}`;
+ $("questItemText").textContent=`攻撃${(quest.baseAttack||1)+questSkinDamageBonus()} 回避低下${percentText((quest.enemyDodgeDebuff||0)+(quest.pendingEnemyDodgeDebuff||0))} 報酬+${Math.max(0,Number(quest.extraDrops||0))}`;
 }
 function openQuestItemModal(){
  if(!quest||quest.phase==="finish"||quest.phase==="gameover")return;
@@ -3980,7 +4496,7 @@ window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
-renderBadges();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();loadRemoteQuestions();save();
+renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();loadRemoteQuestions();loadDevNews();save();
 </script>
 </body>
 </html>
