@@ -1911,6 +1911,99 @@ body.darkTheme .answerListA{background:#19351f;border-color:#3d9253;color:#9cf0b
 body.darkTheme .answerChoices{color:#c9c9c9}
 @media(max-width:560px){#stageMenu .menuImageGrid{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important}#stageMenu .menuImageGrid .imgBtn{width:100% !important;margin:0 !important;padding:0 !important}#stageMenu .menuImageGrid .imgBtn img{width:100% !important;max-width:none !important}.stageAnswerBtn,.stagePdfBtn{font-size:11px;padding:6px 9px}.titleNotifyName{font-size:21px}}
 
+
+
+/* ==========================================================
+   2026-06-25 追加：称号ジャンルタブ・復興限定面白称号
+========================================================== */
+.titleCategoryTabs{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:8px;
+ margin:10px 0 12px;
+}
+.titleCategoryTab{
+ border:0;
+ border-radius:14px;
+ padding:9px 8px;
+ font-weight:1000;
+ background:#fff;
+ color:#263238;
+ box-shadow:0 4px 0 #0001;
+ cursor:pointer;
+}
+.titleCategoryTab.active{
+ background:linear-gradient(#8df08f,#32b85c);
+ color:#fff;
+}
+.titleMetaLine{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+ align-items:center;
+ margin-top:6px;
+}
+.titleCategoryChip,.titleDropChip{
+ display:inline-block;
+ border-radius:999px;
+ padding:3px 8px;
+ font-size:11px;
+ font-weight:1000;
+}
+.titleCategoryChip{
+ background:#eef7ff;
+ color:#23608f;
+ border:1px solid #cfe9ff;
+}
+.titleDropChip{
+ background:#fff4d8;
+ color:#7a5100;
+ border:1px solid #f0d58b;
+}
+body.darkTheme .titleCategoryTab{background:#222;color:#fff;border:1px solid #3a3a3a}
+body.darkTheme .titleCategoryChip{background:#172636;color:#9ed4ff;border-color:#2f5c85}
+body.darkTheme .titleDropChip{background:#3a2a0b;color:#ffe3a1;border-color:#7a5a18}
+@media(max-width:560px){
+ .titleCategoryTabs{grid-template-columns:repeat(3,1fr);gap:6px}
+ .titleCategoryTab{font-size:12px;padding:8px 5px}
+}
+
+/* ==========================================================
+   2026-06-25 追加：称号検索
+========================================================== */
+.titleSearchBox{
+ margin:10px 0 10px;
+ display:grid;
+ gap:6px;
+}
+.titleSearchInput{
+ width:100%;
+ border:3px solid #e6f2eb;
+ border-radius:16px;
+ padding:11px 12px;
+ font-size:15px;
+ font-weight:900;
+ background:#fff;
+ color:#263238;
+ box-shadow:0 4px 0 rgba(0,0,0,.06);
+}
+.titleSearchInput::placeholder{
+ color:#9aa6aa;
+}
+.titleSearchMini{
+ font-size:12px;
+ font-weight:900;
+ color:#667085;
+}
+body.darkTheme .titleSearchInput{
+ background:#222;
+ color:#fff;
+ border-color:#3a3a3a;
+}
+body.darkTheme .titleSearchMini{
+ color:#c9c9c9;
+}
+
 </style>
 </head>
 <body>
@@ -2137,7 +2230,36 @@ body.darkTheme .answerChoices{color:#c9c9c9}
     </div>
   </section>
 
-  <section id="titles" class="screen"><div class="card"><h2>🎖️ 称号</h2><p class="muted">君の冒険の記録</p><div class="titleBox"><div class="rankingHead"><h3>称号一覧</h3><span class="rankingMini" id="titleCountMini">0 / 3</span></div><div class="titleProgress"><div class="titleProgressTop"><span>称号獲得率</span><span id="titleProgressText">0%</span></div><div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div></div><div id="titleList" class="titleList"></div><div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます</div></div><div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div></div></section>
+  <section id="titles" class="screen">
+  <div class="card">
+    <h2>🎖️ 称号</h2>
+    <p class="muted">君の冒険の記録。面白系は復興クリア時だけランダムドロップします。</p>
+    <div class="titleBox">
+      <div class="rankingHead">
+        <h3>称号一覧</h3>
+        <span class="rankingMini" id="titleCountMini">0 / 3</span>
+      </div>
+      <div class="titleProgress">
+        <div class="titleProgressTop">
+          <span>称号獲得率</span>
+          <span id="titleProgressText">0%</span>
+        </div>
+        <div class="titleBar"><div id="titleBarFill" class="titleBarFill"></div></div>
+      </div>
+
+      <div id="titleCategoryTabs" class="titleCategoryTabs"></div>
+
+      <div class="titleSearchBox">
+        <input id="titleSearchInput" class="titleSearchInput" type="search" placeholder="称号名・説明・IDで検索" oninput="setTitleSearch(this.value)">
+        <div id="titleSearchMini" class="titleSearchMini">検索なし</div>
+      </div>
+
+      <div id="titleList" class="titleList"></div>
+      <div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます。面白系は conditionType を random_drop にすると、復興クリア時だけ抽選されます。</div>
+    </div>
+    <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
+  </div>
+</section>
 
   <section id="devMessage" class="screen">
     <div class="card">
@@ -2515,6 +2637,8 @@ let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
 state.selectedMenuTitles??=[];
 state.selectedRankingTitles??=[];
+state.titleCategory??="すべて";
+state.titleSearch??="";
 state.remoteTitles??=[];
 state.remoteUnlockedTitleIds??=[];
 state.challengeClears??={};
@@ -2543,18 +2667,70 @@ let timeAttackChampionsCache={};
 let timeAttackChampionsLoaded=false;
 
 const TITLE_MASTER=[
- {id:"stage1_clear",name:"はじまりの勇者",desc:"ステージ1をクリア",badgeId:"field"},
- {id:"correct_10",name:"次期エース",desc:"累計10問正解",badgeId:"correct_10"},
- {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"},
- {id:"dev_supporter",name:"モリリンゴ支援者",desc:"開発者へメッセージを送った",badgeId:"dev_supporter"}
+ {id:"stage1_clear",name:"はじまりの勇者",category:"成長系",conditionType:"stage_clear",conditionValue:"field",desc:"ステージ1をクリア",badgeId:"field"},
+ {id:"correct_10",name:"次期エース",category:"成長系",conditionType:"total_correct",conditionValue:"10",desc:"累計10問正解",badgeId:"correct_10"},
+ {id:"weekly_king",name:"一週間の覇者",category:"特別系",conditionType:"special",conditionValue:"weekly_king",desc:"週間ランキング1位",badgeId:"weekly_king"},
+ {id:"dev_supporter",name:"モリリンゴ支援者",category:"特別系",conditionType:"special",conditionValue:"dev_supporter",desc:"開発者へメッセージを送った",badgeId:"dev_supporter"}
 ];
+const TITLE_CATEGORIES=["すべて","成長系","冒険系","収集系","ログイン系","面白系","特別系"];
+const TITLE_CATEGORY_ALIASES={
+ growth:"成長系",
+ adventure:"冒険系",
+ quest:"冒険系",
+ collector:"収集系",
+ collect:"収集系",
+ login:"ログイン系",
+ logins:"ログイン系",
+ fun:"面白系",
+ funny:"面白系",
+ special:"特別系",
+ normal:"成長系",
+ rare:"特別系",
+ hidden:"特別系"
+};
+function categoryFromConditionType(conditionType){
+ const type=String(conditionType||"").trim();
+ if(["stage_clear","stage_count","total_score","total_correct"].includes(type))return "成長系";
+ if(["quest_win","timeattack_clear","no_miss"].includes(type))return "冒険系";
+ if(["item_total","skin_count","title_count"].includes(type))return "収集系";
+ if(["consecutive_login"].includes(type))return "ログイン系";
+ if(["random_drop"].includes(type))return "面白系";
+ if(["special","weekly_rank_1"].includes(type))return "特別系";
+ return "成長系";
+}
+function normalizeTitleCategory(value,conditionType){
+ const raw=String(value||"").trim();
+ if(raw){
+  const lower=raw.toLowerCase();
+  return TITLE_CATEGORY_ALIASES[lower] || raw;
+ }
+ return categoryFromConditionType(conditionType);
+}
 function normalizeTitleItem(t){
+ const id=String(t.id||t.titleId||"").trim();
+ const conditionType=String(t.conditionType||"").trim();
+ const rawConditionValue=t.conditionValue ?? t.value ?? "";
+ const rawDropRate=t.dropRate ?? t.rate ?? "";
  return {
-  id:String(t.id||t.titleId||"").trim(),
+  id,
   name:String(t.name||t.titleName||"").trim(),
+  category:normalizeTitleCategory(t.category||t.genre,conditionType),
+  conditionType,
+  conditionValue:String(rawConditionValue).trim(),
+  dropRate:String(rawDropRate).trim(),
   desc:String(t.desc||t.description||"").trim(),
-  badgeId:String(t.badgeId||t.id||t.titleId||"").trim()
+  badgeId:String(t.badgeId||id).trim()
  };
+}
+function titleDropRate(t){
+ const fromDrop=Number(t.dropRate);
+ if(Number.isFinite(fromDrop) && fromDrop>0)return fromDrop;
+ const fromValue=Number(t.conditionValue);
+ if(Number.isFinite(fromValue) && fromValue>0)return fromValue;
+ return 5;
+}
+function isFunnyDropTitle(t){
+ return t && t.category==="面白系" && t.conditionType==="random_drop";
 }
 function allTitleMaster(){
  const map={};
@@ -3182,6 +3358,26 @@ function toggleRankingTitle(id){
  }
  save();renderTitles();renderMenuTopTitles();loadRanking(currentRankingPeriod);
 }
+function setTitleCategory(category){
+ state.titleCategory=category||"すべて";
+ save();
+ renderTitles();
+}
+function setTitleSearch(value){
+ state.titleSearch=String(value||"");
+ save();
+ renderTitles();
+}
+function renderTitleCategoryTabs(master){
+ const box=$("titleCategoryTabs");
+ if(!box)return;
+ const available=new Set(["すべて"]);
+ (master||allTitleMaster()).forEach(t=>{if(t.category)available.add(t.category);});
+ TITLE_CATEGORIES.forEach(c=>available.add(c));
+ const current=available.has(state.titleCategory)?state.titleCategory:"すべて";
+ state.titleCategory=current;
+ box.innerHTML=[...available].map(c=>`<button class="titleCategoryTab ${c===current?"active":""}" onclick="setTitleCategory('${c}')">${c.replace("系","")}</button>`).join("");
+}
 function renderTitles(){
  if(!$("titleList"))return;
  cleanSelectedTitles();
@@ -3193,25 +3389,60 @@ function renderTitles(){
  $("titleCountMini").textContent=`${count} / ${total}`;
  $("titleProgressText").textContent=`${percent}%`;
  $("titleBarFill").style.width=`${percent}%`;
- $("titleList").innerHTML=master.map(t=>{
+ renderTitleCategoryTabs(master);
+
+ const searchInput=$("titleSearchInput");
+ if(searchInput && searchInput.value!==String(state.titleSearch||""))searchInput.value=String(state.titleSearch||"");
+
+ const current=state.titleCategory||"すべて";
+ const keyword=String(state.titleSearch||"").trim().toLowerCase();
+
+ let list=current==="すべて" ? master : master.filter(t=>t.category===current);
+
+ if(keyword){
+  list=list.filter(t=>{
+   const hay=[
+    t.id,
+    t.name,
+    t.category,
+    t.conditionType,
+    t.conditionValue,
+    t.desc
+   ].map(x=>String(x||"").toLowerCase()).join(" ");
+   return hay.includes(keyword);
+  });
+ }
+
+ const mini=$("titleSearchMini");
+ if(mini){
+  const categoryText=current==="すべて" ? "全ジャンル" : current;
+  mini.textContent=keyword
+   ? `${categoryText}から「${state.titleSearch}」で検索：${list.length}件`
+   : `${categoryText}：${list.length}件`;
+ }
+
+ $("titleList").innerHTML=list.length?list.map(t=>{
   const unlocked=earned.includes(t.id);
   const menuOn=state.selectedMenuTitles.includes(t.id);
   const rankOn=state.selectedRankingTitles.includes(t.id);
   const menuText=menuOn?"メニュー表示中":"メニューに表示";
   const rankText=rankOn?"ランキング表示中":"ランキングに表示";
+  const dropHtml=isFunnyDropTitle(t)?`<span class="titleDropChip">復興ドロップ ${titleDropRate(t)}%</span>`:"";
   return `<div class="titleCard ${unlocked?"unlocked":"locked"}">
    <div class="titleIcon">${unlocked?"🏅":"🔒"}</div>
    <div>
     <div class="titleName">${unlocked?t.name:"？？？？？"}</div>
     <div class="titleDesc">${unlocked?t.desc:"未獲得"}</div>
+    <div class="titleMetaLine"><span class="titleCategoryChip">${t.category||"成長系"}</span>${dropHtml}</div>
     <div class="titleActions">
       <button class="titleSelectBtn menuPick ${menuOn?"on":""}" ${unlocked?`onclick="toggleMenuTitle('${t.id}')"`:"disabled"}>${menuText}</button>
       <button class="titleSelectBtn rankPick ${rankOn?"on":""}" ${unlocked?`onclick="toggleRankingTitle('${t.id}')"`:"disabled"}>${rankText}</button>
     </div>
    </div>
   </div>`;
- }).join("");
+ }).join(""):`<div class="rankingEmpty">条件に合う称号はありません</div>`;
 }
+
 function playerTitleStorageKey(){
  const p=state.player||{};
  return `morilingoKnownTitles_${p.className||""}_${p.number||""}_${p.name||""}`;
@@ -3245,7 +3476,16 @@ function loadRemoteTitles(){
  window[callback]=data=>{
   try{
    if(data&&data.ok!==false){
-    state.remoteTitles=(data.titles||[]).map(t=>({id:t.titleId||t.id,name:t.titleName||t.name,desc:t.description||t.desc,badgeId:t.titleId||t.id})).filter(t=>t.id&&t.name);
+    state.remoteTitles=(data.titles||[]).map(t=>({
+     id:t.titleId||t.id,
+     name:t.titleName||t.name,
+     category:t.category||t.genre,
+     conditionType:t.conditionType,
+     conditionValue:t.conditionValue,
+     dropRate:t.dropRate,
+     desc:t.description||t.desc,
+     badgeId:t.titleId||t.id
+    })).filter(t=>t.id&&t.name);
     state.remoteUnlockedTitleIds=(data.unlockedTitleIds||[]).map(String);
     save();
     cleanSelectedTitles();
@@ -3840,6 +4080,32 @@ function answer(i){
   else setTimeout(ninjaEvent,400);
  }
 }
+function randomDropTitlesForRecovery(){
+ const earned=new Set(earnedTitleIds());
+ return allTitleMaster().filter(t=>{
+  if(!isFunnyDropTitle(t))return false;
+  if(earned.has(t.id))return false;
+  const place=String(t.conditionValue||"").trim();
+  return !place || place==="rebuild" || place==="復興" || Number.isFinite(Number(place));
+ });
+}
+function tryFunnyTitleDropFromRecovery(){
+ const candidates=randomDropTitlesForRecovery();
+ if(!candidates.length)return null;
+ const shuffled=shuffle(candidates);
+ for(const t of shuffled){
+  const rate=titleDropRate(t);
+  if(Math.random()*100 < rate){
+   addBadge(t.badgeId||t.id);
+   cleanSelectedTitles();
+   save();
+   showTitleNotify(t);
+   return t;
+  }
+ }
+ return null;
+}
+
 function checkClear(){
  if(game.mode!=="challenge" && game.mode!=="timeAttack")return false;
 
@@ -3862,13 +4128,15 @@ function checkClear(){
 
  addBadge(game.stage.id);
  giveStageClearReward(game.stage);
+ const funnyTitle=tryFunnyTitleDropFromRecovery();
  state.challengeClears[game.stage.id]=(state.challengeClears[game.stage.id]||0)+1;
  if(state.challengeClears[game.stage.id]>=3)state.questUnlocked[game.stage.id]=true;
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
  save();
  submitResult("clear");
  const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
- $("feedback").textContent=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}`;
+ const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
+ $("feedback").textContent=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}${funnyMsg}`;
  setTimeout(openChallenge,1500);
  return true;
 }
