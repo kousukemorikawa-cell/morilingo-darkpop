@@ -1830,6 +1830,60 @@ body.darkTheme #skin #skinCurrent #skinCurrentAttack{
  color:#000 !important;
 }
 
+
+/* ==========================================================
+   2026-06-25 追加：ステージ学習内容・教材PDF
+========================================================== */
+.stageStudyBox{
+ margin:8px 0 6px;
+ background:#f7fff9;
+ border:2px solid #d7f0df;
+ border-radius:16px;
+ padding:9px 10px;
+ font-weight:900;
+ line-height:1.55;
+}
+.stageStudyTitle{
+ font-weight:1000;
+ color:#217246;
+}
+.stageStudyText{
+ color:#667085;
+ font-size:13px;
+}
+.stagePdfBtn{
+ display:inline-block;
+ margin-top:6px;
+ padding:7px 10px;
+ border-radius:999px;
+ background:#111;
+ color:#fff !important;
+ font-size:12px;
+ font-weight:1000;
+ text-decoration:none;
+ box-shadow:0 3px 0 rgba(0,0,0,.22);
+}
+.stagePdfBtn:active{
+ transform:translateY(2px);
+ box-shadow:0 1px 0 rgba(0,0,0,.22);
+}
+body.darkTheme .stageStudyBox{
+ background:#191919;
+ border-color:#3a3a3a;
+ color:#fff;
+}
+body.darkTheme .stageStudyTitle{color:#9cf0b2;}
+body.darkTheme .stageStudyText{color:#c9c9c9;}
+body.goldTheme .stageStudyBox{
+ background:#fff9d8;
+ border-color:#f4d66a;
+}
+@media(max-width:560px){
+ .stageStudyBox{font-size:13px;padding:8px;}
+ .stageStudyText{font-size:12px;}
+ .stagePdfBtn{font-size:11px;padding:6px 9px;}
+}
+
 </style>
 </head>
 <body>
@@ -2189,7 +2243,7 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbw78SVvjLE64agDF6xVs_jNQj
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260625-news-title-evo-v1";
+const ASSET_VERSION="20260625-study-pdf-v1";
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2234,6 +2288,53 @@ const STAGES=[
  {id:'timedimension',name:'ステージ19「時空のはざま」',icon:'🌀',image:'assets/backgrounds/19_timedimension.png',enemyImage:'assets/enemies/19_timedimension_enemy.png',enemyName:'クロノファントム',saplingImage:'assets/items/19_timedimension_sapling.png',grownImage:'assets/items/19_timedimension_grown.png',itemImage:'assets/items/19_timedimension_item.png',cls:'',sun:'',clearTrees:3,plant:'time',growName:'時空の結晶',unit:'stageItem'},
  {id:'worldtree',name:'ステージ20「世界樹」',icon:'🌳',image:'assets/backgrounds/20_worldtree.png',enemyImage:'assets/enemies/20_worldtree_enemy.png',enemyName:'黄金竜アルボル',saplingImage:'assets/items/20_worldtree_sapling.png',grownImage:'assets/items/20_worldtree_grown.png',itemImage:'assets/items/20_worldtree_item.png',cls:'',sun:'',clearTrees:1,plant:'goldapple',growName:'黄金のリンゴ',unit:'stageItem'}
 ];
+
+
+/*
+============================================================
+【ステージ別：学習内容・教材PDF】
+pdf は assets/pdf/ の中に置く。ファイル名を変えたらここだけ直す。
+questionKey はスプレッドシート側で単元別に出題したい時のキー。
+============================================================
+*/
+const STAGE_STUDY=[
+ {title:"動詞の活用の種類",text:"四段・上二段・下二段・上一段・下一段・カ変・サ変・ナ変・ラ変を確認",pdf:"assets/pdf/01_doushi_katsuyo.pdf",questionKey:"doushi_katsuyo"},
+ {title:"重要語彙①",text:"古文読解で最初に覚えたい重要語彙",pdf:"assets/pdf/02_goi1.pdf",questionKey:"goi1"},
+ {title:"動詞の活用形",text:"未然形・連用形・終止形・連体形・已然形・命令形を確認",pdf:"assets/pdf/03_katsuyokei.pdf",questionKey:"katsuyokei"},
+ {title:"再読文字",text:"未・将・当・応・宜・須・猶・盍などの読み方と意味",pdf:"assets/pdf/04_saidoku.pdf",questionKey:"saidoku"},
+ {title:"形容詞・形容動詞の活用の種類",text:"ク活用・シク活用、ナリ活用・タリ活用を確認",pdf:"assets/pdf/05_keiyoushi_keiyoudoushi.pdf",questionKey:"keiyoushi_keiyoudoushi"},
+ {title:"重要語彙②",text:"読解で差がつく重要語彙の確認",pdf:"assets/pdf/06_goi2.pdf",questionKey:"goi2"},
+ {title:"助動詞①［未然形接続］",text:"る・らる・す・さす・しむ・ず・む・むず・じ・ましなど",pdf:"assets/pdf/07_jodoshi_mizen.pdf",questionKey:"jodoshi_mizen"},
+ {title:"重要語彙③",text:"入試・定期考査でよく出る重要語彙",pdf:"assets/pdf/08_goi3.pdf",questionKey:"goi3"},
+ {title:"助動詞②［連用形接続］",text:"き・けり・つ・ぬ・たり・けむなど",pdf:"assets/pdf/09_jodoshi_renyou.pdf",questionKey:"jodoshi_renyou"},
+ {title:"重要語彙④",text:"多義語・頻出語を中心に確認",pdf:"assets/pdf/10_goi4.pdf",questionKey:"goi4"},
+ {title:"助動詞③［終止形接続］",text:"べし・らむ・めり・なり・らし・まじなど",pdf:"assets/pdf/11_jodoshi_shushi.pdf",questionKey:"jodoshi_shushi"},
+ {title:"否定形・禁止形",text:"不・非・無・莫・勿などの否定・禁止表現",pdf:"assets/pdf/12_hitei_kinshi.pdf",questionKey:"hitei_kinshi"},
+ {title:"助動詞④［その他］",text:"連体形接続・体言接続など、その他の助動詞を確認",pdf:"assets/pdf/13_jodoshi_sonota.pdf",questionKey:"jodoshi_sonota"},
+ {title:"疑問形・反語形",text:"何・誰・安・悪・焉・豈などの疑問・反語表現",pdf:"assets/pdf/14_gimon_hango.pdf",questionKey:"gimon_hango"},
+ {title:"敬語①",text:"尊敬語の基本と頻出語を確認",pdf:"assets/pdf/15_keigo1.pdf",questionKey:"keigo1"},
+ {title:"使役形・受身形",text:"使役・受身の句形と読み方を確認",pdf:"assets/pdf/16_shieki_ukemi.pdf",questionKey:"shieki_ukemi"},
+ {title:"敬語②",text:"謙譲語の基本と頻出語を確認",pdf:"assets/pdf/17_keigo2.pdf",questionKey:"keigo2"},
+ {title:"仮定形・限定形・累加形",text:"若・苟・唯・但・不啻などの句形を確認",pdf:"assets/pdf/18_katei_gentei_ruika.pdf",questionKey:"katei_gentei_ruika"},
+ {title:"敬語③",text:"丁寧語・敬意の方向・敬語判定を確認",pdf:"assets/pdf/19_keigo3.pdf",questionKey:"keigo3"},
+ {title:"比較・選択・比況・抑揚・願望・倒置",text:"漢文の重要句形を総合確認",pdf:"assets/pdf/20_hikaku_sentaku_hikyo_yokuyo_ganbo_tochi.pdf",questionKey:"kanbun_sogo"}
+];
+function stageStudy(index){
+ return STAGE_STUDY[index] || {title:"学習内容未設定",text:"このステージの学習内容を設定してください",pdf:"",questionKey:""};
+}
+function stageStudyHtml(index){
+ const st=stageStudy(index);
+ const pdf=st.pdf ? `<br><a class="stagePdfBtn" href="${st.pdf}" target="_blank" rel="noopener">📄 教材を見る</a>` : "";
+ return `<div class="stageStudyBox"><div class="stageStudyTitle">📖 学習内容：${st.title}</div><div class="stageStudyText">📝 ${st.text}</div>${pdf}</div>`;
+}
+function stageQuestionCountText(index){
+ const n=stageQuestions(index).length;
+ return `登録問題：${n}問`;
+}
+function studyStartMessage(index){
+ const st=stageStudy(index);
+ return `📖 今回の学習：${st.title}`;
+}
 
 // 従来どおり「木になる」ステージ。これ以外は宝箱ドロップ式。
 const TREE_STAGE_IDS=["field","subtropical","volcano","jungle"];
@@ -2296,16 +2397,30 @@ const QUESTION_BANK={
 function stageQuestions(stageIndex){
  const source=remoteQuestions||QUESTION_BANK;
  const stage=STAGES[stageIndex];
- let qs=[...(source.basic||[])];
- if(stageIndex>=1)qs=qs.concat(source.level2||[]);
- if(stageIndex>=2)qs=qs.concat(source.level3||[]);
- if(stageIndex>=3)qs=qs.concat(source.level4||[]);
- if(stageIndex>=4)qs=qs.concat(source.level5||[]);
- // stage列に field / snow などステージIDを書いた専用問題も追加できる
- if(stage && source[stage.id])qs=qs.concat(source[stage.id]);
- // シート読み込みに失敗した時や空欄時は内蔵問題に戻す
- if(!qs.length && source!==QUESTION_BANK)return stageQuestionsFallback(stageIndex);
- return qs;
+ const study=stageStudy(stageIndex);
+ const stageNo=stageIndex+1;
+ const keys=[
+  stage?.id,
+  study?.questionKey,
+  `stage${stageNo}`,
+  String(stageNo).padStart(2,"0"),
+  String(stageNo)
+ ].filter(Boolean);
+
+ // スプレッドシート側で stage 列にステージID・単元キー・番号を書いた場合は、
+ // そのステージ専用問題だけを優先して出す。
+ let qs=[];
+ keys.forEach(key=>{
+  if(Array.isArray(source[key]))qs=qs.concat(source[key]);
+ });
+ if(qs.length)return qs;
+
+ // 専用問題がまだない場合だけ、旧内蔵問題で遊べるようにする。
+ // 本番ではシート側に各ステージ専用問題を入れる想定。
+ if(source===QUESTION_BANK)return stageQuestionsFallback(stageIndex);
+
+ // シートは読めたが、そのステージの問題が0件のときも最低限遊べるように内蔵問題へ戻す。
+ return stageQuestionsFallback(stageIndex);
 }
 function stageQuestionsFallback(stageIndex){
  let qs=[...QUESTION_BANK.basic];
@@ -3263,8 +3378,10 @@ function renderStages(){
    <div class="stageIcon">${open?s.icon:"🔒"}</div>
    <div>
     <h3>${s.name}</h3>
+    ${stageStudyHtml(i)}
     <div class="muted">
      ${clearConditionText(s)}<br>
+     ${stageQuestionCountText(i)}<br>
      挑戦クリア：${clears}/3　
      ${questOpen?"⚔️ クエスト解放":"クエスト未解放"}<br>
      ⏱️ ${timeAttackBestText(s.id)}<br>
@@ -3289,7 +3406,9 @@ function openStageMenu(i){
 
  $("stageMenuTitle").textContent=s.name;
  $("stageMenuInfo").innerHTML=
+  `${stageStudyHtml(i)}`+
   `${clearConditionText(s)}<br>`+
+  `${stageQuestionCountText(i)}<br>`+
   `挑戦クリア：${clears}/3<br>`+
   `${questOpen?"クエスト解放済み":"クエスト未解放：挑戦を3回クリアで解放"}<br>`+
   `${timeAttackBestText(s.id)}<br>`+
@@ -3383,7 +3502,7 @@ function nextQuestion(){
  const q=game.questions[game.qIndex % game.questions.length];
  game.qIndex++;
  game.current=q;
- $("question").textContent=q.q;
+ $("question").innerHTML=`<div style="font-size:13px;color:#667085;margin-bottom:4px;">${studyStartMessage(game.stageIndex)}</div><div>${q.q}</div>`;
  $("feedback").textContent="";
  const colors=["red","blue","green","yellow"], labels=["A","B","C","D"];
  $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${x}</button>`).join("");
@@ -4084,7 +4203,7 @@ function questGetQuestion(){
 }
 function questLoadQuestion(){
  questCanAnswer=true;quest.current=questGetQuestion();
- $("questQuestion").textContent=quest.current.q;$("questFeedback").textContent="";$("questNextBtn").style.display="none";
+ $("questQuestion").innerHTML=`<div style="font-size:13px;color:#667085;margin-bottom:4px;">${studyStartMessage(quest.stageIndex)}</div><div>${quest.current.q}</div>`;$("questFeedback").textContent="";$("questNextBtn").style.display="none";
  const colors=["red","blue","green","yellow"],labels=["A","B","C","D"];
  $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${x}</button>`).join("");
  questStartTimer();questUpdateUI();
