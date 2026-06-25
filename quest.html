@@ -1884,6 +1884,33 @@ body.goldTheme .stageStudyBox{
  .stagePdfBtn{font-size:11px;padding:6px 9px;}
 }
 
+
+/* ==========================================================
+   2026-06-25 追加：ガイド・答え一覧・新称号通知
+========================================================== */
+.stageAnswerBtn{display:inline-block;margin-top:6px;margin-left:6px;padding:7px 10px;border:0;border-radius:999px;background:#2f8f57;color:#fff !important;font-size:12px;font-weight:1000;text-decoration:none;box-shadow:0 3px 0 rgba(0,0,0,.22);cursor:pointer}
+.stageAnswerBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.22)}
+.answerListBox{display:grid;gap:10px;margin-top:12px}
+.answerListCard{background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:12px;font-weight:900}
+.answerListQ{font-weight:1000;line-height:1.55}
+.answerListA{margin-top:8px;background:#f0fff4;border:2px solid #b9efc8;border-radius:14px;padding:8px 10px;color:#217246;font-weight:1000}
+.answerChoices{margin-top:6px;font-size:13px;color:#667085;line-height:1.6}
+.guideBox{display:grid;gap:12px;margin-top:12px}
+.guideCard{background:#fff;border:2px solid #eef3ef;border-radius:18px;padding:14px;font-weight:900;line-height:1.65}
+.guideCard h3{margin-top:0;color:#2f8f57}
+.titleNotifyModal{position:fixed;inset:0;z-index:100003;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55)}
+.titleNotifyModal.show{display:flex}
+.titleNotifyCard{width:min(520px,100%);background:linear-gradient(135deg,#fff7b8,#ffd65a 52%,#c98a12);border:5px solid #fff;border-radius:28px;padding:22px 18px;text-align:center;color:#3b2700;box-shadow:0 20px 56px rgba(0,0,0,.5);animation:titleNotifyPop .35s ease-out both}
+.titleNotifyIcon{font-size:54px;line-height:1}
+.titleNotifyLabel{margin-top:8px;font-size:18px;font-weight:1000}
+.titleNotifyName{margin-top:10px;font-size:26px;font-weight:1000;text-shadow:0 2px 0 rgba(255,255,255,.65)}
+.titleNotifyDesc{margin-top:8px;font-weight:900;line-height:1.55}
+@keyframes titleNotifyPop{from{opacity:0;transform:scale(.72) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+body.darkTheme .answerListCard,body.darkTheme .guideCard{background:#202020;color:#fff;border-color:#3a3a3a}
+body.darkTheme .answerListA{background:#19351f;border-color:#3d9253;color:#9cf0b2}
+body.darkTheme .answerChoices{color:#c9c9c9}
+@media(max-width:560px){#stageMenu .menuImageGrid{display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:4px !important}#stageMenu .menuImageGrid .imgBtn{width:100% !important;margin:0 !important;padding:0 !important}#stageMenu .menuImageGrid .imgBtn img{width:100% !important;max-width:none !important}.stageAnswerBtn,.stagePdfBtn{font-size:11px;padding:6px 9px}.titleNotifyName{font-size:21px}}
+
 </style>
 </head>
 <body>
@@ -1957,6 +1984,10 @@ body.goldTheme .stageStudyBox{
 
       <button class="imgBtn" onclick="showDevMessage()">
         <img src="assets/btn/btn_messages.png" alt="開発者へのメッセージ">
+      </button>
+
+      <button class="imgBtn" onclick="showGuide()">
+        <img src="assets/btn/btn_guide.png" alt="ゲームの進め方ガイド">
       </button>
 
       <button id="devAdminBtn" class="btn danger" style="display:none" onclick="debugFullUnlockFromMenu()">
@@ -2134,6 +2165,31 @@ body.goldTheme .stageStudyBox{
     </div>
   </section>
 
+  <section id="guide" class="screen">
+    <div class="card">
+      <h2>📘 ゲームの進め方ガイド</h2>
+      <p class="muted">モリリンゴの基本ルールです。</p>
+      <div class="guideBox">
+        <div class="guideCard"><h3>① チャレンジ</h3><p>問題に正解して、木や宝箱を完成させます。ステージをクリアするとアイテムを獲得できます。</p></div>
+        <div class="guideCard"><h3>② クエスト</h3><p>同じステージのチャレンジを3回クリアすると解放されます。3エリアを進み、敵を倒すとクリアです。</p></div>
+        <div class="guideCard"><h3>③ アイテム・称号・スキン</h3><p>集めたアイテムはクエストで使用できます。称号やスキンはメニューから確認・変更できます。</p></div>
+      </div>
+      <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
+    </div>
+  </section>
+
+  <section id="answerList" class="screen">
+    <div class="card">
+      <h2 id="answerListTitle">答えを見る</h2>
+      <p class="muted" id="answerListInfo">このステージの問題と答えの一覧です。</p>
+      <div id="answerListBox" class="answerListBox"></div>
+      <div class="toolbar">
+        <button class="btn ghost" onclick="openStageMenu(selectedStageIndex||0)">ステージメニューへ戻る</button>
+        <button class="btn ghost" onclick="openChallenge()">ステージ一覧へ戻る</button>
+      </div>
+    </div>
+  </section>
+
   <section id="devTools" class="screen">
     <div class="card">
       <h2>🛠 開発者メニュー</h2>
@@ -2232,13 +2288,14 @@ body.goldTheme .stageStudyBox{
 <div id="questItemModal" class="questModal"><div class="questModalCard"><h2>🎒 アイテムを使う</h2><p class="muted">問題画面を隠して、所持アイテムから選べます。</p><div id="questModalItems"></div><div class="toolbar"><button class="btn ghost" onclick="closeQuestItemModal()">閉じる</button></div></div></div>
 
 <div id="devNewsModal" class="devNewsModal"><div class="devNewsModalCard"><h2>🔔 開発者からのお知らせ</h2><div id="devNewsList"><div class="muted">お知らせを読み込み中...</div></div><div class="toolbar"><button class="btn ghost" onclick="closeDevNews()">閉じる</button></div></div></div>
+<div id="titleNotifyModal" class="titleNotifyModal"><div class="titleNotifyCard"><div class="titleNotifyIcon">🏆</div><div class="titleNotifyLabel">新称号獲得！</div><div id="titleNotifyName" class="titleNotifyName">称号名</div><div id="titleNotifyDesc" class="titleNotifyDesc">説明</div><div class="toolbar" style="justify-content:center;margin-top:16px"><button class="btn ghost" onclick="closeTitleNotify()">OK</button></div></div></div>
 <div id="questCenterFx" class="questCenterFx"><img id="questCenterFxImg" alt="演出"><div id="questCenterFxText" class="questCenterFxText" style="display:none"></div></div>
 <script>
 const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbw78SVvjLE64agDF6xVs_jNQjLQJYI5A6I6rPeAPvbY5zgycMisKB36bYjzXNGQHP9G/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbxHuIOKSQua2wkpy_tGh1sWXWeL5jc769Gji6Ooyt3wvSjgxlkwkM8dnLlS1xHhd7okfw/exec";
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
@@ -2325,7 +2382,8 @@ function stageStudy(index){
 function stageStudyHtml(index){
  const st=stageStudy(index);
  const pdf=st.pdf ? `<br><a class="stagePdfBtn" href="${st.pdf}" target="_blank" rel="noopener">📄 教材を見る</a>` : "";
- return `<div class="stageStudyBox"><div class="stageStudyTitle">📖 学習内容：${st.title}</div><div class="stageStudyText">📝 ${st.text}</div>${pdf}</div>`;
+ const answer=`<button type="button" class="stageAnswerBtn" onclick="event.stopPropagation();openAnswerList(${index})">✅ 答えを見る</button>`;
+ return `<div class="stageStudyBox"><div class="stageStudyTitle">📖 学習内容：${st.title}</div><div class="stageStudyText">📝 ${st.text}</div>${pdf}${answer}</div>`;
 }
 function stageQuestionCountText(index){
  const n=stageQuestions(index).length;
@@ -2457,6 +2515,8 @@ let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
 state.selectedMenuTitles??=[];
 state.selectedRankingTitles??=[];
+state.remoteTitles??=[];
+state.remoteUnlockedTitleIds??=[];
 state.challengeClears??={};
 state.items??={};
 state.questClears??={};
@@ -2488,13 +2548,28 @@ const TITLE_MASTER=[
  {id:"weekly_king",name:"一週間の覇者",desc:"週間ランキング1位",badgeId:"weekly_king"},
  {id:"dev_supporter",name:"モリリンゴ支援者",desc:"開発者へメッセージを送った",badgeId:"dev_supporter"}
 ];
-function titleById(id){return TITLE_MASTER.find(t=>t.id===id);}
+function normalizeTitleItem(t){
+ return {
+  id:String(t.id||t.titleId||"").trim(),
+  name:String(t.name||t.titleName||"").trim(),
+  desc:String(t.desc||t.description||"").trim(),
+  badgeId:String(t.badgeId||t.id||t.titleId||"").trim()
+ };
+}
+function allTitleMaster(){
+ const map={};
+ TITLE_MASTER.map(normalizeTitleItem).forEach(t=>{if(t.id)map[t.id]=t;});
+ (state.remoteTitles||[]).map(normalizeTitleItem).forEach(t=>{if(t.id)map[t.id]=t;});
+ return Object.values(map);
+}
+function titleById(id){return allTitleMaster().find(t=>t.id===id);}
 function earnedTitleIds(){
- const earned=[];
- TITLE_MASTER.forEach(t=>{
-  if(state.badges.includes(t.badgeId || t.id))earned.push(t.id);
+ const set=new Set();
+ allTitleMaster().forEach(t=>{
+  if(state.badges.includes(t.badgeId || t.id))set.add(t.id);
  });
- return earned;
+ (state.remoteUnlockedTitleIds||[]).forEach(id=>set.add(id));
+ return [...set];
 }
 function cleanSelectedTitles(){
  const earned=earnedTitleIds();
@@ -2614,6 +2689,83 @@ function showDevMessage(){
  if(!$("devMsgText"))return;
  $("devMsgText").value="";
  show("devMessage");
+}
+function showGuide(){
+ show("guide");
+}
+function escapeHtml(str){
+ return String(str??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+}
+function localAnswerItems(index){
+ const qs=stageQuestions(index);
+ return qs.map(q=>({
+  question:q.q,
+  answer:Array.isArray(q.a)?q.a[q.c]:"",
+  choices:Array.isArray(q.a)?q.a:[],
+  correctIndex:Number(q.c||0)
+ }));
+}
+function normalizeAnswerItems(items){
+ return (Array.isArray(items)?items:[]).map(x=>({
+  question:String(x.question||x.q||""),
+  answer:String(x.answer||""),
+  word:String(x.word||""),
+  type:String(x.type||""),
+  choices:Array.isArray(x.choices)?x.choices:[],
+  correctIndex:Number.isFinite(Number(x.correctIndex))?Number(x.correctIndex):-1
+ })).filter(x=>x.question||x.answer||x.word);
+}
+function renderAnswerItems(index,items,sourceText){
+ const s=STAGES[index];
+ const study=stageStudy(index);
+ const list=normalizeAnswerItems(items);
+ if($("answerListTitle"))$("answerListTitle").textContent=`${s?.name||"ステージ"}：答えを見る`;
+ if($("answerListInfo"))$("answerListInfo").textContent=`${study.title} / ${list.length}問${sourceText?" / "+sourceText:""}`;
+ const box=$("answerListBox");
+ if(!box)return;
+ box.innerHTML=list.length?list.map((q,i)=>{
+  const question=q.question || (q.type ? `『${q.word}』の${q.type}は？` : `『${q.word}』は？`);
+  const choices=q.choices.length?q.choices.map((x,j)=>`${j===q.correctIndex?"✅":"・"}${escapeHtml(x)}`).join("<br>"):"";
+  return `<div class="answerListCard"><div class="answerListQ">${i+1}. ${escapeHtml(question)}</div><div class="answerListA">答え：${escapeHtml(q.answer)}</div>${choices?`<div class="answerChoices">${choices}</div>`:""}</div>`;
+ }).join(""):`<div class="rankingEmpty">このステージの問題がありません</div>`;
+}
+function fetchAnswerStage(index,keys,pos=0){
+ const box=$("answerListBox");
+ if(!GAS_URL || pos>=keys.length){
+  renderAnswerItems(index,localAnswerItems(index),"内蔵問題");
+  return;
+ }
+ const stageKey=keys[pos];
+ const callback="morilingoAnswersCallback_"+Date.now()+"_"+pos;
+ window[callback]=data=>{
+  try{
+   const answers=normalizeAnswerItems(data?.answers||[]);
+   if(answers.length){
+    renderAnswerItems(index,answers,"スプレッドシート");
+   }else{
+    fetchAnswerStage(index,keys,pos+1);
+   }
+  }finally{
+   delete window[callback];
+   script.remove();
+  }
+ };
+ const script=document.createElement("script");
+ const params=new URLSearchParams({action:"answers",stage:stageKey,callback,v:String(Date.now())});
+ script.src=GAS_URL+"?"+params.toString();
+ script.onerror=()=>{delete window[callback];script.remove();fetchAnswerStage(index,keys,pos+1);};
+ document.body.appendChild(script);
+ if(box)box.innerHTML=`<div class="rankingEmpty">答え一覧を読み込み中...（${escapeHtml(stageKey)}）</div>`;
+}
+function openAnswerList(index){
+ selectedStageIndex=index;
+ const s=STAGES[index];
+ const study=stageStudy(index);
+ if($("answerListTitle"))$("answerListTitle").textContent=`${s?.name||"ステージ"}：答えを見る`;
+ if($("answerListInfo"))$("answerListInfo").textContent=`${study.title} / 読み込み中`;
+ const keys=[s?.id,study?.questionKey,`stage${index+1}`,String(index+1).padStart(2,"0"),String(index+1)].filter(Boolean);
+ show("answerList");
+ fetchAnswerStage(index,[...new Set(keys)]);
 }
 
 
@@ -2874,7 +3026,7 @@ function debugFullUnlockFromMenu(){
   state.items[itemKey(s)]=Math.max(99,Number(state.items[itemKey(s)]||0));
  });
  unlockAllSkinsForAdmin();
- TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
+ allTitleMaster().forEach(t=>addBadge(t.badgeId||t.id));
  cleanSelectedTitles();
  save();
  renderBadges();
@@ -2984,7 +3136,7 @@ function debugUnlockAllSkins(){
 }
 function debugUnlockAllTitles(){
  if(!isAdmin())return;
- TITLE_MASTER.forEach(t=>addBadge(t.badgeId||t.id));
+ allTitleMaster().forEach(t=>addBadge(t.badgeId||t.id));
  cleanSelectedTitles();
  save();
  alert("全称号を解放しました");
@@ -3034,13 +3186,14 @@ function renderTitles(){
  if(!$("titleList"))return;
  cleanSelectedTitles();
  const earned=earnedTitleIds();
- const total=TITLE_MASTER.length;
+ const master=allTitleMaster();
+ const total=master.length;
  const count=earned.length;
  const percent=total?Math.round(count/total*100):0;
  $("titleCountMini").textContent=`${count} / ${total}`;
  $("titleProgressText").textContent=`${percent}%`;
  $("titleBarFill").style.width=`${percent}%`;
- $("titleList").innerHTML=TITLE_MASTER.map(t=>{
+ $("titleList").innerHTML=master.map(t=>{
   const unlocked=earned.includes(t.id);
   const menuOn=state.selectedMenuTitles.includes(t.id);
   const rankOn=state.selectedRankingTitles.includes(t.id);
@@ -3058,6 +3211,56 @@ function renderTitles(){
    </div>
   </div>`;
  }).join("");
+}
+function playerTitleStorageKey(){
+ const p=state.player||{};
+ return `morilingoKnownTitles_${p.className||""}_${p.number||""}_${p.name||""}`;
+}
+function checkNewTitleNotification(){
+ const earned=earnedTitleIds();
+ if(!earned.length)return;
+ const key=playerTitleStorageKey();
+ const known=JSON.parse(localStorage.getItem(key)||"[]");
+ const news=earned.filter(id=>!known.includes(id));
+ localStorage.setItem(key,JSON.stringify(earned));
+ if(news.length){
+  const t=titleById(news[0]);
+  if(t)showTitleNotify(t);
+ }
+}
+function showTitleNotify(t){
+ const name=$("titleNotifyName"),desc=$("titleNotifyDesc"),modal=$("titleNotifyModal");
+ if(name)name.textContent=t.name||"新しい称号";
+ if(desc)desc.textContent=t.desc||"特別称号を獲得しました";
+ if(modal)modal.classList.add("show");
+}
+function closeTitleNotify(){
+ const modal=$("titleNotifyModal");
+ if(modal)modal.classList.remove("show");
+}
+function loadRemoteTitles(){
+ if(!GAS_URL||!state.player?.name)return;
+ const p=state.player;
+ const callback="morilingoTitlesCallback_"+Date.now();
+ window[callback]=data=>{
+  try{
+   if(data&&data.ok!==false){
+    state.remoteTitles=(data.titles||[]).map(t=>({id:t.titleId||t.id,name:t.titleName||t.name,desc:t.description||t.desc,badgeId:t.titleId||t.id})).filter(t=>t.id&&t.name);
+    state.remoteUnlockedTitleIds=(data.unlockedTitleIds||[]).map(String);
+    save();
+    cleanSelectedTitles();
+    renderTitles();
+    renderBadges();
+    renderMenuTopTitles();
+    checkNewTitleNotification();
+   }
+  }finally{delete window[callback];script.remove();}
+ };
+ const script=document.createElement("script");
+ const params=new URLSearchParams({action:"titles",name:p.name||"",className:p.className||"",number:p.number||"",callback,v:String(Date.now())});
+ script.src=GAS_URL+"?"+params.toString();
+ script.onerror=()=>{delete window[callback];script.remove();};
+ document.body.appendChild(script);
 }
 
 
@@ -3084,6 +3287,7 @@ function show(id){
  applySkinSettings();
  applyWorldTheme(id);
  if(id==="menu"){
+  loadRemoteTitles();
   loadRanking();
  }
 }
@@ -3104,6 +3308,7 @@ function saveProfileAndMenu(){
  if(!state.player.name){alert("名前を入力してください");return;}
  save();
  loadRemoteQuestions();
+ loadRemoteTitles();
  show("menu");
 }
 function updatePlayerDisplay(){
@@ -3502,7 +3707,7 @@ function nextQuestion(){
  const q=game.questions[game.qIndex % game.questions.length];
  game.qIndex++;
  game.current=q;
- $("question").innerHTML=`<div style="font-size:13px;color:#667085;margin-bottom:4px;">${studyStartMessage(game.stageIndex)}</div><div>${q.q}</div>`;
+ $("question").textContent=q.q;
  $("feedback").textContent="";
  const colors=["red","blue","green","yellow"], labels=["A","B","C","D"];
  $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${x}</button>`).join("");
@@ -4203,7 +4408,7 @@ function questGetQuestion(){
 }
 function questLoadQuestion(){
  questCanAnswer=true;quest.current=questGetQuestion();
- $("questQuestion").innerHTML=`<div style="font-size:13px;color:#667085;margin-bottom:4px;">${studyStartMessage(quest.stageIndex)}</div><div>${quest.current.q}</div>`;$("questFeedback").textContent="";$("questNextBtn").style.display="none";
+ $("questQuestion").textContent=quest.current.q;$("questFeedback").textContent="";$("questNextBtn").style.display="none";
  const colors=["red","blue","green","yellow"],labels=["A","B","C","D"];
  $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${x}</button>`).join("");
  questStartTimer();questUpdateUI();
@@ -4644,7 +4849,7 @@ window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
-renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();loadRemoteQuestions();loadDevNews();save();
+renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();loadRemoteQuestions();loadDevNews();loadRemoteTitles();save();
 </script>
 </body>
 </html>
