@@ -3299,17 +3299,93 @@ function showProfile(){
  $("playerNumber").value=state.player.number||"";
  show("profile");
 }
-function saveProfileAndMenu(){
- state.player={
-  name:$("playerName").value.trim(),
-  className:$("playerClass").value.trim(),
-  number:$("playerNumber").value.trim()
- };
- if(!state.player.name){alert("名前を入力してください");return;}
- save();
- loadRemoteQuestions();
- loadRemoteTitles();
- show("menu");
+function gasLoginCheck(name,className,number){
+ return new Promise(resolve=>{
+  // GAS_URLが空なら、通信できないので止める
+  if(!GAS_URL){
+   resolve({ok:false,message:"GAS_URLが未設定です"});
+   return;
+  }
+
+  const callback="morilingoLoginCallback_"+Date.now();
+  const script=document.createElement("script");
+
+  window[callback]=data=>{
+   try{
+    resolve(data||{ok:false,message:"ログイン確認に失敗しました"});
+   }finally{
+    delete window[callback];
+    script.remove();
+   }
+  };
+
+  const params=new URLSearchParams({
+   action:"login",
+   name:name||"",
+   className:className||"",
+   number:number||"",
+   callback,
+   v:String(Date.now())
+  });
+
+  script.src=GAS_URL+"?"+params.toString();
+  script.onerror=()=>{
+   delete window[callback];
+   script.remove();
+   resolve({ok:false,message:"ログイン確認に失敗しました。GASを再デプロイしてください。"});
+  };
+
+  document.body.appendChild(script);
+
+  setTimeout(()=>{
+   if(window[callback]){
+    delete window[callback];
+    script.remove();
+    resolve({ok:false,message:"ログイン確認がタイムアウトしました"});
+   }
+  },8000);
+ });
+}
+
+async function saveProfileAndMenu(){
+ const name=$("playerName").value.trim();
+ const className=$("playerClass").value.trim();
+ const number=$("playerNumber").value.trim();
+
+ if(!name){alert("名前を入力してください");return;}
+
+ // 開発者Kosukeは、組・番号なしで進める。
+ // 生徒は、名簿照合のために組・番号も必須。
+ if(name!=="Kosuke" && (!className || !number)){
+  alert("クラスと出席番号も入力してください");
+  return;
+ }
+
+ const btn=document.querySelector('#profile .toolbar .btn.primary');
+ if(btn){
+  btn.disabled=true;
+  btn.textContent="確認中...";
+ }
+
+ try{
+  const result=await gasLoginCheck(name,className,number);
+
+  if(!result.ok){
+   alert(result.message || "登録されていない生徒です");
+   return;
+  }
+
+  state.player={name,className,number};
+  save();
+  loadRemoteQuestions();
+  loadRemoteTitles();
+  show("menu");
+ }finally{
+  if(btn){
+   btn.disabled=false;
+   btn.textContent="保存して進む";
+  }
+ }
 }
 function updatePlayerDisplay(){
  if($("devAdminBtn"))$("devAdminBtn").style.display=isAdmin()?"block":"none";
