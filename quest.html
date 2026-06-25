@@ -1801,6 +1801,35 @@ body.darkTheme .devNewsLatest{color:#c9c9c9}
  .devNewsModalCard{padding:12px;border-radius:20px}
 }
 
+/* ==========================================================
+   2026-06-25 修正：スキン選択中バーの文字色
+   ダークモード時も「名前」「攻撃力」が白背景で読めるように固定
+========================================================== */
+body.darkTheme #skin #skinCurrent,
+body.darkTheme #skin #skinCurrent.skinCurrent,
+body.darkTheme #skin #skinCurrent.skinStatusBar{
+ background:#f0fff4 !important;
+ color:#000 !important;
+ border-color:#b9efc8 !important;
+}
+
+body.darkTheme #skin #skinCurrent .skinStatusItem{
+ background:#fff !important;
+ color:#000 !important;
+ border-color:#e6f2eb !important;
+}
+
+body.darkTheme #skin #skinCurrent .skinStatusLabel{
+ color:#667085 !important;
+}
+
+body.darkTheme #skin #skinCurrent b,
+body.darkTheme #skin #skinCurrent small,
+body.darkTheme #skin #skinCurrent #skinCurrentName,
+body.darkTheme #skin #skinCurrent #skinCurrentAttack{
+ color:#000 !important;
+}
+
 </style>
 </head>
 <body>
