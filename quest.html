@@ -2293,7 +2293,7 @@ body.darkTheme .titleSearchMini{
       <p class="muted">モリリンゴの基本ルールです。</p>
       <div class="guideBox">
         <div class="guideCard"><h3>① チャレンジ</h3><p>問題に正解して、木や宝箱を完成させます。ステージをクリアするとアイテムを獲得できます。</p></div>
-        <div class="guideCard"><h3>② クエスト</h3><p>同じステージのチャレンジを3回クリアすると解放されます。3エリアを進み、敵を倒すとクリアです。</p></div>
+        <div class="guideCard"><h3>② クエスト</h3><p>同じステージの復興を3回クリアすると解放されます。復興3回分の36問からランダムに出題され、3エリアを進み、敵を倒すとクリアです。</p></div>
         <div class="guideCard"><h3>③ アイテム・称号・スキン</h3><p>集めたアイテムはクエストで使用できます。称号やスキンはメニューから確認・変更できます。</p></div>
       </div>
       <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
@@ -2508,8 +2508,8 @@ function stageStudyHtml(index){
  return `<div class="stageStudyBox"><div class="stageStudyTitle">📖 学習内容：${st.title}</div><div class="stageStudyText">📝 ${st.text}</div>${pdf}${answer}</div>`;
 }
 function stageQuestionCountText(index){
- const n=stageQuestions(index).length;
- return `登録問題：${n}問`;
+ const total=stageQuestQuestions(index).length;
+ return `復興：12問×3回（テーマ6＋古文単語6） / クエスト候補：${total}問`;
 }
 function studyStartMessage(index){
  const st=stageStudy(index);
@@ -2574,33 +2574,155 @@ const QUESTION_BANK={
  ]
 };
 
-function stageQuestions(stageIndex){
- const source=remoteQuestions||QUESTION_BANK;
+const RECOVERY_ROUNDS=3;
+const RECOVERY_THEME_QUESTIONS_PER_ROUND=6;
+const RECOVERY_VOCAB_QUESTIONS_PER_ROUND=6;
+const RECOVERY_QUESTIONS_PER_ROUND=RECOVERY_THEME_QUESTIONS_PER_ROUND+RECOVERY_VOCAB_QUESTIONS_PER_ROUND;
+const WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY=RECOVERY_QUESTIONS_PER_ROUND-1;
+
+function questionId(q){
+ return [
+  q?.id,q?.questionId,q?.q,q?.question,
+  Array.isArray(q?.a)?q.a.join("|"):"",
+  q?.answer
+ ].filter(Boolean).join("::");
+}
+function uniqueQuestionList(list){
+ const seen=new Set();
+ return (list||[]).filter(q=>{
+  const id=questionId(q);
+  if(!id)return false;
+  if(seen.has(id))return false;
+  seen.add(id);
+  return true;
+ });
+}
+function normalizeQuestionKind(value){
+ const raw=String(value||"").trim().toLowerCase();
+ if(["vocab","vocabulary","word","words","tango","kobun_vocab","kobun_tango","古文単語","単語","語彙"].includes(raw))return "vocab";
+ if(["theme","unit","grammar","kanbun","bunpo","文法","テーマ","単元"].includes(raw))return "theme";
+ return "";
+}
+function questionKind(q){
+ return normalizeQuestionKind(q?.kind || q?.category || q?.questionType || q?.type || q?.genre);
+}
+function questionRound(q){
+ const raw=q?.round ?? q?.recoveryRound ?? q?.kai ?? q?.回 ?? q?.rebuildRound;
+ const n=Number(raw);
+ return Number.isFinite(n) && n>=1 ? Math.min(RECOVERY_ROUNDS,Math.floor(n)) : 0;
+}
+function collectQuestionsByKeys(source,keys){
+ let qs=[];
+ keys.filter(Boolean).forEach(key=>{
+  if(Array.isArray(source?.[key]))qs=qs.concat(source[key]);
+ });
+ return uniqueQuestionList(qs);
+}
+function stageBaseKeys(stageIndex){
  const stage=STAGES[stageIndex];
  const study=stageStudy(stageIndex);
  const stageNo=stageIndex+1;
- const keys=[
+ return [
   stage?.id,
   study?.questionKey,
   `stage${stageNo}`,
   String(stageNo).padStart(2,"0"),
   String(stageNo)
  ].filter(Boolean);
-
- // スプレッドシート側で stage 列にステージID・単元キー・番号を書いた場合は、
- // そのステージ専用問題だけを優先して出す。
- let qs=[];
- keys.forEach(key=>{
-  if(Array.isArray(source[key]))qs=qs.concat(source[key]);
+}
+function stageRoundKeys(stageIndex,round,kind){
+ const stage=STAGES[stageIndex];
+ const study=stageStudy(stageIndex);
+ const stageNo=stageIndex+1;
+ const no2=String(stageNo).padStart(2,"0");
+ const base=stageBaseKeys(stageIndex);
+ const kindWords=kind==="vocab"
+  ? ["vocab","tango","kobun_vocab","kobun_tango","古文単語","単語"]
+  : ["theme","unit","bunpo","grammar","テーマ","単元"];
+ const keys=[];
+ base.forEach(b=>{
+  keys.push(`${b}_${kind}_r${round}`,`${b}_${kind}_round${round}`,`${b}_${kind}${round}`);
+  kindWords.forEach(k=>{
+   keys.push(`${b}_${k}_r${round}`,`${b}_${k}_round${round}`,`${b}_${k}${round}`);
+  });
  });
+ if(kind==="vocab"){
+  keys.push(
+   `kobun_vocab_${no2}_r${round}`,`kobun_vocab_${stageNo}_r${round}`,
+   `kobun_tango_${no2}_r${round}`,`kobun_tango_${stageNo}_r${round}`,
+   `vocab_stage${stageNo}_r${round}`,`tango_stage${stageNo}_r${round}`
+  );
+ }else{
+  keys.push(
+   `${study?.questionKey}_r${round}`,`${study?.questionKey}_round${round}`,
+   `${stage?.id}_r${round}`,`${stage?.id}_round${round}`,
+   `stage${stageNo}_r${round}`,`stage${stageNo}_round${round}`
+  );
+ }
+ return [...new Set(keys.filter(Boolean))];
+}
+function stageQuestions(stageIndex){
+ // 互換用：そのステージに登録された全問題を返す。
+ return stageQuestQuestions(stageIndex);
+}
+function stageAllQuestions(stageIndex){
+ const source=remoteQuestions||QUESTION_BANK;
+ const keys=stageBaseKeys(stageIndex);
+ let qs=collectQuestionsByKeys(source,keys);
  if(qs.length)return qs;
-
- // 専用問題がまだない場合だけ、旧内蔵問題で遊べるようにする。
- // 本番ではシート側に各ステージ専用問題を入れる想定。
  if(source===QUESTION_BANK)return stageQuestionsFallback(stageIndex);
-
- // シートは読めたが、そのステージの問題が0件のときも最低限遊べるように内蔵問題へ戻す。
  return stageQuestionsFallback(stageIndex);
+}
+function stageRecoveryQuestions(stageIndex,round){
+ const source=remoteQuestions||QUESTION_BANK;
+ const r=Math.min(RECOVERY_ROUNDS,Math.max(1,Number(round)||1));
+
+ // 1. 推奨：stage列を「単元キー_theme_r1」「単元キー_vocab_r1」形式で分けた問題
+ let theme=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme"));
+ let vocab=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"vocab"));
+
+ // 2. 1つのstageキー内に kind / round 列がある場合も拾う
+ const all=stageAllQuestions(stageIndex);
+ if(theme.length<RECOVERY_THEME_QUESTIONS_PER_ROUND || vocab.length<RECOVERY_VOCAB_QUESTIONS_PER_ROUND){
+  const metaTheme=all.filter(q=>{
+   const k=questionKind(q);
+   const qr=questionRound(q);
+   return k==="theme" && (!qr || qr===r);
+  });
+  const metaVocab=all.filter(q=>{
+   const k=questionKind(q);
+   const qr=questionRound(q);
+   return k==="vocab" && (!qr || qr===r);
+  });
+  theme=uniqueQuestionList(theme.concat(metaTheme));
+  vocab=uniqueQuestionList(vocab.concat(metaVocab));
+ }
+
+ // 3. 足りない場合は、そのステージの全問題から補充して止まらないようにする
+ const used=new Set([...theme,...vocab].map(questionId));
+ const rest=all.filter(q=>!used.has(questionId(q)));
+ theme=uniqueQuestionList(theme).slice(0,RECOVERY_THEME_QUESTIONS_PER_ROUND);
+ vocab=uniqueQuestionList(vocab).slice(0,RECOVERY_VOCAB_QUESTIONS_PER_ROUND);
+
+ while(theme.length<RECOVERY_THEME_QUESTIONS_PER_ROUND && rest.length)theme.push(rest.shift());
+ while(vocab.length<RECOVERY_VOCAB_QUESTIONS_PER_ROUND && rest.length)vocab.push(rest.shift());
+
+ const mixed=[];
+ for(let i=0;i<RECOVERY_THEME_QUESTIONS_PER_ROUND;i++){
+  if(theme[i])mixed.push(theme[i]);
+  if(vocab[i])mixed.push(vocab[i]);
+ }
+ return mixed.length ? mixed.slice(0,RECOVERY_QUESTIONS_PER_ROUND) : stageQuestionsFallback(stageIndex).slice(0,RECOVERY_QUESTIONS_PER_ROUND);
+}
+function stageQuestQuestions(stageIndex){
+ // クエスト・タイムアタックは、復興3回分の36問を候補にする。
+ const qs=[];
+ for(let r=1;r<=RECOVERY_ROUNDS;r++)qs.push(...stageRecoveryQuestions(stageIndex,r));
+ return uniqueQuestionList(qs);
+}
+function currentRecoveryRound(stageId){
+ const clears=Number(state.challengeClears?.[stageId]||0);
+ return (clears%RECOVERY_ROUNDS)+1;
 }
 function stageQuestionsFallback(stageIndex){
  let qs=[...QUESTION_BANK.basic];
@@ -3857,9 +3979,7 @@ function clearTargetName(s){
  return s.growName || "育成物";
 }
 function clearConditionText(s){
- if(isWorldTreeStage(s))return "クリア条件：1〜19のアイテムを集めて世界樹を復活";
- if(isTreeStage(s))return `クリア条件：${clearTargetName(s)}完成 ${s.clearTrees}個`;
- return `クリア条件：宝箱 ${s.clearTrees}個開封`;
+ return "クリア条件：12問正解（テーマ6問＋古文単語6問）";
 }
 function completedObjectCount(){
  if(!game)return 0;
@@ -3968,9 +4088,10 @@ function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).ma
 
 function startChallenge(i){
  const s=STAGES[i];
- game={mode:"challenge",stageIndex:i,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))};
+ const round=currentRecoveryRound(s.id);
+ game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageRecoveryQuestions(i,round))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
- $("modeTitle").textContent=s.name;
+ $("modeTitle").textContent=`${s.name} 復興${round}`;
  if($("timeLabel"))$("timeLabel").textContent="残り時間";
  if($("timeUnit"))$("timeUnit").textContent="秒";
  startGame();
@@ -4109,8 +4230,8 @@ function tryFunnyTitleDropFromRecovery(){
 function checkClear(){
  if(game.mode!=="challenge" && game.mode!=="timeAttack")return false;
 
- const completed=completedObjectCount();
- if(completed<game.stage.clearTrees)return false;
+ const targetCorrect=RECOVERY_QUESTIONS_PER_ROUND;
+ if((game.correctCount||0)<targetCorrect)return false;
 
  stopTimer();
  canAnswer=false;
@@ -4208,7 +4329,7 @@ function renderObject(n,idx){
  </div>`;
 }
 function renderWorldTreeObject(){
- const count=Math.min(game.worldtreeItems||0,19);
+ const count=Math.min(game.worldtreeItems||0,WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY);
  const finalDropped=!!game.finalWorldtreeDropped;
  const images=worldTreeItemImages();
  const items=images.slice(0,count).map((src,i)=>{
@@ -4219,7 +4340,7 @@ function renderWorldTreeObject(){
   return assetImg(src,"ritualItem",name,`style="left:${x}%;top:${y}%;animation-delay:${Math.min(i*.025,.4)}s"`);
  }).join("");
  const final=finalDropped ? assetImg(game.stage.itemImage,"finalWorldtreeItem",game.stage.growName||"黄金のリンゴ") : "";
- const label=finalDropped ? "世界樹復活！" : `${count}/19`;
+ const label=finalDropped ? "世界樹復活！" : `${count}/${WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY}`;
  return `
  <div class="obj" style="width:100%;height:100%;flex:1 1 auto;">
    <div class="worldtreeRitual">
@@ -4262,11 +4383,11 @@ function growObject(){
  let last=game.objects.length-1;
  const stage=game.stage||{};
  if(isWorldTreeStage(stage)){
-  if((game.worldtreeItems||0)<19){
+  if((game.worldtreeItems||0)<WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY){
    game.worldtreeItems=(game.worldtreeItems||0)+1;
    renderObjects();
    const itemName=STAGES[game.worldtreeItems-1]?.growName || "アイテム";
-   return `正解！ ${itemName}が世界樹のまわりに集まった！（${game.worldtreeItems}/19）`;
+   return `正解！ ${itemName}が世界樹のまわりに集まった！（${game.worldtreeItems}/${WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY}）`;
   }
   game.finalWorldtreeDropped=true;
   renderObjects();
@@ -4574,7 +4695,7 @@ function startTimeAttack(i){
   mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,
   time:0,timeLimit:0,elapsedSec:0,startMs:performance.now(),
   qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,
-  unit:s.unit,plant:s.plant,questions:shuffle(stageQuestions(i))
+  unit:s.unit,plant:s.plant,questions:shuffle(stageQuestQuestions(i))
  };
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=s.name+" タイムアタック";
@@ -4608,7 +4729,7 @@ function startQuest(i){
    return;
   }
 
-  const qs=shuffle(stageQuestions(i));
+  const qs=shuffle(stageQuestQuestions(i));
   const passive=questPassiveStats();
   const maxTime=QUEST_MAX_TIME+passive.timerBonus;
 
