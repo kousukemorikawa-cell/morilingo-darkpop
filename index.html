@@ -2149,6 +2149,117 @@ body.darkTheme .originalQuizCard.active{
 body.darkTheme .originalQuizName{color:#9cf0b2;}
 body.darkTheme .originalQuizMeta{color:#c9c9c9;}
 
+
+
+/* ==========================================================
+   2026-06-26 修正：称号表示の文字色
+   白背景の称号は、ダークモードでも黒文字に固定する
+========================================================== */
+.badge{
+ display:inline-flex !important;
+ align-items:center !important;
+ gap:6px !important;
+ padding:10px 16px !important;
+ border-radius:999px !important;
+ background:#fff !important;
+ color:#000 !important;
+ font-weight:1000 !important;
+ text-shadow:none !important;
+ border:2px solid #e6e6e6 !important;
+ box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+}
+.badge *{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.menuTitleChip,
+.menuTitleChip *{
+ background:#fffdf0 !important;
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.menuTitleEmpty{
+ background:#fff !important;
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.rankTitleChip,
+.rankTitleChip *{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+ text-shadow:none !important;
+}
+.rankNameLine.hasRankingTitle{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.rankNameLine.hasRankingTitle *{
+ text-shadow:none !important;
+}
+.titleCard,
+.titleCard.unlocked{
+ background:#fff !important;
+ color:#000 !important;
+ border-color:#e6e6e6 !important;
+}
+.titleCard *,
+.titleCard.unlocked *{
+ text-shadow:none !important;
+}
+.titleCard .titleName{
+ color:#000 !important;
+}
+.titleCard .titleDesc{
+ color:#555 !important;
+}
+.titleProgress,
+.titleProgress *{
+ background-color:#fff;
+ color:#000;
+ text-shadow:none !important;
+}
+.titleCategoryChip{
+ background:#eef7ff !important;
+ color:#23608f !important;
+}
+.titleDropChip{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+}
+body.darkTheme .badge,
+body.darkTheme .menuTitleChip,
+body.darkTheme .menuTitleEmpty,
+body.darkTheme .titleCard,
+body.darkTheme .titleCard.unlocked{
+ background:#fff !important;
+ color:#000 !important;
+ border-color:#e6e6e6 !important;
+}
+body.darkTheme .badge *,
+body.darkTheme .menuTitleChip *,
+body.darkTheme .menuTitleEmpty *,
+body.darkTheme .titleCard *,
+body.darkTheme .titleCard.unlocked *{
+ text-shadow:none !important;
+}
+body.darkTheme .titleCard .titleName{
+ color:#000 !important;
+}
+body.darkTheme .titleCard .titleDesc{
+ color:#555 !important;
+}
+body.darkTheme .titleCategoryChip{
+ background:#eef7ff !important;
+ color:#23608f !important;
+ border-color:#cfe9ff !important;
+}
+body.darkTheme .titleDropChip,
+body.darkTheme .rankTitleChip{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+ border-color:#f0d58b !important;
+}
+
 </style>
 </head>
 <body>
