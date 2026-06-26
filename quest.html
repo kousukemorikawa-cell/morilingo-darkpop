@@ -2397,12 +2397,58 @@ body.darkTheme .titleSearchMini{
       <div class="questControls"><button class="btn questItemButton" onclick="openQuestItemModal()">🎒 アイテム</button><button class="btn ghost" onclick="quitQuest()">メニュー</button></div><button id="questNextBtn" class="btn primary" style="display:none" onclick="questNextQuestion()">次へ</button>
     </div>
   </section>
+<section id="original" class="screen">
+  <div class="card">
+    <h2>オリジナル問題</h2>
+    <p class="muted">自作問題で、復興またはクエストを遊べます。</p>
 
-  <section id="original" class="screen"><div class="card"><h2>オリジナル</h2><p class="muted">自作問題で遊ぶ場所。背景は学校のグラウンドです。</p><div class="toolbar"><button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button><button class="btn secondary" onclick="show('editor')">問題を作る</button><button class="btn ghost" onclick="show('menu')">戻る</button></div></div></section>
-  <section id="editor" class="screen"><div class="card"><h2>問題作成</h2><p class="muted">Excelやスプレッドシートで作った表をCSVで読み込めます。正解番号は1〜4で入力してください。</p><div class="form"><textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
+    <div id="originalSummary" class="stageStudyBox"></div>
+
+    <div class="toolbar">
+      <button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button>
+      <button class="btn secondary" onclick="showOriginalEditor()">問題を作る</button>
+      <button class="btn ghost" onclick="show('menu')">戻る</button>
+    </div>
+  </div>
+</section>
+
+<section id="editor" class="screen">
+  <div class="card">
+    <h2>問題作成</h2>
+    <p class="muted">クイズ名・問題タイプ・使用ステージを選んで、CSV問題を読み込みます。</p>
+
+    <div class="form">
+      <label><b>クイズ名</b></label>
+      <input id="originalQuizName" placeholder="例：古文助動詞">
+
+      <label><b>問題タイプ</b></label>
+      <select id="originalQuizMode" onchange="updateOriginalLimitText()">
+        <option value="rebuild">復興</option>
+        <option value="quest">クエスト</option>
+      </select>
+
+      <label><b>使用ステージ</b></label>
+      <select id="originalQuizStage"></select>
+
+      <div id="originalLimitText" class="devNote">復興は最大12問、クエストは最大36問までです。</div>
+
+      <textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
 書くの未然形は？,書か,書き,書く,書け,1
-けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea><input type="file" id="csvFile" accept=".csv,text/csv"></div><div class="toolbar"><button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button><button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button><button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button><button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button><button class="btn ghost" onclick="show('original')">戻る</button></div></div></section>
-  <section id="game" class="screen"><div class="card"><h2 id="modeTitle">ステージ</h2><div class="status"><div class="stat">点 <span id="score">0</span></div><div class="stat">連続 <span id="streak">0</span></div><div class="stat">ミス <span id="miss">0</span>/3</div><div class="timer"><div class="timerTop"><span id="timeLabel">残り時間</span><span><span id="time">20</span><span id="timeUnit">秒</span></span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div></div><div id="world" class="world"><div id="stageCap" class="stageCap">田園</div><div class="track"></div><div id="treeArea" class="treeArea"></div><img id="ninja" class="char" src="assets/enemies/01_field_enemy.png" onerror="this.onerror=null;this.src='assets/enemies/gobelyn.png';">
+けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea>
+
+      <input type="file" id="csvFile" accept=".csv,text/csv">
+    </div>
+
+    <div class="toolbar">
+      <button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button>
+      <button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button>
+      <button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button>
+      <button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button>
+      <button class="btn ghost" onclick="show('original')">戻る</button>
+    </div>
+  </div>
+</section>
+
 <img id="dragon" class="char" src="assets/enemies/dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
 </div>
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
@@ -2756,7 +2802,12 @@ function fruitPositions(){
  return window.matchMedia("(max-width:560px)").matches ? POS6_MOBILE : POS6_DESKTOP;
 }
 let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
-state.unlocked??=1;state.badges??=[];state.original??=[];state.player??={name:"",className:"",number:""};
+state.unlocked??=1;state.badges??=[];state.original??=[];state.originalQuiz??={
+  name:"",
+  mode:"rebuild",
+  stageIndex:0
+};state.player??={name:"",className:"",number:""};
+ 
 state.selectedMenuTitles??=[];
 state.selectedRankingTitles??=[];
 state.titleCategory??="すべて";
@@ -4097,15 +4148,95 @@ function startChallenge(i){
  startGame();
 }
 function startOriginal(){
- const qs=state.original.length?state.original:QUESTION_BANK.basic.slice(0,4);
- const s={name:"オリジナル「学校のグラウンド」",cls:"school",sun:"🏫",unit:"stageItem",plant:"apple",growName:"リンゴ",saplingImage:"assets/items/01_field_sapling.png",grownImage:"assets/items/01_field_grown.png",itemImage:"assets/items/01_field_item.png",clear:999,id:"original"};
- game={mode:"original",stageIndex:-1,stage:s,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],unit:s.unit,plant:s.plant,questions:shuffle(qs)};
- setupWorld(s.cls,s.sun,"オリジナル");
- $("modeTitle").textContent=s.name;
+ const q=state.originalQuiz||{};
+ const qs=state.original||[];
+
+ if(!qs.length){
+  alert("先に問題を作成・読み込みしてください。");
+  showOriginalEditor();
+  return;
+ }
+
+ const stageIndex=Number(q.stageIndex||0);
+ const s=STAGES[stageIndex]||STAGES[0];
+ const quizName=q.name||"オリジナル問題";
+
+ if(q.mode==="quest"){
+  startOriginalQuest(stageIndex,quizName,qs);
+  return;
+ }
+
+ game={
+  mode:"original",
+  stageIndex,
+  stage:s,
+  score:0,
+  streak:0,
+  miss:0,
+  time:20,
+  qIndex:0,
+  correctCount:0,
+  objects:[0],
+  worldtreeItems:0,
+  finalWorldtreeDropped:false,
+  unit:s.unit,
+  plant:s.plant,
+  questions:shuffle(qs)
+ };
+
+ setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
+ $("modeTitle").textContent=`${quizName}：${s.name} 復興`;
  if($("timeLabel"))$("timeLabel").textContent="残り時間";
  if($("timeUnit"))$("timeUnit").textContent="秒";
  startGame();
 }
+function startOriginalQuest(stageIndex,quizName,qs){
+ const s=STAGES[stageIndex]||STAGES[0];
+
+ const passive=questPassiveStats();
+ const maxTime=QUEST_MAX_TIME+passive.timerBonus;
+ const playerMaxHp=QUEST_PLAYER_MAX_HP+(passive.hpBonus||0);
+
+ quest={
+  stageIndex,
+  stage:s,
+  questions:shuffle(qs),
+  qIndex:0,
+  current:null,
+  area:1,
+  progress:0,
+  phase:"walk",
+  enemyHp:0,
+  enemyMax:0,
+  playerHp:playerMaxHp,
+  playerMaxHp,
+  score:0,
+  attackBoost:1,
+  baseAttack:1+passive.attackPassive,
+  maxTime,
+  time:maxTime,
+  timeFrozen:0,
+  missGuard:false,
+  enemyDodgeDebuff:0,
+  pendingEnemyDodgeDebuff:0,
+  extraDrops:0,
+  passive,
+  isOriginal:true,
+  originalQuizName:quizName
+ };
+
+ questUsedQueue=[];
+
+ show("questGame");
+ document.body.classList.add("gameMode");
+ setupQuestWorld();
+
+ $("questTitle").textContent=`${quizName}：${s.name} クエスト`;
+ $("questCap").textContent=`${quizName} クエスト`;
+
+ questLoadQuestion();
+}
+ 
 function setupWorld(cls,sun,label,image,enemyImage){
  $("world").className="world "+cls;
  if($("sun")) $("sun").textContent=sun;
