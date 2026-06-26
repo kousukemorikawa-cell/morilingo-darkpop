@@ -618,6 +618,37 @@ body.gameMode .answerPanel{padding-top:9px}
  align-items:center;
  gap:6px;
  flex-wrap:wrap;
+ color:#fff;
+ font-weight:900;
+ text-shadow:0 2px 4px rgba(0,0,0,.45);
+}
+
+.rankNameLine *{
+ color:#fff;
+}
+
+.rankTitleChip{
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+
+ border-radius:999px;
+ padding:3px 8px;
+
+ font-size:11px;
+ font-weight:1000;
+ line-height:1;
+
+ color:#fff;
+ background:rgba(255,255,255,.08);
+
+ border:2px solid rgba(255,255,255,.95);
+
+ box-shadow:
+ 0 0 8px rgba(255,255,255,.18),
+ inset 0 0 6px rgba(255,255,255,.08);
+
+ backdrop-filter:blur(2px);
 }
 .rankTitleChip{
  display:inline-block;
@@ -3429,7 +3460,7 @@ function skinName(id){
 }
 function hasQuestClearForGoldBackground(){
  const clears=state.questClears||{};
- return Object.values(clears).some(v=>Number(v||0)>0);
+ return Number(clears.worldtree||0)>0;
 }
 function applySkinSettings(){
  ensureSkinState();
