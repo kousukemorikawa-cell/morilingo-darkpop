@@ -2004,6 +2004,56 @@ body.darkTheme .titleSearchMini{
  color:#c9c9c9;
 }
 
+/* ==========================================================
+   オリジナル問題：手入力式問題作成フォーム
+========================================================== */
+.originalQuestionEditor{
+ display:grid;
+ gap:10px;
+}
+.originalQuestionCard{
+ margin:8px 0;
+ background:#f7fff9;
+ border:2px solid #d7f0df;
+ border-radius:18px;
+ padding:12px;
+ display:grid;
+ gap:8px;
+}
+.originalQuestionHead{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ font-weight:1000;
+ color:#217246;
+}
+.originalQuestionGrid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+}
+.originalQuestionGrid .wide{
+ grid-column:1 / -1;
+}
+.originalQuestionMini{
+ font-size:12px;
+ font-weight:900;
+ color:#667085;
+}
+body.darkTheme .originalQuestionCard{
+ background:#191919;
+ border-color:#3a3a3a;
+ color:#fff;
+}
+body.darkTheme .originalQuestionHead{color:#9cf0b2;}
+body.darkTheme .originalQuestionMini{color:#c9c9c9;}
+@media(max-width:560px){
+ .originalQuestionGrid{grid-template-columns:1fr;}
+ .originalQuestionGrid .wide{grid-column:auto;}
+ .originalQuestionCard{padding:10px;}
+}
+
 </style>
 </head>
 <body>
@@ -2441,29 +2491,32 @@ body.darkTheme .titleSearchMini{
   <section id="editor" class="screen">
     <div class="card">
       <h2>問題作成</h2>
-      <p class="muted">クイズ名・問題タイプ・使用ステージを選んで、CSV問題を読み込みます。</p>
+      <p class="muted">クイズ名・問題タイプ・使用ステージを選び、問題を1問ずつ作成します。</p>
+
       <div class="form">
         <label><b>クイズ名</b></label>
         <input id="originalQuizName" placeholder="例：古文助動詞">
+
         <label><b>問題タイプ</b></label>
-        <select id="originalQuizMode" onchange="updateOriginalLimitText()">
+        <select id="originalQuizMode" onchange="handleOriginalModeChange()">
           <option value="rebuild">復興</option>
           <option value="quest">クエスト</option>
         </select>
+
         <label><b>使用ステージ</b></label>
-        <select id="originalQuizStage"></select>
+        <select id="originalQuizStage" onchange="handleOriginalModeChange()"></select>
+
         <div id="originalLimitText" class="devNote">復興は最大12問、クエストは最大36問までです。</div>
-        <textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
-書くの未然形は？,書か,書き,書く,書け,1
-けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea>
-        <input type="file" id="csvFile" accept=".csv,text/csv">
+
+        <div id="originalQuestionEditor" class="originalQuestionEditor"></div>
+
+        <button class="btn secondary" type="button" onclick="addOriginalQuestionForm()">＋ 問題を追加</button>
       </div>
+
       <div class="toolbar">
-        <button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button>
-        <button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button>
-        <button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button>
-        <button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button>
-        <button class="btn ghost" onclick="show('original')">戻る</button>
+        <button class="btn primary" type="button" onclick="saveOriginalQuestionsFromForm()">問題作成を決定</button>
+        <button class="btn ghost" type="button" onclick="clearOriginalQuestions()">自作問題を空にする</button>
+        <button class="btn ghost" type="button" onclick="show('original')">戻る</button>
       </div>
     </div>
   </section>
@@ -2819,7 +2872,7 @@ function fruitPositions(){
  return window.matchMedia("(max-width:560px)").matches ? POS6_MOBILE : POS6_DESKTOP;
 }
 let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
-state.unlocked??=1;state.badges??=[];state.original??=[];state.originalQuiz??={
+state.unlocked??=1;state.badges??=[];state.original??=[];state.originalDraft??=[];state.originalQuiz??={
   name:"",
   mode:"rebuild",
   stageIndex:0
@@ -4169,7 +4222,7 @@ function startOriginal(){
  const qs=state.original||[];
 
  if(!qs.length){
-  alert("先に問題を作成・読み込みしてください。");
+  alert("先に問題を作成してください。");
   showOriginalEditor();
   return;
  }
@@ -5491,43 +5544,187 @@ function renderOriginalSummary(){
  const count=(state.original||[]).length;
  box.innerHTML=`<div class="stageStudyTitle">📝 クイズ名：${escapeHtml(q.name||"未設定")}</div><div class="stageStudyText">問題タイプ：${modeText}<br>使用ステージ：${escapeHtml(stage.name)}<br>問題数：${count}/${limit}</div>`;
 }
+function originalQuestionDraftFromSaved(){
+ return (state.original||[]).map(q=>{
+  const choices=Array.isArray(q.a)?q.a:[];
+  const correctIndex=Number(q.c||0);
+  const answer=choices[correctIndex]||"";
+  const wrongs=choices.filter((_,i)=>i!==correctIndex);
+  return {
+   q:q.q||"",
+   ans:answer,
+   w1:wrongs[0]||"",
+   w2:wrongs[1]||"",
+   w3:wrongs[2]||""
+  };
+ });
+}
+function ensureOriginalDraft(){
+ state.originalDraft??=[];
+ if(!state.originalDraft.length && (state.original||[]).length){
+  state.originalDraft=originalQuestionDraftFromSaved();
+ }
+}
+function readOriginalDraftFromForm(){
+ const cards=[...document.querySelectorAll(".originalQuestionCard")];
+ if(!cards.length)return state.originalDraft||[];
+ return cards.map(card=>{
+  const i=card.dataset.index;
+  return {
+   q:($(`oq_q_${i}`)?.value||"").trim(),
+   ans:($(`oq_ans_${i}`)?.value||"").trim(),
+   w1:($(`oq_w1_${i}`)?.value||"").trim(),
+   w2:($(`oq_w2_${i}`)?.value||"").trim(),
+   w3:($(`oq_w3_${i}`)?.value||"").trim()
+  };
+ });
+}
 function showOriginalEditor(){
  initOriginalQuizStageSelect();
+ ensureOriginalDraft();
+ if(!state.originalDraft.length){
+  state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
+ }
+ renderOriginalQuestionForms();
  show("editor");
 }
-function importCSVFromText(){
- const text=$("csvBox").value;
- const {questions,errors}=rowsToQuestions(parseCSV(text));
- if(!questions.length){alert("読み込める問題がありません。CSVの形を確認してください。");return;}
+function handleOriginalModeChange(){
+ state.originalDraft=readOriginalDraftFromForm();
  saveOriginalQuizSetting();
+ updateOriginalLimitText();
+ renderOriginalQuestionForms();
+}
+function addOriginalQuestionForm(){
+ state.originalDraft=readOriginalDraftFromForm();
  const limit=originalQuestionLimit();
- if(questions.length>limit){alert(`このモードでは最大${limit}問までです。読み込んだ問題は${questions.length}問あります。`);return;}
+
+ if(state.originalDraft.length>=limit){
+  alert(`このモードでは最大${limit}問までです。`);
+  return;
+ }
+
+ state.originalDraft.push({q:"",ans:"",w1:"",w2:"",w3:""});
+ save();
+ renderOriginalQuestionForms();
+ updateOriginalLimitText();
+}
+function removeOriginalQuestionForm(index){
+ state.originalDraft=readOriginalDraftFromForm();
+ state.originalDraft.splice(index,1);
+ if(!state.originalDraft.length){
+  state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
+ }
+ save();
+ renderOriginalQuestionForms();
+ updateOriginalLimitText();
+}
+function renderOriginalQuestionForms(){
+ const box=$("originalQuestionEditor");
+ if(!box)return;
+
+ ensureOriginalDraft();
+ const limit=originalQuestionLimit();
+
+ box.innerHTML=(state.originalDraft||[]).map((q,i)=>`
+  <div class="originalQuestionCard" data-index="${i}">
+    <div class="originalQuestionHead">
+      <span>問題${i+1}</span>
+      <button class="btn ghost" type="button" onclick="removeOriginalQuestionForm(${i})">削除</button>
+    </div>
+
+    <div class="originalQuestionGrid">
+      <div class="wide">
+        <label><b>質問文</b></label>
+        <input id="oq_q_${i}" value="${escapeHtml(q.q||"")}" placeholder="例：『書く』の未然形は？">
+      </div>
+
+      <div>
+        <label><b>答え</b></label>
+        <input id="oq_ans_${i}" value="${escapeHtml(q.ans||"")}" placeholder="例：書か">
+      </div>
+
+      <div>
+        <label><b>間違い1</b></label>
+        <input id="oq_w1_${i}" value="${escapeHtml(q.w1||"")}" placeholder="例：書き">
+      </div>
+
+      <div>
+        <label><b>間違い2</b></label>
+        <input id="oq_w2_${i}" value="${escapeHtml(q.w2||"")}" placeholder="例：書く">
+      </div>
+
+      <div>
+        <label><b>間違い3</b></label>
+        <input id="oq_w3_${i}" value="${escapeHtml(q.w3||"")}" placeholder="例：書け">
+      </div>
+    </div>
+
+    <div class="originalQuestionMini">答え1つ・間違い3つを入れると、出題時に選択肢の順番は自動でシャッフルされます。</div>
+  </div>
+ `).join("");
+
+ const addBtn=document.querySelector("#editor button[onclick='addOriginalQuestionForm()']");
+ if(addBtn){
+  addBtn.disabled=(state.originalDraft||[]).length>=limit;
+  addBtn.textContent=(state.originalDraft||[]).length>=limit ? `最大${limit}問です` : "＋ 問題を追加";
+ }
+
+ updateOriginalLimitText();
+}
+function saveOriginalQuestionsFromForm(){
+ saveOriginalQuizSetting();
+
+ const draft=readOriginalDraftFromForm();
+ const limit=originalQuestionLimit();
+ const questions=[];
+
+ for(let i=0;i<draft.length;i++){
+  const row=draft[i];
+  const values=[row.q,row.ans,row.w1,row.w2,row.w3].map(x=>String(x||"").trim());
+  const allBlank=values.every(x=>!x);
+
+  if(allBlank)continue;
+
+  if(values.some(x=>!x)){
+   alert(`問題${i+1}に未入力があります。`);
+   return;
+  }
+
+  const [q,ans,w1,w2,w3]=values;
+  const shuffled=shuffle([ans,w1,w2,w3]);
+
+  questions.push({
+   q,
+   a:shuffled,
+   c:shuffled.indexOf(ans)
+  });
+ }
+
+ if(!questions.length){
+  alert("問題を1問以上入力してください。");
+  return;
+ }
+
+ if(questions.length>limit){
+  alert(`このモードでは最大${limit}問までです。`);
+  return;
+ }
+
+ state.originalDraft=draft;
  state.original=questions;
  save();
+
  updateOriginalLimitText();
  renderOriginalSummary();
- alert(`${questions.length}問を読み込みました${errors.length?`\n※${errors.length}行は読み込めませんでした`:""}`);
-}
-function loadCSVFile(){
- const file=$("csvFile").files[0];
- if(!file){alert("CSVファイルを選んでください");return;}
- const reader=new FileReader();
- reader.onload=()=>{
-  $("csvBox").value=reader.result;
-  importCSVFromText();
- };
- reader.readAsText(file,"UTF-8");
-}
-function exportCSV(){
- const header=["問題文","選択肢1","選択肢2","選択肢3","選択肢4","正解番号"];
- const rows=(state.original||[]).map(x=>[x.q,x.a[0],x.a[1],x.a[2],x.a[3],x.c+1]);
- $("csvBox").value=[header,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
+ alert(`${questions.length}問を保存しました！`);
+ show("original");
 }
 function clearOriginalQuestions(){
  if(confirm("自作問題をすべて空にしますか？")){
   state.original=[];
+  state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
   save();
-  if($("csvBox"))$("csvBox").value="";
+  renderOriginalQuestionForms();
   updateOriginalLimitText();
   renderOriginalSummary();
   alert("自作問題を空にしました");
