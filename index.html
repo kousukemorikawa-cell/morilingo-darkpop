@@ -2739,8 +2739,153 @@ const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbxUx4-YAXE23ZikXJ0R68B3ykTWSpv7gijKPqTsWgIi8GY-OZhSqfnmDNUPK1W4TEmDoA/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbzNTq9PfqmaEjTA4Jz3ACUuI0xWDoeE6hetbC2rJWlYOXgg9WbZGTX6hUi2SgqWZ65w3w/exec";
+function playerKey(){
+  return {
+    name: state.name || localStorage.getItem("morilingoName") || "",
+    className: state.className || localStorage.getItem("morilingoClass") || "",
+    number: state.number || localStorage.getItem("morilingoNumber") || ""
+  };
+}
 
+function makeSaveData(){
+  return {
+    pt: state.pt || 0,
+    score: state.score || 0,
+    totalScore: state.totalScore || 0,
+    totalCorrect: state.totalCorrect || 0,
+
+    items: state.items || {},
+    skins: state.skins || [],
+    effects: state.effects || [],
+    titles: state.titles || [],
+    selectedTitles: state.selectedTitles || [],
+
+    clearedStages: state.clearedStages || {},
+    questClears: state.questClears || {},
+    challengeClears: state.challengeClears || {},
+    rebuild: state.rebuild || {},
+    bestTimes: state.bestTimes || {},
+
+    settings: {
+      meSkin: state.meSkin || "me_magician",
+      effect: state.effect || "effect_magician",
+      darkMode: state.darkMode ?? true
+    }
+  };
+}
+
+function applySaveData(saveData){
+  if(!saveData)return;
+
+  state.pt = Number(saveData.pt || saveData.score || 0);
+  state.score = Number(saveData.score || saveData.pt || 0);
+  state.totalScore = Number(saveData.totalScore || saveData.pt || 0);
+  state.totalCorrect = Number(saveData.totalCorrect || 0);
+
+  state.items = saveData.items || {};
+  state.skins = saveData.skins || [];
+  state.effects = saveData.effects || [];
+  state.titles = saveData.titles || [];
+  state.selectedTitles = saveData.selectedTitles || [];
+
+  state.clearedStages = saveData.clearedStages || {};
+  state.questClears = saveData.questClears || {};
+  state.challengeClears = saveData.challengeClears || {};
+  state.rebuild = saveData.rebuild || {};
+  state.bestTimes = saveData.bestTimes || {};
+
+  const settings = saveData.settings || {};
+  state.meSkin = settings.meSkin || state.meSkin || "me_magician";
+  state.effect = settings.effect || state.effect || "effect_magician";
+  state.darkMode = settings.darkMode ?? state.darkMode ?? true;
+
+  saveLocal();
+  renderAll();
+}
+async function loadPlayerData(){
+  const key = playerKey();
+  if(!key.name)return;
+
+  const url =
+    GAS_URL +
+    "?action=loadPlayerData" +
+    "&name=" + encodeURIComponent(key.name) +
+    "&className=" + encodeURIComponent(key.className) +
+    "&number=" + encodeURIComponent(key.number);
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(data.ok && data.saveData){
+      applySaveData(data.saveData);
+      console.log("PlayerData読み込みOK", data.saveData);
+    }
+  }catch(err){
+    console.warn("PlayerData読み込み失敗", err);
+  }
+}
+
+async function savePlayerData(){
+  const key = playerKey();
+  if(!key.name)return;
+
+  const payload = {
+    action: "savePlayerData",
+    name: key.name,
+    className: key.className,
+    number: key.number,
+    saveData: makeSaveData()
+  };
+
+  try{
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    console.log("PlayerData保存OK", data);
+  }catch(err){
+    console.warn("PlayerData保存失敗", err);
+  }
+}
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(data.ok && data.saveData){
+      applySaveData(data.saveData);
+      console.log("PlayerData読み込みOK", data.saveData);
+    }
+  }catch(err){
+    console.warn("PlayerData読み込み失敗", err);
+  }
+}
+async function savePlayerData(){
+  const key = playerKey();
+  if(!key.name)return;
+
+  const payload = {
+    action: "savePlayerData",
+    name: key.name,
+    className: key.className,
+    number: key.number,
+    saveData: makeSaveData()
+  };
+
+  try{
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    console.log("PlayerData保存OK", data);
+  }catch(err){
+    console.warn("PlayerData保存失敗", err);
+  }
+}
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
