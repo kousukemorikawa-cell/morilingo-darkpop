@@ -2088,6 +2088,10 @@ body.darkTheme .titleSearchMini{
       </button>
     </div>
 
+    <div class="toolbar">
+      <button class="btn secondary" onclick="show('original')">📝 オリジナル問題</button>
+    </div>
+
     <div class="rankingBox">
       <div class="rankingHead">
         <h3 id="rankingTitle">ランキング</h3>
@@ -2397,59 +2401,72 @@ body.darkTheme .titleSearchMini{
       <div class="questControls"><button class="btn questItemButton" onclick="openQuestItemModal()">🎒 アイテム</button><button class="btn ghost" onclick="quitQuest()">メニュー</button></div><button id="questNextBtn" class="btn primary" style="display:none" onclick="questNextQuestion()">次へ</button>
     </div>
   </section>
-<section id="original" class="screen">
-  <div class="card">
-    <h2>オリジナル問題</h2>
-    <p class="muted">自作問題で、復興またはクエストを遊べます。</p>
 
-    <div id="originalSummary" class="stageStudyBox"></div>
-
-    <div class="toolbar">
-      <button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button>
-      <button class="btn secondary" onclick="showOriginalEditor()">問題を作る</button>
-      <button class="btn ghost" onclick="show('menu')">戻る</button>
+  <section id="game" class="screen">
+    <div class="card">
+      <h2 id="modeTitle">ステージ</h2>
+      <div class="status">
+        <div class="stat">点 <span id="score">0</span></div>
+        <div class="stat">連続 <span id="streak">0</span></div>
+        <div class="stat">ミス <span id="miss">0</span>/3</div>
+        <div class="timer"><div class="timerTop"><span id="timeLabel">残り時間</span><span><span id="time">20</span><span id="timeUnit">秒</span></span></div><div class="trackbar"><div id="timeFill" class="fill"></div></div></div>
+      </div>
+      <div id="world" class="world">
+        <div id="stageCap" class="stageCap">田園</div>
+        <div class="track"></div>
+        <div id="treeArea" class="treeArea"></div>
+        <img id="ninja" class="char" src="assets/enemies/01_field_enemy.png" onerror="this.onerror=null;this.src='assets/enemies/gobelyn.png';">
+        <img id="dragon" class="char" src="assets/enemies/dragon.png">
+        <div id="fireOverlay" class="fireOverlay"></div>
+      </div>
+      <div id="question" class="question">問題</div>
+      <div id="feedback" class="feedback"></div>
+      <div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="editor" class="screen">
-  <div class="card">
-    <h2>問題作成</h2>
-    <p class="muted">クイズ名・問題タイプ・使用ステージを選んで、CSV問題を読み込みます。</p>
+  <section id="original" class="screen">
+    <div class="card">
+      <h2>オリジナル問題</h2>
+      <p class="muted">自作問題で、復興またはクエストを遊べます。</p>
+      <div id="originalSummary" class="stageStudyBox"></div>
+      <div class="toolbar">
+        <button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button>
+        <button class="btn secondary" onclick="showOriginalEditor()">問題を作る</button>
+        <button class="btn ghost" onclick="show('menu')">戻る</button>
+      </div>
+    </div>
+  </section>
 
-    <div class="form">
-      <label><b>クイズ名</b></label>
-      <input id="originalQuizName" placeholder="例：古文助動詞">
-
-      <label><b>問題タイプ</b></label>
-      <select id="originalQuizMode" onchange="updateOriginalLimitText()">
-        <option value="rebuild">復興</option>
-        <option value="quest">クエスト</option>
-      </select>
-
-      <label><b>使用ステージ</b></label>
-      <select id="originalQuizStage"></select>
-
-      <div id="originalLimitText" class="devNote">復興は最大12問、クエストは最大36問までです。</div>
-
-      <textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
+  <section id="editor" class="screen">
+    <div class="card">
+      <h2>問題作成</h2>
+      <p class="muted">クイズ名・問題タイプ・使用ステージを選んで、CSV問題を読み込みます。</p>
+      <div class="form">
+        <label><b>クイズ名</b></label>
+        <input id="originalQuizName" placeholder="例：古文助動詞">
+        <label><b>問題タイプ</b></label>
+        <select id="originalQuizMode" onchange="updateOriginalLimitText()">
+          <option value="rebuild">復興</option>
+          <option value="quest">クエスト</option>
+        </select>
+        <label><b>使用ステージ</b></label>
+        <select id="originalQuizStage"></select>
+        <div id="originalLimitText" class="devNote">復興は最大12問、クエストは最大36問までです。</div>
+        <textarea id="csvBox" placeholder="問題文,選択肢1,選択肢2,選択肢3,選択肢4,正解番号
 書くの未然形は？,書か,書き,書く,書け,1
 けりの接続は？,未然形,連用形,終止形,連体形,2"></textarea>
-
-      <input type="file" id="csvFile" accept=".csv,text/csv">
+        <input type="file" id="csvFile" accept=".csv,text/csv">
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button>
+        <button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button>
+        <button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button>
+        <button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button>
+        <button class="btn ghost" onclick="show('original')">戻る</button>
+      </div>
     </div>
-
-    <div class="toolbar">
-      <button class="btn primary" onclick="importCSVFromText()">CSVを読み込み</button>
-      <button class="btn secondary" onclick="loadCSVFile()">CSVファイル読み込み</button>
-      <button class="btn secondary" onclick="exportCSV()">CSVを書き出し</button>
-      <button class="btn ghost" onclick="clearOriginalQuestions()">自作問題を空にする</button>
-      <button class="btn ghost" onclick="show('original')">戻る</button>
-    </div>
-  </div>
-</section>
-
-<img id="dragon" class="char" src="assets/enemies/dragon.png"><div id="fireOverlay" class="fireOverlay"></div></div><div id="question" class="question">問題</div><div id="feedback" class="feedback"></div><div class="toolbar"><button class="btn ghost" onclick="quit()">メニューへ</button></div></div></section>
+  </section>
 </div>
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <div id="questAnswerPanel" class="answerPanel" style="display:none"><div id="questAnswers" class="answers"></div></div>
@@ -4359,13 +4376,19 @@ function tryFunnyTitleDropFromRecovery(){
 }
 
 function checkClear(){
- if(game.mode!=="challenge" && game.mode!=="timeAttack")return false;
+ if(game.mode!=="challenge" && game.mode!=="timeAttack" && game.mode!=="original")return false;
 
  const targetCorrect=RECOVERY_QUESTIONS_PER_ROUND;
  if((game.correctCount||0)<targetCorrect)return false;
 
  stopTimer();
  canAnswer=false;
+
+ if(game.mode==="original"){
+  $("feedback").textContent=`${state.originalQuiz?.name||"オリジナル問題"}クリア！`;
+  setTimeout(()=>{game=null;resetScoreHud();show("original");},1500);
+  return true;
+ }
 
  if(game.mode==="timeAttack"){
   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
@@ -4985,8 +5008,9 @@ function quitQuest(){
  questStopTimer();
  if(shouldRestore)restoreQuestUsedItems();
  else questUsedQueue=[];
+ const backToOriginal=!!quest?.isOriginal;
  quest=null;
- show("challenge");
+ show(backToOriginal?"original":"challenge");
  renderStages();
 }
 function questStopTimer(){if(questTimerId){clearInterval(questTimerId);questTimerId=null;}}
@@ -5207,24 +5231,28 @@ async function questFinish(){
  $("questChest").style.display="none";
  questMoveBg(1);
 
- state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
- save();
- applySkinSettings();
- applyWorldTheme("questGame");
+ if(!quest.isOriginal){
+  state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
+  save();
+  applySkinSettings();
+  applyWorldTheme("questGame");
+ }
+ const rewardText=quest.isOriginal ? "オリジナルクエストをクリアしました。" : "報酬を獲得します。";
 
- $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">報酬を獲得します。</div></div>`;
+ $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">${rewardText}</div></div>`;
  $("questAnswers").innerHTML="";
  $("questNextBtn").style.display="none";
  $("questFeedback").textContent="🎉 クエストクリア！";
  questUpdateUI();
 
- await questRewardSequence();
+ if(!quest.isOriginal)await questRewardSequence();
  questUsedQueue=[];
+ const backToOriginal=!!quest.isOriginal;
 
  quest=null;
  document.body.classList.remove("gameMode");
  renderStages();
- show("challenge");
+ show(backToOriginal?"original":"challenge");
 }
 function questGameOver(){
  questStopTimer();quest.phase="gameover";questUsedQueue=[];$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
@@ -5417,12 +5445,67 @@ function rowsToQuestions(rows){
  });
  return {questions,errors};
 }
+function originalQuestionLimit(){
+ const mode=$("originalQuizMode")?.value || state.originalQuiz?.mode || "rebuild";
+ const stageIndex=Number($("originalQuizStage")?.value||state.originalQuiz?.stageIndex||0);
+ return mode==="quest" ? stageQuestQuestions(stageIndex).length : RECOVERY_QUESTIONS_PER_ROUND;
+}
+function initOriginalQuizStageSelect(){
+ const sel=$("originalQuizStage");
+ if(!sel)return;
+ sel.innerHTML=STAGES.map((s,i)=>`<option value="${i}">${i+1}. ${s.name}</option>`).join("");
+ const q=state.originalQuiz||{};
+ if($("originalQuizName"))$("originalQuizName").value=q.name||"";
+ if($("originalQuizMode"))$("originalQuizMode").value=q.mode||"rebuild";
+ sel.value=String(q.stageIndex||0);
+ updateOriginalLimitText();
+ renderOriginalSummary();
+}
+function updateOriginalLimitText(){
+ const el=$("originalLimitText");
+ if(!el)return;
+ const mode=$("originalQuizMode")?.value || state.originalQuiz?.mode || "rebuild";
+ const stageIndex=Number($("originalQuizStage")?.value||state.originalQuiz?.stageIndex||0);
+ const limit=mode==="quest" ? stageQuestQuestions(stageIndex).length : RECOVERY_QUESTIONS_PER_ROUND;
+ const count=(state.original||[]).length;
+ el.textContent=mode==="quest"
+  ? `クエスト用：最大${limit}問まで。現在 ${count}/${limit}問。`
+  : `復興用：最大${limit}問まで。現在 ${count}/${limit}問。`;
+}
+function saveOriginalQuizSetting(){
+ state.originalQuiz={
+  name:($("originalQuizName")?.value||"").trim(),
+  mode:$("originalQuizMode")?.value||"rebuild",
+  stageIndex:Number($("originalQuizStage")?.value||0)
+ };
+ save();
+ renderOriginalSummary();
+}
+function renderOriginalSummary(){
+ const box=$("originalSummary");
+ if(!box)return;
+ const q=state.originalQuiz||{};
+ const stage=STAGES[Number(q.stageIndex||0)]||STAGES[0];
+ const modeText=q.mode==="quest" ? "クエスト" : "復興";
+ const limit=q.mode==="quest" ? stageQuestQuestions(Number(q.stageIndex||0)).length : RECOVERY_QUESTIONS_PER_ROUND;
+ const count=(state.original||[]).length;
+ box.innerHTML=`<div class="stageStudyTitle">📝 クイズ名：${escapeHtml(q.name||"未設定")}</div><div class="stageStudyText">問題タイプ：${modeText}<br>使用ステージ：${escapeHtml(stage.name)}<br>問題数：${count}/${limit}</div>`;
+}
+function showOriginalEditor(){
+ initOriginalQuizStageSelect();
+ show("editor");
+}
 function importCSVFromText(){
  const text=$("csvBox").value;
  const {questions,errors}=rowsToQuestions(parseCSV(text));
  if(!questions.length){alert("読み込める問題がありません。CSVの形を確認してください。");return;}
+ saveOriginalQuizSetting();
+ const limit=originalQuestionLimit();
+ if(questions.length>limit){alert(`このモードでは最大${limit}問までです。読み込んだ問題は${questions.length}問あります。`);return;}
  state.original=questions;
  save();
+ updateOriginalLimitText();
+ renderOriginalSummary();
  alert(`${questions.length}問を読み込みました${errors.length?`\n※${errors.length}行は読み込めませんでした`:""}`);
 }
 function loadCSVFile(){
@@ -5437,12 +5520,17 @@ function loadCSVFile(){
 }
 function exportCSV(){
  const header=["問題文","選択肢1","選択肢2","選択肢3","選択肢4","正解番号"];
- const rows=state.original.map(x=>[x.q,x.a[0],x.a[1],x.a[2],x.a[3],x.c+1]);
+ const rows=(state.original||[]).map(x=>[x.q,x.a[0],x.a[1],x.a[2],x.a[3],x.c+1]);
  $("csvBox").value=[header,...rows].map(r=>r.map(csvEscape).join(",")).join("\n");
 }
 function clearOriginalQuestions(){
  if(confirm("自作問題をすべて空にしますか？")){
-  state.original=[];save();$("csvBox").value="";alert("自作問題を空にしました");
+  state.original=[];
+  save();
+  if($("csvBox"))$("csvBox").value="";
+  updateOriginalLimitText();
+  renderOriginalSummary();
+  alert("自作問題を空にしました");
  }
 }
 function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
@@ -5450,7 +5538,7 @@ window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
-renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();loadRemoteQuestions();loadDevNews();loadRemoteTitles();save();
+renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();save();
 </script>
 </body>
 </html>
