@@ -627,6 +627,17 @@ body.gameMode .answerPanel{padding-top:9px}
  color:#fff;
 }
 
+/* ランキングに称号を表示している行だけ、名前を黒文字にする */
+.rankNameLine.hasRankingTitle{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+
+.rankNameLine.hasRankingTitle .rankTitleChip{
+ color:#7a5100 !important;
+ text-shadow:none !important;
+}
+
 .rankTitleChip{
  display:inline-flex;
  align-items:center;
@@ -4125,10 +4136,13 @@ function renderRanking(data){
   const meClass=(sameName && sameNumber)?" me":"";
   const numberText=item.number?`${item.number}番 `:"";
 
-  const titleHtml=(sameName && sameNumber)
-   ? (state.selectedRankingTitles||[]).map(titleChipHtml).join("")
-   : "";
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const rankingTitleIds=(sameName && sameNumber)
+   ? (state.selectedRankingTitles||[])
+   : [];
+  const titleHtml=rankingTitleIds.map(titleChipHtml).join("");
+  const rankTitleClass=rankingTitleIds.length ? " hasRankingTitle" : "";
+
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine${rankTitleClass}">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
