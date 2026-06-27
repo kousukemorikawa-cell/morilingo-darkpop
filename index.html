@@ -117,6 +117,35 @@ body.gameMode #menuHud{
   top:72px;
  }
 }
+#bgmHud{
+ position:fixed;
+ top:180px;
+ right:12px;
+ z-index:99999;
+ background:#111;
+ color:#fff;
+ font-weight:1000;
+ padding:7px 12px 8px;
+ border-radius:16px;
+ border:3px solid #fff;
+ box-shadow:0 0 0 3px #111,0 5px 0 rgba(0,0,0,.35);
+ cursor:pointer;
+ font-size:13px;
+ line-height:1;
+}
+#bgmHud.off{
+ background:#777;
+ box-shadow:0 0 0 3px #777,0 5px 0 rgba(0,0,0,.25);
+}
+#bgmHud:active{transform:translateY(3px)}
+@media(max-width:560px){
+ #bgmHud{
+  top:132px;
+  right:8px;
+  padding:6px 9px 7px;
+  font-size:11px;
+ }
+}
  .app{max-width:880px;margin:0 auto;min-height:100vh;padding:12px 12px 122px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .logo{font-size:24px;font-weight:1000;color:var(--green);text-shadow:0 2px 0 #fff}.pill{background:#fff;border-radius:999px;padding:8px 12px;font-weight:900;box-shadow:0 4px 14px #0001}
@@ -2390,6 +2419,7 @@ body.darkTheme .rankTitleChip{
 <button id="menuHud" class="isHidden" onclick="show('menu')">
 ☰ メニュー
 </button>
+<button id="bgmHud" onclick="toggleBgm()" aria-label="BGM切替">♪ BGM</button>
 <div class="app">
   <div class="header"><div class="logo">🌳 モリリンゴ</div><div class="pill" id="savePill">保存済み</div></div>
  <section id="home" class="screen active">
@@ -2865,6 +2895,103 @@ const GAS_URL="https://script.google.com/macros/s/AKfycbxkXGIAVLoZpL7MDs42oQsnBm
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
 const ASSET_VERSION="20260625-study-pdf-v1";
+
+/* ==========================================================
+   BGM設定
+   assets/bgm/ に7曲を置く
+   title.mp3 / home.mp3 / challenge.mp3 / recovery.mp3 / quest.mp3 / worldtree.mp3 / timeattack.mp3
+========================================================== */
+const BGM_TRACKS={
+ title:"assets/bgm/title.mp3",
+ home:"assets/bgm/home.mp3",
+ challenge:"assets/bgm/challenge.mp3",
+ recovery:"assets/bgm/recovery.mp3",
+ quest:"assets/bgm/quest.mp3",
+ worldtree:"assets/bgm/worldtree.mp3",
+ timeattack:"assets/bgm/timeattack.mp3"
+};
+const BGM_SCREEN_MAP={
+ home:"title",
+ profile:"title",
+ menu:"home",
+ skin:"home",
+ zukan:"home",
+ story:"home",
+ titles:"home",
+ devMessage:"home",
+ guide:"home",
+ answerList:"home",
+ devTools:"home",
+ original:"home",
+ editor:"home",
+ challenge:"challenge",
+ stageMenu:"challenge",
+ items:"home",
+ worldtreeStory:"worldtree",
+ finalStory:"worldtree"
+};
+let bgmAudio=null;
+let bgmCurrent="";
+let bgmUnlocked=false;
+let bgmMuted=localStorage.getItem("morilingoBgmMuted")==="1";
+
+function ensureBgm(){
+ if(bgmAudio)return bgmAudio;
+ bgmAudio=new Audio();
+ bgmAudio.loop=true;
+ bgmAudio.volume=.42;
+ bgmAudio.preload="auto";
+ bgmAudio.addEventListener("error",()=>{
+  const hud=$("bgmHud");
+  if(hud)hud.textContent="♪ なし";
+ });
+ return bgmAudio;
+}
+function bgmTrackForScreen(screenId){
+ if(screenId==="questGame")return "quest";
+ if(screenId==="game"){
+  if(game?.mode==="timeAttack")return "timeattack";
+  return "recovery";
+ }
+ return BGM_SCREEN_MAP[screenId] || "home";
+}
+function updateBgmHud(){
+ const hud=$("bgmHud");
+ if(!hud)return;
+ hud.classList.toggle("off",bgmMuted);
+ hud.textContent=bgmMuted?"♪ OFF":"♪ BGM";
+}
+function playBgm(trackKey){
+ updateBgmHud();
+ if(!trackKey || bgmMuted)return;
+ const src=BGM_TRACKS[trackKey];
+ if(!src)return;
+ const audio=ensureBgm();
+ if(bgmCurrent!==trackKey){
+  bgmCurrent=trackKey;
+  audio.pause();
+  audio.src=src+`?v=${ASSET_VERSION}`;
+  audio.currentTime=0;
+ }
+ if(!bgmUnlocked)return;
+ audio.play().catch(()=>{});
+}
+function pauseBgm(){
+ if(bgmAudio)bgmAudio.pause();
+}
+function unlockBgm(){
+ bgmUnlocked=true;
+ playBgm(bgmTrackForScreen(document.querySelector(".screen.active")?.id || "home"));
+}
+function toggleBgm(){
+ bgmMuted=!bgmMuted;
+ localStorage.setItem("morilingoBgmMuted",bgmMuted?"1":"0");
+ updateBgmHud();
+ if(bgmMuted)pauseBgm();
+ else unlockBgm();
+}
+document.addEventListener("pointerdown",()=>unlockBgm(),{once:true});
+document.addEventListener("keydown",()=>unlockBgm(),{once:true});
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -4384,6 +4511,7 @@ function show(id){
  updatePlayerDisplay();
  applySkinSettings();
  applyWorldTheme(id);
+ playBgm(bgmTrackForScreen(id));
  if(id==="menu"){
   loadRemoteTitles();
   loadRanking();
@@ -4835,6 +4963,7 @@ function openQuestFromStageMenu(i){
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
 
 function startChallenge(i){
+ unlockBgm();
  const s=STAGES[i];
  const round=currentRecoveryRound(s.id);
  game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageRecoveryQuestions(i,round))};
@@ -5582,6 +5711,7 @@ function renderItems(){
  }).join("");
 }
 function startTimeAttack(i){
+ unlockBgm();
  const s=STAGES[i];
  game={
   mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,
@@ -5607,6 +5737,7 @@ let questPaused=false;
 let questUsedQueue=[];
 
 function startQuest(i){
+ unlockBgm();
  try{
   const s=STAGES[i];
   if(!s){alert("ステージ情報が見つかりません");return;}
@@ -6588,6 +6719,8 @@ if(state.player?.name){
   setScoreHud(state.totalPt||0);
  });
 }
+updateBgmHud();
+playBgm(bgmTrackForScreen("home"));
 </script>
 </body>
 </html>
