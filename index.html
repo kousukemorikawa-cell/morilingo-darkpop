@@ -2515,99 +2515,110 @@ body.darkTheme .rankTitleChip{
 
 
 /* ==========================================================
-   2026-06-27 修正：漢文選択肢の2行表示・Ending画像全体表示
-   ・選択肢が2行以上になっても見切れないように高さを自動化
-   ・Ending画像は cover ではなく contain で全体を表示
+   2026-06-27 緊急修正
+   ・スマホ版クエストのアイテム/メニューバーが選択肢に被らないよう固定配置を解除
+   ・選択肢が2行以上でも見切れないようにする
+   ・Ending画像を cover ではなく contain で全体表示
 ========================================================== */
-.answerPanel{
- max-height:48vh !important;
- overflow-y:auto !important;
- overscroll-behavior:contain !important;
-}
-.answers{
- align-items:stretch !important;
-}
+
+/* 選択肢：2行・3行でも切らない */
 .ans{
  height:auto !important;
  min-height:74px !important;
  overflow:visible !important;
  white-space:normal !important;
- word-break:keep-all !important;
- overflow-wrap:anywhere !important;
  line-height:1.45 !important;
  display:flex !important;
  align-items:flex-start !important;
- gap:8px !important;
- padding:12px 14px !important;
+ gap:6px !important;
 }
 .ans:before{
  flex:0 0 auto !important;
- margin-right:0 !important;
+ margin-top:0 !important;
 }
-.ans.correctChoice:after,
-.ans.wrongChoice:after,
-.ans.wrongChoice .xLine{
- pointer-events:none !important;
+@media(max-width:560px){
+ .answerPanel{
+  padding:8px 8px calc(10px + env(safe-area-inset-bottom)) !important;
+ }
+ .answers{
+  gap:8px !important;
+ }
+ .ans{
+  min-height:74px !important;
+  padding:10px 9px !important;
+  font-size:14px !important;
+  line-height:1.42 !important;
+ }
+ body.gameMode .ans{
+  min-height:74px !important;
+  padding:10px 9px !important;
+  font-size:14px !important;
+  line-height:1.42 !important;
+ }
 }
+
+/* クエストのアイテム・メニュー：スマホでは固定しない。選択肢に重ならない */
+@media(max-width:560px){
+ .questControls{
+  position:static !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  transform:none !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin:8px 0 6px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+ }
+ .questControls .btn{
+  min-height:40px !important;
+  padding:9px 8px !important;
+  font-size:13px !important;
+  border-radius:14px !important;
+ }
+ body.gameMode #questGame .card{
+  padding-bottom:10px !important;
+ }
+ body.gameMode .app{
+  padding-bottom:230px !important;
+ }
+}
+
+/* Ending：画像を必ず全体表示 */
 .endStoryImageWrap{
  display:flex !important;
  align-items:center !important;
  justify-content:center !important;
+ height:min(62vh,620px) !important;
+ max-height:620px !important;
+ overflow:hidden !important;
  background:#000 !important;
- min-height:0 !important;
 }
 .endStoryImage{
  width:100% !important;
- height:auto !important;
- max-height:52vh !important;
- aspect-ratio:auto !important;
+ height:100% !important;
+ max-width:100% !important;
+ max-height:100% !important;
  object-fit:contain !important;
  object-position:center center !important;
+ aspect-ratio:auto !important;
  background:#000 !important;
 }
 @media(max-width:560px){
- body.gameMode .app{
-  padding-bottom:172px !important;
- }
- .answerPanel{
-  max-height:38vh !important;
-  padding:8px 8px calc(10px + env(safe-area-inset-bottom)) !important;
- }
- .answers{
-  grid-template-columns:1fr 1fr !important;
-  gap:8px !important;
- }
- .ans,
- body.gameMode .ans{
-  min-height:86px !important;
-  height:auto !important;
-  padding:10px 9px !important;
-  font-size:14px !important;
-  line-height:1.45 !important;
-  overflow:visible !important;
- }
- .ans:before{
-  width:24px !important;
-  height:24px !important;
- }
- .endStoryViewer{
-  min-height:100dvh !important;
+ .endStoryImageWrap{
+  height:42vh !important;
+  max-height:360px !important;
+  min-height:220px !important;
  }
  .endStoryImage{
-  max-height:42vh !important;
- }
- .endStoryBody{
-  flex:1 1 auto !important;
- }
-}
-@media(min-width:561px){
- body.gameMode .ans{
-  min-height:78px !important;
-  height:auto !important;
-  overflow:visible !important;
- }
- .endStoryImage{
-  max-height:58vh !important;
+  object-fit:contain !important;
  }
 }
 
