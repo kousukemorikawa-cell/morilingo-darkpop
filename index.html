@@ -4284,7 +4284,9 @@ function show(id){
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:"auto"}));
  $("answerPanel").style.display=id==="game"?"block":"none";
  const qPanel=$("questAnswerPanel"); if(qPanel)qPanel.style.display=id==="questGame"?"block":"none";
- if(id!=="game" && id!=="questGame")resetScoreHud();
+ if(id!=="game" && id!=="questGame"){
+  setScoreHud(Number(state.totalPt||0));
+ }
 
  const menuHud=$("menuHud");
  if(menuHud){
@@ -4881,7 +4883,7 @@ function setupWorld(cls,sun,label,image,enemyImage){
  }
 }
 function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
-function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);game=null;resetScoreHud();show("menu");}
+function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);game=null;setScoreHud(Number(state.totalPt||0));show("menu");}
 
 function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
 function scheduleNext(ms=850){clearTimeout(nextId);nextId=setTimeout(nextQuestion,ms);}
@@ -4990,7 +4992,7 @@ function checkClear(){
   state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
   save();
   $("feedback").textContent=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
-  setTimeout(()=>{game=null;resetScoreHud();renderOriginalSummary();show("original");},1500);
+  setTimeout(()=>{game=null;setScoreHud(Number(state.totalPt||0));renderOriginalSummary();show("original");},1500);
   return true;
  }
 
@@ -5002,7 +5004,7 @@ function checkClear(){
   submitResult("timeAttackClear");
   const bestMsg=isBest ? " 自己ベスト更新！" : "";
   $("feedback").textContent=`⏱️ タイムアタッククリア！ ${game.elapsedSec.toFixed(2)}秒${bestMsg}`;
-  setTimeout(()=>{game=null;resetScoreHud();openChallenge();},1800);
+  setTimeout(()=>{game=null;setScoreHud(Number(state.totalPt||0));openChallenge();},1800);
   return true;
  }
 
@@ -5019,7 +5021,7 @@ function checkClear(){
  const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
  const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
  $("feedback").textContent=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}${funnyMsg}`;
- setTimeout(openChallenge,1500);
+ setTimeout(()=>{setScoreHud(Number(state.totalPt||0));openChallenge();},1500);
  return true;
 }
 function updateStats(){
