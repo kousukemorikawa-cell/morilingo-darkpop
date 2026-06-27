@@ -4357,8 +4357,14 @@ async function saveProfileAndMenu(){
 
   state.player={name,className,number};
   playerDataLoaded=false;
-  save();
+
+  // クラウド読込前はPlayerDataへ送らない。
+  // ここで save() を使うと、別端末の初期データがクラウドを上書きする危険がある。
+  localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+  $("savePill").textContent="保存済み";
+
   await loadPlayerData();
+
   loadRemoteQuestions();
   loadRemoteTitles();
   show("menu");
