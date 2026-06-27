@@ -2409,6 +2409,110 @@ body.darkTheme .rankTitleChip{
  border-color:#f0d58b !important;
 }
 
+
+/* ==========================================================
+   エンディングストーリー：ステージ20クエストクリア後
+========================================================== */
+.endStoryCard{
+ padding:0 !important;
+ overflow:hidden;
+ background:#090703 !important;
+ color:#fff !important;
+ border-color:#fff4b8 !important;
+}
+.endStoryViewer{
+ min-height:calc(100vh - 28px);
+ display:flex;
+ flex-direction:column;
+ background:
+  radial-gradient(circle at 50% 18%,rgba(255,226,108,.22),transparent 38%),
+  linear-gradient(180deg,#16110a,#050403 72%,#000);
+}
+.endStoryImageWrap{
+ position:relative;
+ width:100%;
+ background:#000;
+ border-bottom:3px solid rgba(255,244,184,.55);
+}
+.endStoryImage{
+ display:block;
+ width:100%;
+ aspect-ratio:16/9;
+ object-fit:cover;
+ background:#000;
+}
+.endStoryGlow{
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+ box-shadow:inset 0 -80px 80px rgba(0,0,0,.45),inset 0 0 80px rgba(255,210,80,.18);
+}
+.endStoryBody{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+ gap:14px;
+ padding:18px;
+}
+.endStoryKicker{
+ display:inline-flex;
+ align-items:center;
+ width:max-content;
+ background:rgba(255,220,98,.14);
+ border:2px solid rgba(255,244,184,.45);
+ color:#ffeaa3;
+ border-radius:999px;
+ padding:5px 12px;
+ font-size:12px;
+ font-weight:1000;
+ letter-spacing:.12em;
+}
+.endStoryTitle{
+ margin:10px 0 8px;
+ color:#fff3b8;
+ font-size:26px;
+ text-shadow:0 3px 0 rgba(0,0,0,.55);
+}
+.endStoryText{
+ margin:0;
+ color:#fff;
+ font-size:18px;
+ font-weight:900;
+ line-height:1.85;
+ white-space:pre-line;
+ text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+.endStoryControls{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:8px;
+}
+.endStoryControls .btn:disabled{
+ opacity:.45;
+ filter:grayscale(1);
+ cursor:not-allowed;
+ transform:none !important;
+}
+.endStoryPageDot{
+ text-align:center;
+ color:#ffeaa3;
+ font-size:13px;
+ font-weight:1000;
+ letter-spacing:.2em;
+ opacity:.9;
+}
+@media(max-width:560px){
+ .endStoryViewer{min-height:calc(100vh - 16px)}
+ .endStoryBody{padding:13px 12px 15px;gap:10px}
+ .endStoryTitle{font-size:20px;margin:8px 0 6px}
+ .endStoryText{font-size:15px;line-height:1.7}
+ .endStoryKicker{font-size:10px;padding:4px 9px}
+ .endStoryControls{gap:7px}
+ .endStoryControls .btn{font-size:14px;padding:12px 10px;border-radius:15px}
+}
+
 </style>
 </head>
 <body>
@@ -2636,6 +2740,32 @@ body.darkTheme .rankTitleChip{
       <div class="toolbar">
         <button class="btn primary" onclick="openChallenge()">冒険へ進む</button>
         <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="endStory" class="screen">
+    <div class="card endStoryCard">
+      <div class="endStoryViewer">
+        <div class="endStoryImageWrap">
+          <img id="endStoryImage" class="endStoryImage" src="assets/story/endstory1.png" alt="エンディング">
+          <div class="endStoryGlow"></div>
+        </div>
+        <div class="endStoryBody">
+          <div>
+            <span class="endStoryKicker">MORILINGO ENDING</span>
+            <h2 id="endStoryTitle" class="endStoryTitle">世界樹の頂へ</h2>
+            <p id="endStoryText" class="endStoryText">長い旅の果てに、主人公は世界樹の根元へたどり着いた。</p>
+          </div>
+          <div>
+            <div id="endStoryPageDot" class="endStoryPageDot">◆ ◇ ◇ ◇ ◇ ◇ ◇ ◇</div>
+            <div class="endStoryControls">
+              <button id="endStoryBackBtn" class="btn ghost" onclick="prevEndStory()">戻る</button>
+              <button id="endStoryNextBtn" class="btn primary" onclick="nextEndStory()">次へ</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -2928,7 +3058,8 @@ const BGM_SCREEN_MAP={
  stageMenu:"challenge",
  items:"home",
  worldtreeStory:"worldtree",
- finalStory:"worldtree"
+ finalStory:"worldtree",
+ endStory:"worldtree"
 };
 let bgmAudio=null;
 let bgmCurrent="";
@@ -3592,6 +3723,95 @@ function showTitles(){
 function showStory(){
  show("story");
 }
+
+
+const END_STORY_PAGES=[
+ {title:"世界樹の頂へ",text:"黄金竜アルボルは、光の粒となって静かに消えた。
+主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。",img:"assets/story/endstory1.png"},
+ {title:"最後の種",text:"世界樹は、まだ枯れ果てていた。
+けれど根元には、小さく黄金に輝く種が一粒だけ残っていた。
+主人公はそれを、そっと両手で包んだ。",img:"assets/story/endstory2.png"},
+ {title:"まだ、終わりじゃない",text:"主人公は種を大地に植えた。
+すると、光が地中を走り、世界のすみずみへ根を伸ばしていく。
+やがて一本の若木は、大きく成長した。",img:"assets/story/endstory3.png"},
+ {title:"光が世界を包む",text:"光は世界を包み、荒廃した大地がよみがえった。
+空は青く澄み、川には水が戻り、草木が芽吹き、花が咲いた。
+一枚の葉が、世界を変えた。",img:"assets/story/endstory4.png"},
+ {title:"人々が戻る",text:"人々が戻り、笑顔があふれた。
+畑を耕す人、遊ぶ子ども、風車が回り、鳥が空を舞う。
+みんなで、もう一度、この世界を育てていく。",img:"assets/story/endstory5.png"},
+ {title:"世界樹の祝福",text:"主人公は世界樹を見上げた。
+すると、枝から黄金のリンゴが一つ落ちてきた。
+世界樹の声が、心に響いた。
+「ありがとう。」",img:"assets/story/endstory6.png"},
+ {title:"次の育樹師へ",text:"主人公はリンゴを食べなかった。
+それを、新しい子どもへと渡した。
+その子はにっこりと笑った。
+守る役目は、受け継がれていく。",img:"assets/story/endstory7.png"},
+ {title:"Morilingo",text:"世界樹は、これからも育ち続ける。
+新しい未来への希望が広がっていく。
+この物語の続きは、きっと、みんなの手で。
+
+世界は、何度でも育て直せる。",img:"assets/story/endstory8.png"}
+];
+let endStoryIndex=0;
+function showEndStory(startIndex=0){
+ endStoryIndex=Math.max(0,Math.min(END_STORY_PAGES.length-1,Number(startIndex)||0));
+ renderEndStory();
+ show("endStory");
+ playBgm("worldtree");
+}
+function renderEndStory(){
+ const page=END_STORY_PAGES[endStoryIndex]||END_STORY_PAGES[0];
+ const img=$("endStoryImage");
+ const title=$("endStoryTitle");
+ const text=$("endStoryText");
+ const back=$("endStoryBackBtn");
+ const next=$("endStoryNextBtn");
+ const dot=$("endStoryPageDot");
+ if(img){
+  img.onerror=function(){
+   const current=this.dataset.fallbackStep||"png";
+   const base=`assets/story/endstory${endStoryIndex+1}`;
+   if(current==="png"){
+    this.dataset.fallbackStep="jpg";
+    this.src=`${base}.jpg?v=${ASSET_VERSION}`;
+   }else if(current==="jpg"){
+    this.dataset.fallbackStep="jpeg";
+    this.src=`${base}.jpeg?v=${ASSET_VERSION}`;
+   }else if(current==="jpeg"){
+    this.dataset.fallbackStep="webp";
+    this.src=`${base}.webp?v=${ASSET_VERSION}`;
+   }else{
+    this.onerror=null;
+   }
+  };
+  img.dataset.fallbackStep="png";
+  img.src=`${page.img}?v=${ASSET_VERSION}`;
+  img.alt=page.title;
+ }
+ if(title)title.textContent=page.title;
+ if(text)text.textContent=page.text;
+ if(back)back.disabled=endStoryIndex===0;
+ if(next)next.textContent=endStoryIndex===END_STORY_PAGES.length-1?"メニューへ":"次へ";
+ if(dot)dot.textContent=END_STORY_PAGES.map((_,i)=>i===endStoryIndex?"◆":"◇").join(" ");
+}
+function nextEndStory(){
+ if(endStoryIndex>=END_STORY_PAGES.length-1){
+  show("menu");
+  return;
+ }
+ endStoryIndex++;
+ renderEndStory();
+ window.scrollTo({top:0,left:0,behavior:"auto"});
+}
+function prevEndStory(){
+ if(endStoryIndex<=0)return;
+ endStoryIndex--;
+ renderEndStory();
+ window.scrollTo({top:0,left:0,behavior:"auto"});
+}
+
 
 function showDevMessage(){
  if(!$("devMsgText"))return;
@@ -6117,13 +6337,18 @@ async function questFinish(){
  questUpdateUI();
 
  if(!quest.isOriginal)await questRewardSequence();
+ const shouldShowEndStory=!quest.isOriginal && quest.stage?.id==="worldtree";
  questUsedQueue=[];
  const backToOriginal=!!quest.isOriginal;
 
  quest=null;
  document.body.classList.remove("gameMode");
  renderStages();
- show(backToOriginal?"original":"challenge");
+ if(shouldShowEndStory){
+  showEndStory(0);
+ }else{
+  show(backToOriginal?"original":"challenge");
+ }
 }
 function questGameOver(){
  questStopTimer();quest.phase="gameover";questUsedQueue=[];$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
