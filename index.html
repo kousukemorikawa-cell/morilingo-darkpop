@@ -248,36 +248,55 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
  border:3px solid #8a5a24;
  box-shadow:0 7px 0 #2f1b081f, inset 0 0 0 2px #fff6d6;
 }
-.question.kanbunVertical .kaeri-mark{
+.question.kanbunVertical .kanbun-unit{
+ position:relative;
  display:inline-block;
- font-size:.52em;
+ line-height:1.35;
+ margin:.04em 0;
+}
+
+.question.kanbunVertical .kaeri-mark{
+ position:absolute;
+ left:-.68em;
+ top:50%;
+ transform:translateY(-50%);
+ display:block;
+ min-width:1em;
+ text-align:center;
+ font-size:.48em;
  line-height:1;
  font-weight:900;
  letter-spacing:0;
- transform:translateX(-.58em);
- margin-inline:0 -.22em;
  color:inherit;
 }
 
 .question.kanbunVertical .kaeri-re{
- font-size:.5em;
- transform:translateX(-.62em);
+ font-size:.46em;
+ left:-.72em;
 }
 
 .question.kanbunVertical .kaeri-serial,
 .question.kanbunVertical .kaeri-joge,
 .question.kanbunVertical .kaeri-kouotsu{
+ font-size:.48em;
+}
+
+.question.kanbunVertical .kaeri-standalone{
+ position:static;
+ display:inline-block;
  font-size:.52em;
+ line-height:1;
+ margin:0;
+ transform:none;
 }
 
 @media(max-width:560px){
  .question.kanbunVertical .kaeri-mark{
-  font-size:.5em;
-  transform:translateX(-.52em);
-  margin-inline:0 -.18em;
+  left:-.62em;
+  font-size:.46em;
  }
  .question.kanbunVertical .kaeri-re{
-  transform:translateX(-.56em);
+  left:-.66em;
  }
 }
 @media (max-width:768px){
@@ -4950,7 +4969,7 @@ function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);ga
 function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
 function scheduleNext(ms=850){clearTimeout(nextId);nextId=setTimeout(nextQuestion,ms);}
 function renderKanbunQuestionText(text){
- const safe=escapeHtml(text??"");
+ const source=String(text??"");
  const markClass={
   "レ":"kaeri-re",
   "一":"kaeri-serial",
@@ -4965,9 +4984,44 @@ function renderKanbunQuestionText(text){
   "丙":"kaeri-kouotsu",
   "丁":"kaeri-kouotsu"
  };
- return safe.replace(/[レ一二三四上中下甲乙丙丁]/g,(mark)=>{
-  return `<span class="kaeri-mark ${markClass[mark]||""}">${mark}</span>`;
- });
+ const isMark=(ch)=>Object.prototype.hasOwnProperty.call(markClass,ch);
+ const esc=(value)=>escapeHtml(value);
+
+ const units=[];
+
+ for(const ch of source){
+  if(isMark(ch)){
+   // 直前の本文文字へ返点を付ける。不レ可 → 「不」にレ点、不二復一 → 「不」に二・「復」に一。
+   const target=[...units].reverse().find(unit=>unit.type==="char");
+   if(target){
+    target.marks.push(ch);
+   }else{
+    units.push({type:"mark",char:ch});
+   }
+   continue;
+  }
+
+  if(ch==="\n"){
+   units.push({type:"br"});
+   continue;
+  }
+
+  units.push({type:"char",char:ch,marks:[]});
+ }
+
+ return units.map((unit)=>{
+  if(unit.type==="br")return "<br>";
+  if(unit.type==="mark"){
+   return `<span class="kaeri-mark kaeri-standalone ${markClass[unit.char]||""}">${esc(unit.char)}</span>`;
+  }
+
+  const marks=unit.marks.map((mark,index)=>{
+   const offset=index*.72;
+   return `<span class="kaeri-mark ${markClass[mark]||""}" style="top:calc(50% + ${offset}em)">${esc(mark)}</span>`;
+  }).join("");
+
+  return `<span class="kanbun-unit">${esc(unit.char)}${marks}</span>`;
+ }).join("");
 }
 
 function applyQuestionLayout(el,q){
