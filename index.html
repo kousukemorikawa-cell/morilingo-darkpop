@@ -1771,6 +1771,42 @@ body.goldTheme .answerPanel{
  box-shadow:0 3px 0 rgba(0,0,0,.18);
 }
 .devNewsCard.hasNew .devNewsBadge{display:inline-block}
+.devNewsCard.hasNew{
+ background:linear-gradient(135deg,#fff,#fff1f1 55%,#ffe0e0) !important;
+ border-color:#ff3333 !important;
+ box-shadow:0 0 0 4px rgba(255,51,51,.18),0 10px 24px rgba(255,51,51,.22) !important;
+ animation:devNewsPulse 1.15s ease-in-out infinite;
+}
+.devNewsCard.hasNew .devNewsTitle{
+ color:#d80000 !important;
+}
+.devNewsCard.hasNew .devNewsLatest{
+ color:#8f1b1b !important;
+}
+.devNewsCard.hasNew .devNewsBadge{
+ display:inline-flex !important;
+ align-items:center;
+ justify-content:center;
+ min-width:42px;
+ min-height:42px;
+ border-radius:999px;
+ font-size:12px;
+ border:3px solid #fff;
+ box-shadow:0 0 0 3px #ff3333,0 5px 0 rgba(0,0,0,.20);
+}
+@keyframes devNewsPulse{
+ 0%,100%{transform:translateY(0);filter:brightness(1)}
+ 50%{transform:translateY(-2px);filter:brightness(1.06)}
+}
+body.darkTheme .devNewsCard.hasNew{
+ background:linear-gradient(135deg,#2b1010,#4a1717 58%,#7b1f1f) !important;
+ border-color:#ff5a5a !important;
+ box-shadow:0 0 0 4px rgba(255,90,90,.20),0 10px 24px rgba(255,0,0,.24) !important;
+}
+body.darkTheme .devNewsCard.hasNew .devNewsTitle,
+body.darkTheme .devNewsCard.hasNew .devNewsLatest{
+ color:#fff !important;
+}
 .devNewsModal{
  position:fixed;
  inset:0;
@@ -3269,6 +3305,9 @@ function renderMenuTopTitles(){
   return t?`<span class="menuTitleChip">🏅 ${t.name}</span>`:"";
  }).join("");
 }
+function unreadNewsPrefix(){
+ return isDevNewsUnread()?"❗ NEW：":"";
+}
 function renderDevNews(){
  const card=$("devNewsCard");
  const latest=$("devNewsLatest");
@@ -3278,11 +3317,18 @@ function renderDevNews(){
  devNewsCache=items;
  if(latest){
   const top=items[0];
-  latest.textContent=top?`${top.date?top.date+"：":""}${top.title}`:"お知らせはまだありません";
+  latest.textContent=top?`${unreadNewsPrefix()}${top.date?top.date+"：":""}${top.title}`:"お知らせはまだありません";
  }
  const unread=isDevNewsUnread();
- if(card)card.classList.toggle("hasNew",unread);
- if(badge)badge.style.display=unread?"inline-block":"none";
+ if(card){
+  card.classList.toggle("hasNew",unread);
+  card.setAttribute("aria-label",unread?"未読のお知らせがあります":"開発者からのお知らせ");
+ }
+ if(badge){
+  badge.textContent=unread?"❗NEW":"";
+  badge.style.display=unread?"inline-flex":"none";
+ }
+ document.title=unread?"❗モリリンゴ":"モリリンゴ";
  if(list){
   list.innerHTML=items.length?items.map(n=>`
    <div class="devNewsItem">
