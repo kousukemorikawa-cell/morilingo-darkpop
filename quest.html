@@ -618,6 +618,48 @@ body.gameMode .answerPanel{padding-top:9px}
  align-items:center;
  gap:6px;
  flex-wrap:wrap;
+ color:#fff;
+ font-weight:900;
+ text-shadow:0 2px 4px rgba(0,0,0,.45);
+}
+
+.rankNameLine *{
+ color:#fff;
+}
+
+/* ランキングに称号を表示している行だけ、名前を黒文字にする */
+.rankNameLine.hasRankingTitle{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+
+.rankNameLine.hasRankingTitle .rankTitleChip{
+ color:#7a5100 !important;
+ text-shadow:none !important;
+}
+
+.rankTitleChip{
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+
+ border-radius:999px;
+ padding:3px 8px;
+
+ font-size:11px;
+ font-weight:1000;
+ line-height:1;
+
+ color:#fff;
+ background:rgba(255,255,255,.08);
+
+ border:2px solid rgba(255,255,255,.95);
+
+ box-shadow:
+ 0 0 8px rgba(255,255,255,.18),
+ inset 0 0 6px rgba(255,255,255,.08);
+
+ backdrop-filter:blur(2px);
 }
 .rankTitleChip{
  display:inline-block;
@@ -2054,6 +2096,170 @@ body.darkTheme .originalQuestionMini{color:#c9c9c9;}
  .originalQuestionCard{padding:10px;}
 }
 
+/* ==========================================================
+   オリジナル問題：クイズ名ごとのフォルダ一覧
+========================================================== */
+.originalQuizList{
+ display:grid;
+ gap:10px;
+ margin-top:10px;
+}
+.originalQuizCard{
+ background:#f7fff9;
+ border:2px solid #d7f0df;
+ border-radius:18px;
+ padding:12px;
+ font-weight:900;
+ display:grid;
+ gap:8px;
+}
+.originalQuizCard.active{
+ border-color:#32b85c;
+ box-shadow:0 0 0 4px rgba(50,184,92,.18);
+}
+.originalQuizName{
+ font-size:18px;
+ font-weight:1000;
+ color:#217246;
+}
+.originalQuizMeta{
+ color:#667085;
+ font-size:13px;
+ line-height:1.6;
+}
+.originalQuizActions{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap;
+}
+.originalQuizActions .btn{
+ padding:9px 11px;
+ font-size:13px;
+ border-radius:14px;
+}
+body.darkTheme .originalQuizCard{
+ background:#191919;
+ border-color:#3a3a3a;
+ color:#fff;
+}
+body.darkTheme .originalQuizCard.active{
+ border-color:#9cf0b2;
+ box-shadow:0 0 0 4px rgba(156,240,178,.14);
+}
+body.darkTheme .originalQuizName{color:#9cf0b2;}
+body.darkTheme .originalQuizMeta{color:#c9c9c9;}
+
+
+
+/* ==========================================================
+   2026-06-26 修正：称号表示の文字色
+   白背景の称号は、ダークモードでも黒文字に固定する
+========================================================== */
+.badge{
+ display:inline-flex !important;
+ align-items:center !important;
+ gap:6px !important;
+ padding:10px 16px !important;
+ border-radius:999px !important;
+ background:#fff !important;
+ color:#000 !important;
+ font-weight:1000 !important;
+ text-shadow:none !important;
+ border:2px solid #e6e6e6 !important;
+ box-shadow:0 3px 8px rgba(0,0,0,.15) !important;
+}
+.badge *{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.menuTitleChip,
+.menuTitleChip *{
+ background:#fffdf0 !important;
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.menuTitleEmpty{
+ background:#fff !important;
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.rankTitleChip,
+.rankTitleChip *{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+ text-shadow:none !important;
+}
+.rankNameLine.hasRankingTitle{
+ color:#000 !important;
+ text-shadow:none !important;
+}
+.rankNameLine.hasRankingTitle *{
+ text-shadow:none !important;
+}
+.titleCard,
+.titleCard.unlocked{
+ background:#fff !important;
+ color:#000 !important;
+ border-color:#e6e6e6 !important;
+}
+.titleCard *,
+.titleCard.unlocked *{
+ text-shadow:none !important;
+}
+.titleCard .titleName{
+ color:#000 !important;
+}
+.titleCard .titleDesc{
+ color:#555 !important;
+}
+.titleProgress,
+.titleProgress *{
+ background-color:#fff;
+ color:#000;
+ text-shadow:none !important;
+}
+.titleCategoryChip{
+ background:#eef7ff !important;
+ color:#23608f !important;
+}
+.titleDropChip{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+}
+body.darkTheme .badge,
+body.darkTheme .menuTitleChip,
+body.darkTheme .menuTitleEmpty,
+body.darkTheme .titleCard,
+body.darkTheme .titleCard.unlocked{
+ background:#fff !important;
+ color:#000 !important;
+ border-color:#e6e6e6 !important;
+}
+body.darkTheme .badge *,
+body.darkTheme .menuTitleChip *,
+body.darkTheme .menuTitleEmpty *,
+body.darkTheme .titleCard *,
+body.darkTheme .titleCard.unlocked *{
+ text-shadow:none !important;
+}
+body.darkTheme .titleCard .titleName{
+ color:#000 !important;
+}
+body.darkTheme .titleCard .titleDesc{
+ color:#555 !important;
+}
+body.darkTheme .titleCategoryChip{
+ background:#eef7ff !important;
+ color:#23608f !important;
+ border-color:#cfe9ff !important;
+}
+body.darkTheme .titleDropChip,
+body.darkTheme .rankTitleChip{
+ background:#fff4d8 !important;
+ color:#7a5100 !important;
+ border-color:#f0d58b !important;
+}
+
 </style>
 </head>
 <body>
@@ -2347,7 +2553,7 @@ body.darkTheme .originalQuestionMini{color:#c9c9c9;}
       <p class="muted">モリリンゴの基本ルールです。</p>
       <div class="guideBox">
         <div class="guideCard"><h3>① チャレンジ</h3><p>問題に正解して、木や宝箱を完成させます。ステージをクリアするとアイテムを獲得できます。</p></div>
-        <div class="guideCard"><h3>② クエスト</h3><p>同じステージの復興を3回クリアすると解放されます。復興3回分の36問からランダムに出題され、3エリアを進み、敵を倒すとクリアです。</p></div>
+        <div class="guideCard"><h3>② クエスト</h3><p>同じステージの復興を3回クリアすると解放されます。復興3回分の問題からランダムに出題され、3エリアを進み、敵を倒すとクリアです。</p></div>
         <div class="guideCard"><h3>③ アイテム・称号・スキン</h3><p>集めたアイテムはクエストで使用できます。称号やスキンはメニューから確認・変更できます。</p></div>
       </div>
       <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
@@ -2478,11 +2684,11 @@ body.darkTheme .originalQuestionMini{color:#c9c9c9;}
   <section id="original" class="screen">
     <div class="card">
       <h2>オリジナル問題</h2>
-      <p class="muted">自作問題で、復興またはクエストを遊べます。</p>
+      <p class="muted">クイズ名ごとに保存できます。作ったクイズを選んで、復興またはクエストで遊べます。</p>
       <div id="originalSummary" class="stageStudyBox"></div>
+      <div id="originalQuizList" class="originalQuizList"></div>
       <div class="toolbar">
-        <button class="btn primary" onclick="startOriginal()">オリジナルで遊ぶ</button>
-        <button class="btn secondary" onclick="showOriginalEditor()">問題を作る</button>
+        <button class="btn primary" onclick="createNewOriginalQuiz()">＋ 新しいクイズを作る</button>
         <button class="btn ghost" onclick="show('menu')">戻る</button>
       </div>
     </div>
@@ -2490,7 +2696,7 @@ body.darkTheme .originalQuestionMini{color:#c9c9c9;}
 
   <section id="editor" class="screen">
     <div class="card">
-      <h2>問題作成</h2>
+      <h2 id="originalEditorTitle">問題作成</h2>
       <p class="muted">クイズ名・問題タイプ・使用ステージを選び、問題を1問ずつ作成します。</p>
 
       <div class="form">
@@ -2506,7 +2712,7 @@ body.darkTheme .originalQuestionMini{color:#c9c9c9;}
         <label><b>使用ステージ</b></label>
         <select id="originalQuizStage" onchange="handleOriginalModeChange()"></select>
 
-        <div id="originalLimitText" class="devNote">復興は最大12問、クエストは最大36問までです。</div>
+        <div id="originalLimitText" class="devNote">復興は最大12問（ステージ20のみ20問）、クエストはステージ別候補数までです。</div>
 
         <div id="originalQuestionEditor" class="originalQuestionEditor"></div>
 
@@ -2533,7 +2739,7 @@ const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbxUx4-YAXE23ZikXJ0R68B3ykTWSpv7gijKPqTsWgIi8GY-OZhSqfnmDNUPK1W4TEmDoA/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbzhN2Zy8EFfksyNyyP4yyiXCMyX9lYgIz5bzdiTTJeAWsvxgHYByfvUOHNEagTNpIphBQ/exec";
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
@@ -2597,22 +2803,22 @@ const STAGE_STUDY=[
  {title:"重要語彙①",text:"漢文読解で最初に覚えたい重要語彙",pdf:"assets/pdf/02_goi1.pdf",questionKey:"goi1"},
  {title:"動詞の活用形",text:"未然形・連用形・終止形・連体形・已然形・命令形を確認",pdf:"assets/pdf/03_katsuyokei.pdf",questionKey:"katsuyokei"},
  {title:"再読文字",text:"未・将・当・応・宜・須・猶・盍などの読み方と意味",pdf:"assets/pdf/04_saidoku.pdf",questionKey:"saidoku"},
- {title:"形容詞・形容動詞の活用の種類",text:"ク活用・シク活用、ナリ活用・タリ活用を確認",pdf:"assets/pdf/05_keiyoushi_keiyoudoushi.pdf",questionKey:"keiyoushi_keiyoudoushi"},
+ {title:"形容詞・形容動詞の活用の種類",text:"ク活用・シク活用、ナリ活用・タリ活用を確認",pdf:"assets/pdf/05_keiyoushi.pdf",questionKey:"keiyoushi"},
  {title:"重要語彙②",text:"読解で差がつく重要語彙の確認",pdf:"assets/pdf/06_goi2.pdf",questionKey:"goi2"},
- {title:"助動詞①［未然形接続］",text:"る・らる・す・さす・しむ・ず・む・むず・じ・ましなど",pdf:"assets/pdf/07_jodoshi_mizen.pdf",questionKey:"jodoshi_mizen"},
+ {title:"助動詞①［未然形接続］",text:"る・らる・す・さす・しむ・ず・む・むず・じ・ましなど",pdf:"assets/pdf/07_jodoshi1.pdf",questionKey:"jodoshi1"},
  {title:"重要語彙③",text:"入試・定期考査でよく出る重要語彙",pdf:"assets/pdf/08_goi3.pdf",questionKey:"goi3"},
- {title:"助動詞②［連用形接続］",text:"き・けり・つ・ぬ・たり・けむなど",pdf:"assets/pdf/09_jodoshi_renyou.pdf",questionKey:"jodoshi_renyou"},
+ {title:"助動詞②［連用形接続］",text:"き・けり・つ・ぬ・たり・けむなど",pdf:"assets/pdf/09_jodoshi2.pdf",questionKey:"jodoshi2"},
  {title:"重要語彙④",text:"多義語・頻出語を中心に確認",pdf:"assets/pdf/10_goi4.pdf",questionKey:"goi4"},
- {title:"助動詞③［終止形接続］",text:"べし・らむ・めり・なり・らし・まじなど",pdf:"assets/pdf/11_jodoshi_shushi.pdf",questionKey:"jodoshi_shushi"},
- {title:"否定形・禁止形",text:"不・非・無・莫・勿などの否定・禁止表現",pdf:"assets/pdf/12_hitei_kinshi.pdf",questionKey:"hitei_kinshi"},
- {title:"助動詞④［その他］",text:"連体形接続・体言接続など、その他の助動詞を確認",pdf:"assets/pdf/13_jodoshi_sonota.pdf",questionKey:"jodoshi_sonota"},
- {title:"疑問形・反語形",text:"何・誰・安・悪・焉・豈などの疑問・反語表現",pdf:"assets/pdf/14_gimon_hango.pdf",questionKey:"gimon_hango"},
+ {title:"助動詞③［終止形接続］",text:"べし・らむ・めり・なり・らし・まじなど",pdf:"assets/pdf/11_jodoshi3.pdf",questionKey:"jodoshi3"},
+ {title:"否定形・禁止形",text:"不・非・無・莫・勿などの否定・禁止表現",pdf:"assets/pdf/12_hitei.pdf",questionKey:"hitei"},
+ {title:"助動詞④［その他］",text:"連体形接続・体言接続など、その他の助動詞を確認",pdf:"assets/pdf/13_jodoshi4.pdf",questionKey:"jodoshi4"},
+ {title:"疑問形・反語形",text:"何・誰・安・悪・焉・豈などの疑問・反語表現",pdf:"assets/pdf/14_gimon.pdf",questionKey:"gimon"},
  {title:"敬語①",text:"尊敬語の基本と頻出語を確認",pdf:"assets/pdf/15_keigo1.pdf",questionKey:"keigo1"},
- {title:"使役形・受身形",text:"使役・受身の句形と読み方を確認",pdf:"assets/pdf/16_shieki_ukemi.pdf",questionKey:"shieki_ukemi"},
+ {title:"使役形・受身形",text:"使役・受身の句形と読み方を確認",pdf:"assets/pdf/16_shieki.pdf",questionKey:"shieki"},
  {title:"敬語②",text:"謙譲語の基本と頻出語を確認",pdf:"assets/pdf/17_keigo2.pdf",questionKey:"keigo2"},
- {title:"仮定形・限定形・累加形",text:"若・苟・唯・但・不啻などの句形を確認",pdf:"assets/pdf/18_katei_gentei_ruika.pdf",questionKey:"katei_gentei_ruika"},
+ {title:"仮定形・限定形・累加形",text:"若・苟・唯・但・不啻などの句形を確認",pdf:"assets/pdf/18_katei.pdf",questionKey:"katei"},
  {title:"敬語③",text:"丁寧語・敬意の方向・敬語判定を確認",pdf:"assets/pdf/19_keigo3.pdf",questionKey:"keigo3"},
- {title:"比較・選択・比況・抑揚・願望・倒置",text:"漢文の重要句形を総合確認",pdf:"assets/pdf/20_hikaku_sentaku_hikyo_yokuyo_ganbo_tochi.pdf",questionKey:"kanbun_sogo"}
+ {title:"比較・選択・比況・抑揚・願望・倒置",text:"漢文の重要句形を総合確認",pdf:"assets/pdf/20_hikaku.pdf",questionKey:"hikaku"}
 ];
 function stageStudy(index){
  return STAGE_STUDY[index] || {title:"学習内容未設定",text:"このステージの学習内容を設定してください",pdf:"",questionKey:""};
@@ -2624,8 +2830,9 @@ function stageStudyHtml(index){
  return `<div class="stageStudyBox"><div class="stageStudyTitle">📖 学習内容：${st.title}</div><div class="stageStudyText">📝 ${st.text}</div>${pdf}${answer}</div>`;
 }
 function stageQuestionCountText(index){
+ const cfg=recoveryQuestionConfig(index);
  const total=stageQuestQuestions(index).length;
- return `復興：12問×3回（テーマ6＋古文単語6） / クエスト候補：${total}問`;
+ return `復興：${cfg.totalCount}問×3回（テーマ${cfg.themeCount}＋古文単語${cfg.vocabCount}） / クエスト候補：${total}問`;
 }
 function studyStartMessage(index){
  const st=stageStudy(index);
@@ -2694,7 +2901,20 @@ const RECOVERY_ROUNDS=3;
 const RECOVERY_THEME_QUESTIONS_PER_ROUND=6;
 const RECOVERY_VOCAB_QUESTIONS_PER_ROUND=6;
 const RECOVERY_QUESTIONS_PER_ROUND=RECOVERY_THEME_QUESTIONS_PER_ROUND+RECOVERY_VOCAB_QUESTIONS_PER_ROUND;
-const WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY=RECOVERY_QUESTIONS_PER_ROUND-1;
+const WORLD_TREE_THEME_QUESTIONS_PER_ROUND=10;
+const WORLD_TREE_VOCAB_QUESTIONS_PER_ROUND=10;
+const WORLD_TREE_RITUAL_ITEMS_PER_RECOVERY=WORLD_TREE_THEME_QUESTIONS_PER_ROUND+WORLD_TREE_VOCAB_QUESTIONS_PER_ROUND-1;
+
+function recoveryQuestionConfig(stageIndex){
+ const isWorldTree=Number(stageIndex)===19;
+ const themeCount=isWorldTree ? WORLD_TREE_THEME_QUESTIONS_PER_ROUND : RECOVERY_THEME_QUESTIONS_PER_ROUND;
+ const vocabCount=isWorldTree ? WORLD_TREE_VOCAB_QUESTIONS_PER_ROUND : RECOVERY_VOCAB_QUESTIONS_PER_ROUND;
+ return {
+  themeCount,
+  vocabCount,
+  totalCount:themeCount+vocabCount
+ };
+}
 
 function questionId(q){
  return [
@@ -2792,6 +3012,10 @@ function stageAllQuestions(stageIndex){
 function stageRecoveryQuestions(stageIndex,round){
  const source=remoteQuestions||QUESTION_BANK;
  const r=Math.min(RECOVERY_ROUNDS,Math.max(1,Number(round)||1));
+ const cfg=recoveryQuestionConfig(stageIndex);
+ const THEME_COUNT=cfg.themeCount;
+ const VOCAB_COUNT=cfg.vocabCount;
+ const TOTAL_COUNT=cfg.totalCount;
 
  // 1. 推奨：stage列を「単元キー_theme_r1」「単元キー_vocab_r1」形式で分けた問題
  let theme=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme"));
@@ -2799,7 +3023,7 @@ function stageRecoveryQuestions(stageIndex,round){
 
  // 2. 1つのstageキー内に kind / round 列がある場合も拾う
  const all=stageAllQuestions(stageIndex);
- if(theme.length<RECOVERY_THEME_QUESTIONS_PER_ROUND || vocab.length<RECOVERY_VOCAB_QUESTIONS_PER_ROUND){
+ if(theme.length<THEME_COUNT || vocab.length<VOCAB_COUNT){
   const metaTheme=all.filter(q=>{
    const k=questionKind(q);
    const qr=questionRound(q);
@@ -2817,18 +3041,18 @@ function stageRecoveryQuestions(stageIndex,round){
  // 3. 足りない場合は、そのステージの全問題から補充して止まらないようにする
  const used=new Set([...theme,...vocab].map(questionId));
  const rest=all.filter(q=>!used.has(questionId(q)));
- theme=uniqueQuestionList(theme).slice(0,RECOVERY_THEME_QUESTIONS_PER_ROUND);
- vocab=uniqueQuestionList(vocab).slice(0,RECOVERY_VOCAB_QUESTIONS_PER_ROUND);
+ theme=uniqueQuestionList(theme).slice(0,THEME_COUNT);
+ vocab=uniqueQuestionList(vocab).slice(0,VOCAB_COUNT);
 
- while(theme.length<RECOVERY_THEME_QUESTIONS_PER_ROUND && rest.length)theme.push(rest.shift());
- while(vocab.length<RECOVERY_VOCAB_QUESTIONS_PER_ROUND && rest.length)vocab.push(rest.shift());
+ while(theme.length<THEME_COUNT && rest.length)theme.push(rest.shift());
+ while(vocab.length<VOCAB_COUNT && rest.length)vocab.push(rest.shift());
 
  const mixed=[];
- for(let i=0;i<RECOVERY_THEME_QUESTIONS_PER_ROUND;i++){
+ for(let i=0;i<Math.max(THEME_COUNT,VOCAB_COUNT);i++){
   if(theme[i])mixed.push(theme[i]);
   if(vocab[i])mixed.push(vocab[i]);
  }
- return mixed.length ? mixed.slice(0,RECOVERY_QUESTIONS_PER_ROUND) : stageQuestionsFallback(stageIndex).slice(0,RECOVERY_QUESTIONS_PER_ROUND);
+ return mixed.length ? mixed.slice(0,TOTAL_COUNT) : stageQuestionsFallback(stageIndex).slice(0,TOTAL_COUNT);
 }
 function stageQuestQuestions(stageIndex){
  // クエスト・タイムアタックは、復興3回分の36問を候補にする。
@@ -2876,7 +3100,10 @@ state.unlocked??=1;state.badges??=[];state.original??=[];state.originalDraft??=[
   name:"",
   mode:"rebuild",
   stageIndex:0
-};state.player??={name:"",className:"",number:""};
+};
+state.originalQuizzes??=[];
+state.currentOriginalQuizId??="";
+state.player??={name:"",className:"",number:""};
  
 state.selectedMenuTitles??=[];
 state.selectedRankingTitles??=[];
@@ -2893,6 +3120,11 @@ state.zukanTab??="items";
 state.skin??={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
 state.skins??={};
 state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+state.totalPt??=Number(state.totalPt||0);
+state.totalCorrect??=Number(state.totalCorrect||0);
+let playerDataLoaded=false;
+let playerDataSaveTimer=null;
+let playerDataSaving=false;
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -3252,6 +3484,22 @@ const QUEST_DAMAGE_BONUS_PLUS1_SKINS=[
 ];
 
 const QUEST_DAMAGE_BONUS_PLUS2_SKINS=[
+"enemy_field",
+ "enemy_subtropical",
+ "enemy_snow",
+ "enemy_volcano",
+ "enemy_desert",
+ "enemy_cave",
+ "enemy_deepsea",
+ "enemy_jungle",
+ "enemy_ruins",
+ "enemy_magicforest",
+ "enemy_skyisland",
+ "enemy_thunder",
+ "enemy_glacier",
+ "enemy_machinecity",
+ "enemy_haunted",
+ "enemy_dragonvalley",
  "enemy_moon",
  "enemy_starsea",
  "enemy_timedimension"
@@ -3339,7 +3587,7 @@ function skinName(id){
 }
 function hasQuestClearForGoldBackground(){
  const clears=state.questClears||{};
- return Object.values(clears).some(v=>Number(v||0)>0);
+ return Number(clears.worldtree||0)>0;
 }
 function applySkinSettings(){
  ensureSkinState();
@@ -3747,7 +3995,210 @@ function loadRemoteTitles(){
 }
 
 
-function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
+
+/* ==========================================================
+   PlayerData同期
+   GAS側 PlayerData:
+   name | className | number | saveData(JSON) | updatedAt
+========================================================== */
+function playerKey(){
+ const p=state.player||{};
+ return {
+  name:String(p.name||"").trim(),
+  className:String(p.className||"").trim(),
+  number:String(p.number||"").trim()
+ };
+}
+function hasLocalProgress(){
+ const hasObj=o=>o && typeof o==="object" && Object.keys(o).length>0;
+ if(Number(state.unlocked||1)>1)return true;
+ if(Number(state.totalPt||0)>0)return true;
+ if(Number(state.totalCorrect||0)>0)return true;
+ if((state.badges||[]).length>0)return true;
+ if(hasObj(state.items))return true;
+ if(hasObj(state.challengeClears))return true;
+ if(hasObj(state.questClears))return true;
+ if(hasObj(state.questUnlocked))return true;
+ if(hasObj(state.timeAttackBests))return true;
+ if(hasObj(state.skins) && Object.keys(state.skins).length>1)return true;
+ if((state.originalQuizzes||[]).length>0)return true;
+ return false;
+}
+function makeSaveData(){
+ ensureSkinState();
+ cleanSelectedTitles();
+ return {
+  schemaVersion:1,
+
+  pt:Number(state.totalPt||0),
+  totalPt:Number(state.totalPt||0),
+  totalScore:Number(state.totalPt||0),
+  totalCorrect:Number(state.totalCorrect||0),
+
+  unlocked:Number(state.unlocked||1),
+  badges:state.badges||[],
+
+  items:state.items||{},
+  skins:state.skins||{},
+  skin:state.skin||{},
+
+  selectedMenuTitles:state.selectedMenuTitles||[],
+  selectedRankingTitles:state.selectedRankingTitles||[],
+
+  challengeClears:state.challengeClears||{},
+  questClears:state.questClears||{},
+  questUnlocked:state.questUnlocked||{},
+  timeAttackBests:state.timeAttackBests||{},
+
+  original:state.original||[],
+  originalDraft:state.originalDraft||[],
+  originalQuiz:state.originalQuiz||{},
+  originalQuizzes:state.originalQuizzes||[],
+  currentOriginalQuizId:state.currentOriginalQuizId||"",
+
+  zukanTab:state.zukanTab||"items",
+  titleCategory:state.titleCategory||"すべて",
+  titleSearch:state.titleSearch||""
+ };
+}
+function applySaveData(saveData){
+ if(!saveData || typeof saveData!=="object")return;
+
+ const keepPlayer=state.player||{name:"",className:"",number:""};
+
+ state.totalPt=Number(saveData.totalPt ?? saveData.pt ?? saveData.totalScore ?? state.totalPt ?? 0);
+ state.totalCorrect=Number(saveData.totalCorrect ?? state.totalCorrect ?? 0);
+ state.unlocked=Number(saveData.unlocked || state.unlocked || 1);
+
+ state.badges=Array.isArray(saveData.badges)?saveData.badges:(state.badges||[]);
+ state.items=saveData.items || state.items || {};
+ state.skins=saveData.skins || state.skins || {};
+ state.skin=saveData.skin || state.skin || {};
+
+ state.selectedMenuTitles=Array.isArray(saveData.selectedMenuTitles)?saveData.selectedMenuTitles:(state.selectedMenuTitles||[]);
+ state.selectedRankingTitles=Array.isArray(saveData.selectedRankingTitles)?saveData.selectedRankingTitles:(state.selectedRankingTitles||[]);
+
+ state.challengeClears=saveData.challengeClears || state.challengeClears || {};
+ state.questClears=saveData.questClears || state.questClears || {};
+ state.questUnlocked=saveData.questUnlocked || state.questUnlocked || {};
+ state.timeAttackBests=saveData.timeAttackBests || state.timeAttackBests || {};
+
+ state.original=Array.isArray(saveData.original)?saveData.original:(state.original||[]);
+ state.originalDraft=Array.isArray(saveData.originalDraft)?saveData.originalDraft:(state.originalDraft||[]);
+ state.originalQuiz=saveData.originalQuiz || state.originalQuiz || {name:"",mode:"rebuild",stageIndex:0};
+ state.originalQuizzes=Array.isArray(saveData.originalQuizzes)?saveData.originalQuizzes:(state.originalQuizzes||[]);
+ state.currentOriginalQuizId=String(saveData.currentOriginalQuizId || state.currentOriginalQuizId || "");
+
+ state.zukanTab=saveData.zukanTab || state.zukanTab || "items";
+ state.titleCategory=saveData.titleCategory || state.titleCategory || "すべて";
+ state.titleSearch=saveData.titleSearch || state.titleSearch || "";
+
+ state.player=keepPlayer;
+ state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+
+ ensureSkinState();
+ cleanSelectedTitles();
+ localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+
+ renderBadges();
+ renderMenuTopTitles();
+ updatePlayerDisplay();
+ updateDevAdminButton();
+ applySkinSettings();
+ renderItems();
+ renderZukan(state.zukanTab||"items");
+ renderSkinLists();
+ renderStages();
+ renderOriginalSummary();
+}
+function loadPlayerData(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name)return Promise.resolve(false);
+
+ $("savePill").textContent="セーブ読込中...";
+
+ return new Promise(resolve=>{
+  const callback="morilingoPlayerDataCallback_"+Date.now();
+  const script=document.createElement("script");
+
+  window[callback]=data=>{
+   try{
+    if(data && data.ok){
+     if(data.exists===false && hasLocalProgress()){
+      playerDataLoaded=true;
+      savePlayerDataNow();
+      $("savePill").textContent="端末データを同期中";
+     }else{
+      applySaveData(data.saveData||{});
+      playerDataLoaded=true;
+      $("savePill").textContent=data.exists===false?"新規セーブ作成":"セーブ読込済み";
+     }
+     resolve(true);
+    }else{
+     $("savePill").textContent="セーブ読込失敗";
+     resolve(false);
+    }
+   }finally{
+    delete window[callback];
+    script.remove();
+   }
+  };
+
+  const params=new URLSearchParams({
+   action:"loadPlayerData",
+   name:key.name,
+   className:key.className,
+   number:key.number,
+   callback,
+   v:String(Date.now())
+  });
+
+  script.src=GAS_URL+"?"+params.toString();
+  script.onerror=()=>{
+   delete window[callback];
+   script.remove();
+   $("savePill").textContent="セーブ読込失敗";
+   resolve(false);
+  };
+
+  document.body.appendChild(script);
+
+  setTimeout(()=>{
+   if(window[callback]){
+    delete window[callback];
+    script.remove();
+    $("savePill").textContent="セーブ読込タイムアウト";
+    resolve(false);
+   }
+  },9000);
+ });
+}
+function savePlayerDataNow(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ if(playerDataSaving)return;
+
+ playerDataSaving=true;
+ const payload=new URLSearchParams({
+  action:"savePlayerData",
+  name:key.name,
+  className:key.className,
+  number:key.number,
+  saveData:JSON.stringify(makeSaveData())
+ });
+
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload})
+  .then(()=>{$("savePill").textContent="クラウド保存済み";})
+  .catch(()=>{$("savePill").textContent="クラウド保存失敗";})
+  .finally(()=>{playerDataSaving=false;});
+}
+function schedulePlayerDataSave(){
+ if(!playerDataLoaded)return;
+ clearTimeout(playerDataSaveTimer);
+ playerDataSaveTimer=setTimeout(savePlayerDataNow,600);
+}
+
+function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";schedulePlayerDataSave();}
 function show(id){
  document.body.classList.toggle("gameMode",id==="game" || id==="questGame");
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -3859,7 +4310,9 @@ async function saveProfileAndMenu(){
   }
 
   state.player={name,className,number};
+  playerDataLoaded=false;
   save();
+  await loadPlayerData();
   loadRemoteQuestions();
   loadRemoteTitles();
   show("menu");
@@ -4004,10 +4457,13 @@ function renderRanking(data){
   const meClass=(sameName && sameNumber)?" me":"";
   const numberText=item.number?`${item.number}番 `:"";
 
-  const titleHtml=(sameName && sameNumber)
-   ? (state.selectedRankingTitles||[]).map(titleChipHtml).join("")
-   : "";
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
+  const rankingTitleIds=(sameName && sameNumber)
+   ? (state.selectedRankingTitles||[])
+   : [];
+  const titleHtml=rankingTitleIds.map(titleChipHtml).join("");
+  const rankTitleClass=rankingTitleIds.length ? " hasRankingTitle" : "";
+
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine${rankTitleClass}">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
@@ -4100,7 +4556,9 @@ function clearTargetName(s){
  return s.growName || "育成物";
 }
 function clearConditionText(s){
- return "クリア条件：12問正解（テーマ6問＋古文単語6問）";
+ const index=STAGES.findIndex(stage=>stage.id===s?.id);
+ const cfg=recoveryQuestionConfig(index);
+ return `クリア条件：${cfg.totalCount}問正解（テーマ${cfg.themeCount}問＋古文単語${cfg.vocabCount}問）`;
 }
 function completedObjectCount(){
  if(!game)return 0;
@@ -4217,21 +4675,24 @@ function startChallenge(i){
  if($("timeUnit"))$("timeUnit").textContent="秒";
  startGame();
 }
-function startOriginal(){
- const q=state.originalQuiz||{};
- const qs=state.original||[];
-
- if(!qs.length){
-  alert("先に問題を作成してください。");
-  showOriginalEditor();
+function startOriginal(id){
+ const quiz=id ? selectOriginalQuiz(id) : currentOriginalQuiz();
+ if(!quiz){
+  alert("先にクイズを作成してください。");
+  createNewOriginalQuiz();
   return;
  }
-
- const stageIndex=Number(q.stageIndex||0);
+ const qs=quiz.questions||[];
+ if(!qs.length){
+  alert("このクイズには問題がありません。編集画面で問題を追加してください。");
+  editOriginalQuiz(quiz.id);
+  return;
+ }
+ const stageIndex=Number(quiz.stageIndex||0);
  const s=STAGES[stageIndex]||STAGES[0];
- const quizName=q.name||"オリジナル問題";
+ const quizName=quiz.name||"オリジナル問題";
 
- if(q.mode==="quest"){
+ if(quiz.mode==="quest"){
   startOriginalQuest(stageIndex,quizName,qs);
   return;
  }
@@ -4251,7 +4712,9 @@ function startOriginal(){
   finalWorldtreeDropped:false,
   unit:s.unit,
   plant:s.plant,
-  questions:shuffle(qs)
+  questions:shuffle(qs),
+  originalQuizId:quiz.id,
+  originalQuizName:quizName
  };
 
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
@@ -4431,21 +4894,27 @@ function tryFunnyTitleDropFromRecovery(){
 function checkClear(){
  if(game.mode!=="challenge" && game.mode!=="timeAttack" && game.mode!=="original")return false;
 
- const targetCorrect=RECOVERY_QUESTIONS_PER_ROUND;
+ const targetCorrect=(game.mode==="challenge" || game.mode==="timeAttack")
+  ? recoveryQuestionConfig(game.stageIndex).totalCount
+  : (game.mode==="original" ? Math.min((game.questions||[]).length,recoveryQuestionConfig(game.stageIndex).totalCount) : RECOVERY_QUESTIONS_PER_ROUND);
  if((game.correctCount||0)<targetCorrect)return false;
 
  stopTimer();
  canAnswer=false;
 
  if(game.mode==="original"){
-  $("feedback").textContent=`${state.originalQuiz?.name||"オリジナル問題"}クリア！`;
-  setTimeout(()=>{game=null;resetScoreHud();show("original");},1500);
+  state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
+  save();
+  $("feedback").textContent=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
+  setTimeout(()=>{game=null;resetScoreHud();renderOriginalSummary();show("original");},1500);
   return true;
  }
 
  if(game.mode==="timeAttack"){
   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
   game.score=0;
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
   const isBest=saveTimeAttackBest();
   submitResult("timeAttackClear");
   const bestMsg=isBest ? " 自己ベスト更新！" : "";
@@ -4455,6 +4924,8 @@ function checkClear(){
  }
 
  addBadge(game.stage.id);
+ state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+ state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
  giveStageClearReward(game.stage);
  const funnyTitle=tryFunnyTitleDropFromRecovery();
  state.challengeClears[game.stage.id]=(state.challengeClears[game.stage.id]||0)+1;
@@ -5286,6 +5757,8 @@ async function questFinish(){
 
  if(!quest.isOriginal){
   state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
+  state.totalPt=Number(state.totalPt||0)+Number(quest.score||0);
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(quest.qIndex||0);
   save();
   applySkinSettings();
   applyWorldTheme("questGame");
@@ -5498,10 +5971,58 @@ function rowsToQuestions(rows){
  });
  return {questions,errors};
 }
+function makeOriginalQuizId(){
+ return "original_"+Date.now()+"_"+Math.random().toString(36).slice(2,8);
+}
+function normalizeOriginalQuizItem(q){
+ return {
+  id:String(q?.id||makeOriginalQuizId()),
+  name:String(q?.name||"無題のクイズ").trim()||"無題のクイズ",
+  mode:q?.mode==="quest" ? "quest" : "rebuild",
+  stageIndex:Number.isFinite(Number(q?.stageIndex)) ? Number(q.stageIndex) : 0,
+  questions:Array.isArray(q?.questions) ? q.questions : []
+ };
+}
+function migrateOriginalQuizzes(){
+ state.originalQuizzes??=[];
+ state.originalQuizzes=state.originalQuizzes.map(normalizeOriginalQuizItem);
+ const hasLegacy=(state.original||[]).length>0;
+ if(!state.originalQuizzes.length && hasLegacy){
+  const q=state.originalQuiz||{};
+  const quiz={
+   id:makeOriginalQuizId(),
+   name:String(q.name||"オリジナル問題").trim()||"オリジナル問題",
+   mode:q.mode==="quest" ? "quest" : "rebuild",
+   stageIndex:Number(q.stageIndex||0),
+   questions:state.original||[]
+  };
+  state.originalQuizzes.push(quiz);
+  state.currentOriginalQuizId=quiz.id;
+ }
+ if(!state.currentOriginalQuizId && state.originalQuizzes.length){
+  state.currentOriginalQuizId=state.originalQuizzes[0].id;
+ }
+ save();
+}
+function currentOriginalQuiz(){
+ state.originalQuizzes??=[];
+ return state.originalQuizzes.find(q=>q.id===state.currentOriginalQuizId) || state.originalQuizzes[0] || null;
+}
+function selectOriginalQuiz(id){
+ const quiz=(state.originalQuizzes||[]).find(q=>q.id===id);
+ if(quiz){
+  state.currentOriginalQuizId=id;
+  state.originalQuiz={name:quiz.name,mode:quiz.mode,stageIndex:quiz.stageIndex};
+  state.original=quiz.questions||[];
+  save();
+ }
+ renderOriginalSummary();
+ return quiz||currentOriginalQuiz();
+}
 function originalQuestionLimit(){
  const mode=$("originalQuizMode")?.value || state.originalQuiz?.mode || "rebuild";
  const stageIndex=Number($("originalQuizStage")?.value||state.originalQuiz?.stageIndex||0);
- return mode==="quest" ? stageQuestQuestions(stageIndex).length : RECOVERY_QUESTIONS_PER_ROUND;
+ return mode==="quest" ? stageQuestQuestions(stageIndex).length : recoveryQuestionConfig(stageIndex).totalCount;
 }
 function initOriginalQuizStageSelect(){
  const sel=$("originalQuizStage");
@@ -5519,8 +6040,8 @@ function updateOriginalLimitText(){
  if(!el)return;
  const mode=$("originalQuizMode")?.value || state.originalQuiz?.mode || "rebuild";
  const stageIndex=Number($("originalQuizStage")?.value||state.originalQuiz?.stageIndex||0);
- const limit=mode==="quest" ? stageQuestQuestions(stageIndex).length : RECOVERY_QUESTIONS_PER_ROUND;
- const count=(state.original||[]).length;
+ const limit=mode==="quest" ? stageQuestQuestions(stageIndex).length : recoveryQuestionConfig(stageIndex).totalCount;
+ const count=(state.originalDraft||[]).filter(row=>[row.q,row.ans,row.w1,row.w2,row.w3].some(x=>String(x||"").trim())).length;
  el.textContent=mode==="quest"
   ? `クエスト用：最大${limit}問まで。現在 ${count}/${limit}問。`
   : `復興用：最大${limit}問まで。現在 ${count}/${limit}問。`;
@@ -5535,34 +6056,75 @@ function saveOriginalQuizSetting(){
  renderOriginalSummary();
 }
 function renderOriginalSummary(){
- const box=$("originalSummary");
- if(!box)return;
- const q=state.originalQuiz||{};
- const stage=STAGES[Number(q.stageIndex||0)]||STAGES[0];
- const modeText=q.mode==="quest" ? "クエスト" : "復興";
- const limit=q.mode==="quest" ? stageQuestQuestions(Number(q.stageIndex||0)).length : RECOVERY_QUESTIONS_PER_ROUND;
- const count=(state.original||[]).length;
- box.innerHTML=`<div class="stageStudyTitle">📝 クイズ名：${escapeHtml(q.name||"未設定")}</div><div class="stageStudyText">問題タイプ：${modeText}<br>使用ステージ：${escapeHtml(stage.name)}<br>問題数：${count}/${limit}</div>`;
+ migrateOriginalQuizzesOnce();
+ const summary=$("originalSummary");
+ const listBox=$("originalQuizList");
+ if(summary){
+  const total=(state.originalQuizzes||[]).length;
+  const current=currentOriginalQuiz();
+  summary.innerHTML=current
+   ? `<div class="stageStudyTitle">📁 保存済みクイズ：${total}個</div><div class="stageStudyText">現在選択中：${escapeHtml(current.name)}<br>下のカードから遊ぶ・編集・削除ができます。</div>`
+   : `<div class="stageStudyTitle">📁 保存済みクイズ：0個</div><div class="stageStudyText">「＋ 新しいクイズを作る」から作成してください。</div>`;
+ }
+ if(!listBox)return;
+ const quizzes=state.originalQuizzes||[];
+ if(!quizzes.length){
+  listBox.innerHTML=`<div class="rankingEmpty">まだクイズがありません</div>`;
+  return;
+ }
+ listBox.innerHTML=quizzes.map(q=>{
+  const stage=STAGES[Number(q.stageIndex||0)]||STAGES[0];
+  const modeText=q.mode==="quest" ? "クエスト" : "復興";
+  const limit=q.mode==="quest" ? stageQuestQuestions(Number(q.stageIndex||0)).length : RECOVERY_QUESTIONS_PER_ROUND;
+  const active=q.id===state.currentOriginalQuizId;
+  return `<div class="originalQuizCard ${active?"active":""}">
+   <div class="originalQuizName">📁 ${escapeHtml(q.name||"無題のクイズ")}</div>
+   <div class="originalQuizMeta">問題タイプ：${modeText}<br>使用ステージ：${escapeHtml(stage.name)}<br>問題数：${(q.questions||[]).length}/${limit}</div>
+   <div class="originalQuizActions">
+    <button class="btn primary" onclick="startOriginal('${q.id}')">このクイズで遊ぶ</button>
+    <button class="btn secondary" onclick="editOriginalQuiz('${q.id}')">編集</button>
+    <button class="btn ghost" onclick="selectOriginalQuiz('${q.id}')">選択</button>
+    <button class="btn ghost" onclick="deleteOriginalQuiz('${q.id}')">削除</button>
+   </div>
+  </div>`;
+ }).join("");
 }
-function originalQuestionDraftFromSaved(){
- return (state.original||[]).map(q=>{
+let originalQuizzesMigrated=false;
+function migrateOriginalQuizzesOnce(){
+ if(originalQuizzesMigrated)return;
+ originalQuizzesMigrated=true;
+ state.originalQuizzes??=[];
+ state.originalQuizzes=state.originalQuizzes.map(normalizeOriginalQuizItem);
+ if(!state.originalQuizzes.length && (state.original||[]).length){
+  const q=state.originalQuiz||{};
+  const quiz={
+   id:makeOriginalQuizId(),
+   name:String(q.name||"オリジナル問題").trim()||"オリジナル問題",
+   mode:q.mode==="quest" ? "quest" : "rebuild",
+   stageIndex:Number(q.stageIndex||0),
+   questions:state.original||[]
+  };
+  state.originalQuizzes.push(quiz);
+  state.currentOriginalQuizId=quiz.id;
+ }
+ if(!state.currentOriginalQuizId && state.originalQuizzes.length){
+  state.currentOriginalQuizId=state.originalQuizzes[0].id;
+ }
+ save();
+}
+function originalQuestionDraftFromQuestions(questions){
+ return (questions||[]).map(q=>{
   const choices=Array.isArray(q.a)?q.a:[];
   const correctIndex=Number(q.c||0);
   const answer=choices[correctIndex]||"";
   const wrongs=choices.filter((_,i)=>i!==correctIndex);
-  return {
-   q:q.q||"",
-   ans:answer,
-   w1:wrongs[0]||"",
-   w2:wrongs[1]||"",
-   w3:wrongs[2]||""
-  };
+  return {q:q.q||"",ans:answer,w1:wrongs[0]||"",w2:wrongs[1]||"",w3:wrongs[2]||""};
  });
 }
 function ensureOriginalDraft(){
  state.originalDraft??=[];
  if(!state.originalDraft.length && (state.original||[]).length){
-  state.originalDraft=originalQuestionDraftFromSaved();
+  state.originalDraft=originalQuestionDraftFromQuestions(state.original);
  }
 }
 function readOriginalDraftFromForm(){
@@ -5579,14 +6141,48 @@ function readOriginalDraftFromForm(){
   };
  });
 }
-function showOriginalEditor(){
+let editingOriginalQuizId="";
+function createNewOriginalQuiz(){
+ editingOriginalQuizId="";
+ state.originalQuiz={name:"",mode:"rebuild",stageIndex:0};
+ state.original=[];
+ state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
+ if($("originalEditorTitle"))$("originalEditorTitle").textContent="新しいクイズを作成";
  initOriginalQuizStageSelect();
- ensureOriginalDraft();
- if(!state.originalDraft.length){
-  state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
- }
  renderOriginalQuestionForms();
  show("editor");
+}
+function showOriginalEditor(){
+ createNewOriginalQuiz();
+}
+function editOriginalQuiz(id){
+ const quiz=(state.originalQuizzes||[]).find(q=>q.id===id);
+ if(!quiz){alert("クイズが見つかりません");return;}
+ editingOriginalQuizId=id;
+ state.currentOriginalQuizId=id;
+ state.originalQuiz={name:quiz.name,mode:quiz.mode,stageIndex:quiz.stageIndex};
+ state.original=quiz.questions||[];
+ state.originalDraft=originalQuestionDraftFromQuestions(quiz.questions||[]);
+ if(!state.originalDraft.length)state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
+ if($("originalEditorTitle"))$("originalEditorTitle").textContent="クイズを編集";
+ initOriginalQuizStageSelect();
+ renderOriginalQuestionForms();
+ save();
+ show("editor");
+}
+function deleteOriginalQuiz(id){
+ const quiz=(state.originalQuizzes||[]).find(q=>q.id===id);
+ if(!quiz)return;
+ if(!confirm(`「${quiz.name}」を削除しますか？`))return;
+ state.originalQuizzes=(state.originalQuizzes||[]).filter(q=>q.id!==id);
+ if(state.currentOriginalQuizId===id){
+  state.currentOriginalQuizId=state.originalQuizzes[0]?.id||"";
+ }
+ const current=currentOriginalQuiz();
+ state.originalQuiz=current?{name:current.name,mode:current.mode,stageIndex:current.stageIndex}:{name:"",mode:"rebuild",stageIndex:0};
+ state.original=current?.questions||[];
+ save();
+ renderOriginalSummary();
 }
 function handleOriginalModeChange(){
  state.originalDraft=readOriginalDraftFromForm();
@@ -5597,12 +6193,10 @@ function handleOriginalModeChange(){
 function addOriginalQuestionForm(){
  state.originalDraft=readOriginalDraftFromForm();
  const limit=originalQuestionLimit();
-
  if(state.originalDraft.length>=limit){
   alert(`このモードでは最大${limit}問までです。`);
   return;
  }
-
  state.originalDraft.push({q:"",ans:"",w1:"",w2:"",w3:""});
  save();
  renderOriginalQuestionForms();
@@ -5621,113 +6215,89 @@ function removeOriginalQuestionForm(index){
 function renderOriginalQuestionForms(){
  const box=$("originalQuestionEditor");
  if(!box)return;
-
  ensureOriginalDraft();
  const limit=originalQuestionLimit();
-
  box.innerHTML=(state.originalDraft||[]).map((q,i)=>`
   <div class="originalQuestionCard" data-index="${i}">
     <div class="originalQuestionHead">
       <span>問題${i+1}</span>
       <button class="btn ghost" type="button" onclick="removeOriginalQuestionForm(${i})">削除</button>
     </div>
-
     <div class="originalQuestionGrid">
-      <div class="wide">
-        <label><b>質問文</b></label>
-        <input id="oq_q_${i}" value="${escapeHtml(q.q||"")}" placeholder="例：『書く』の未然形は？">
-      </div>
-
-      <div>
-        <label><b>答え</b></label>
-        <input id="oq_ans_${i}" value="${escapeHtml(q.ans||"")}" placeholder="例：書か">
-      </div>
-
-      <div>
-        <label><b>間違い1</b></label>
-        <input id="oq_w1_${i}" value="${escapeHtml(q.w1||"")}" placeholder="例：書き">
-      </div>
-
-      <div>
-        <label><b>間違い2</b></label>
-        <input id="oq_w2_${i}" value="${escapeHtml(q.w2||"")}" placeholder="例：書く">
-      </div>
-
-      <div>
-        <label><b>間違い3</b></label>
-        <input id="oq_w3_${i}" value="${escapeHtml(q.w3||"")}" placeholder="例：書け">
-      </div>
+      <div class="wide"><label><b>質問文</b></label><input id="oq_q_${i}" value="${escapeHtml(q.q||"")}" placeholder="例：『書く』の未然形は？"></div>
+      <div><label><b>答え</b></label><input id="oq_ans_${i}" value="${escapeHtml(q.ans||"")}" placeholder="例：書か"></div>
+      <div><label><b>間違い1</b></label><input id="oq_w1_${i}" value="${escapeHtml(q.w1||"")}" placeholder="例：書き"></div>
+      <div><label><b>間違い2</b></label><input id="oq_w2_${i}" value="${escapeHtml(q.w2||"")}" placeholder="例：書く"></div>
+      <div><label><b>間違い3</b></label><input id="oq_w3_${i}" value="${escapeHtml(q.w3||"")}" placeholder="例：書け"></div>
     </div>
-
     <div class="originalQuestionMini">答え1つ・間違い3つを入れると、出題時に選択肢の順番は自動でシャッフルされます。</div>
-  </div>
- `).join("");
-
+  </div>`).join("");
  const addBtn=document.querySelector("#editor button[onclick='addOriginalQuestionForm()']");
  if(addBtn){
   addBtn.disabled=(state.originalDraft||[]).length>=limit;
   addBtn.textContent=(state.originalDraft||[]).length>=limit ? `最大${limit}問です` : "＋ 問題を追加";
  }
-
  updateOriginalLimitText();
 }
 function saveOriginalQuestionsFromForm(){
  saveOriginalQuizSetting();
-
  const draft=readOriginalDraftFromForm();
  const limit=originalQuestionLimit();
  const questions=[];
-
  for(let i=0;i<draft.length;i++){
   const row=draft[i];
   const values=[row.q,row.ans,row.w1,row.w2,row.w3].map(x=>String(x||"").trim());
   const allBlank=values.every(x=>!x);
-
   if(allBlank)continue;
-
   if(values.some(x=>!x)){
    alert(`問題${i+1}に未入力があります。`);
    return;
   }
-
   const [q,ans,w1,w2,w3]=values;
   const shuffled=shuffle([ans,w1,w2,w3]);
-
-  questions.push({
-   q,
-   a:shuffled,
-   c:shuffled.indexOf(ans)
-  });
+  questions.push({q,a:shuffled,c:shuffled.indexOf(ans)});
  }
-
  if(!questions.length){
   alert("問題を1問以上入力してください。");
   return;
  }
-
  if(questions.length>limit){
   alert(`このモードでは最大${limit}問までです。`);
   return;
  }
-
+ const name=(state.originalQuiz.name||"").trim();
+ if(!name){
+  alert("クイズ名を入力してください。");
+  return;
+ }
+ const quiz={
+  id:editingOriginalQuizId||makeOriginalQuizId(),
+  name,
+  mode:state.originalQuiz.mode||"rebuild",
+  stageIndex:Number(state.originalQuiz.stageIndex||0),
+  questions
+ };
+ state.originalQuizzes??=[];
+ const index=state.originalQuizzes.findIndex(q=>q.id===quiz.id);
+ if(index>=0)state.originalQuizzes[index]=quiz;
+ else state.originalQuizzes.push(quiz);
+ state.currentOriginalQuizId=quiz.id;
  state.originalDraft=draft;
  state.original=questions;
+ state.originalQuiz={name:quiz.name,mode:quiz.mode,stageIndex:quiz.stageIndex};
+ editingOriginalQuizId=quiz.id;
  save();
-
  updateOriginalLimitText();
  renderOriginalSummary();
  alert(`${questions.length}問を保存しました！`);
  show("original");
 }
 function clearOriginalQuestions(){
- if(confirm("自作問題をすべて空にしますか？")){
-  state.original=[];
+ if(confirm("この編集画面の問題欄を空にしますか？")){
   state.originalDraft=[{q:"",ans:"",w1:"",w2:"",w3:""}];
   save();
   renderOriginalQuestionForms();
   updateOriginalLimitText();
-  renderOriginalSummary();
-  alert("自作問題を空にしました");
  }
 }
 function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
@@ -5735,7 +6305,12 @@ window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
-renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();save();
+renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();migrateOriginalQuizzesOnce();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();
+if(state.player?.name){
+ loadPlayerData().then(()=>save());
+}else{
+ save();
+}
 </script>
 </body>
 </html>
