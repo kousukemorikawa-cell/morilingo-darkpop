@@ -3037,7 +3037,7 @@ body.darkTheme .resultCard{
   <section id="titles" class="screen">
   <div class="card">
     <h2>🎖️ 称号</h2>
-    <p class="muted">君の冒険の記録。面白系は復興クリア時だけランダムドロップします。</p>
+    <p class="muted">君の冒険の記録。面白系は復興クリア時やクエスト報酬でランダムドロップします。</p>
     <div class="titleBox">
       <div class="rankingHead">
         <h3>称号一覧</h3>
@@ -3059,7 +3059,7 @@ body.darkTheme .resultCard{
       </div>
 
       <div id="titleList" class="titleList"></div>
-      <div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます。面白系は conditionType を random_drop にすると、復興クリア時だけ抽選されます。</div>
+      <div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます。面白系は conditionType を random_drop にすると、復興クリア時やクエスト報酬で抽選されます。</div>
     </div>
     <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
   </div>
@@ -5774,30 +5774,48 @@ function answer(i){
   else setTimeout(ninjaEvent,400);
  }
 }
-function randomDropTitlesForRecovery(){
+function randomDropTitlesForReward(place="rebuild"){
  const earned=new Set(earnedTitleIds());
+ const key=String(place||"").trim().toLowerCase();
  return allTitleMaster().filter(t=>{
   if(!isFunnyDropTitle(t))return false;
   if(earned.has(t.id))return false;
-  const place=String(t.conditionValue||"").trim();
-  return !place || place==="rebuild" || place==="復興" || Number.isFinite(Number(place));
+  const value=String(t.conditionValue||"").trim();
+  const lower=value.toLowerCase();
+
+  // conditionValue が空欄・all・any なら、復興/クエスト共通で抽選対象。
+  if(!value || lower==="all" || lower==="any" || value==="共通")return true;
+
+  // 既存データ互換：rebuild/復興 は復興クリア時に抽選。
+  if(key==="rebuild")return lower==="rebuild" || value==="復興" || Number.isFinite(Number(value));
+
+  // クエスト報酬用：quest/クエスト のほか、既に rebuild で作った面白称号も対象にする。
+  if(key==="quest")return lower==="quest" || value==="クエスト" || lower==="rebuild" || value==="復興" || Number.isFinite(Number(value));
+
+  return false;
  });
 }
-function tryFunnyTitleDropFromRecovery(){
- const candidates=randomDropTitlesForRecovery();
+function randomDropTitlesForRecovery(){
+ return randomDropTitlesForReward("rebuild");
+}
+function drawRandomDropTitle(place="rebuild",useIndividualRate=true){
+ const candidates=randomDropTitlesForReward(place);
  if(!candidates.length)return null;
  const shuffled=shuffle(candidates);
  for(const t of shuffled){
-  const rate=titleDropRate(t);
-  if(Math.random()*100 < rate){
-   addBadge(t.badgeId||t.id);
-   cleanSelectedTitles();
-   save();
-   showTitleNotify(t);
-   return t;
-  }
+  const rate=useIndividualRate ? titleDropRate(t) : 100;
+  if(Math.random()*100 < rate)return t;
  }
  return null;
+}
+function tryFunnyTitleDropFromRecovery(){
+ const t=drawRandomDropTitle("rebuild",true);
+ if(!t)return null;
+ addBadge(t.badgeId||t.id);
+ cleanSelectedTitles();
+ save();
+ showTitleNotify(t);
+ return t;
 }
 
 function checkClear(){
@@ -6765,21 +6783,28 @@ function questRewardPool(){
 }
 function randomQuestReward(stage){
  const r=Math.random();
+
+ // クエスト報酬割合：アイテム70% / 味方スキン10% / 敵スキン10% / 称号10%
  if(r<0.70){
   return {kind:"item",stageId:stage.id,name:itemDisplayName(stage),src:itemInfo(stage).img||stage.itemImage};
  }
- if(r<0.90){
+ if(r<0.80){
   const ids=BASE_SKINS.map(x=>x.id);
   const id=ids[Math.floor(Math.random()*ids.length)];
   return {kind:"skin",skinId:id,name:skinName(id),src:`assets/me/me_${id}.png`};
  }
-const enemyId=`enemy_${stage.id}`;
- return {
-  kind:"skin",
-  skinId:enemyId,
-  name:skinName(enemyId),
-  src:stage.enemyImage
- };
+ if(r<0.90){
+  const enemyId=`enemy_${stage.id}`;
+  return {kind:"skin",skinId:enemyId,name:skinName(enemyId),src:stage.enemyImage};
+ }
+
+ const title=drawRandomDropTitle("quest",false);
+ if(title){
+  return {kind:"title",titleId:title.id,name:title.name,desc:title.desc,src:"assets/effects/effect_clear.png"};
+ }
+
+ // すべてのランダム称号を入手済みなら、アイテムへフォールバック。
+ return {kind:"item",stageId:stage.id,name:itemDisplayName(stage),src:itemInfo(stage).img||stage.itemImage};
 }
 function grantQuestReward(reward){
  if(!reward)return "";
@@ -6795,6 +6820,14 @@ function grantQuestReward(reward){
   const isNew=unlockSkin(reward.skinId);
   return isNew ? `${reward.name}のスキンを入手！` : `${reward.name}のスキンは入手済み！`;
  }
+ if(reward.kind==="title"){
+  const t=titleById(reward.titleId) || {id:reward.titleId,name:reward.name,desc:reward.desc,badgeId:reward.titleId};
+  addBadge(t.badgeId||t.id);
+  cleanSelectedTitles();
+  save();
+  showTitleNotify(t);
+  return `称号『${t.name}』を手に入れた！`;
+ }
  return "";
 }
 async function questRewardSequence(){
@@ -6807,7 +6840,7 @@ async function questRewardSequence(){
  for(let n=0;n<dropCount;n++){
   const reward=randomQuestReward(stage);
   const msg=grantQuestReward(reward);
-  await centerFx(reward.src,2000,"dropFx",dropCount>1?`${msg}（${n+1}/${dropCount}）`:msg);
+  await centerFx(reward.src||"assets/effects/effect_clear.png",2000,"dropFx",dropCount>1?`${msg}（${n+1}/${dropCount}）`:msg);
  }
  renderItems();
  renderSkinLists();
