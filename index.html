@@ -3038,7 +3038,8 @@ const BGM_TRACKS={
  recovery:"assets/bgm/recovery.mp3",
  quest:"assets/bgm/quest.mp3",
  worldtree:"assets/bgm/worldtree.mp3",
- timeattack:"assets/bgm/timeattack.mp3"
+ timeattack:"assets/bgm/timeattack.mp3",
+ ending:"assets/bgm/ending.mp3"
 };
 const BGM_SCREEN_MAP={
  home:"title",
@@ -3059,7 +3060,7 @@ const BGM_SCREEN_MAP={
  items:"home",
  worldtreeStory:"worldtree",
  finalStory:"worldtree",
- endStory:"worldtree"
+ endStory:"ending"
 };
 let bgmAudio=null;
 let bgmCurrent="";
@@ -3726,40 +3727,40 @@ function showStory(){
 
 
 const END_STORY_PAGES=[
- {title:"世界樹の頂へ",text:"黄金竜アルボルは、光の粒となって静かに消えた。
-主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。",img:"assets/story/endstory1.png"},
- {title:"最後の種",text:"世界樹は、まだ枯れ果てていた。
+ {title:"世界樹の頂へ",text:`黄金竜アルボルは、光の粒となって静かに消えた。
+主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。`,img:"assets/story/endstory1.png"},
+ {title:"最後の種",text:`世界樹は、まだ枯れ果てていた。
 けれど根元には、小さく黄金に輝く種が一粒だけ残っていた。
-主人公はそれを、そっと両手で包んだ。",img:"assets/story/endstory2.png"},
- {title:"まだ、終わりじゃない",text:"主人公は種を大地に植えた。
+主人公はそれを、そっと両手で包んだ。`,img:"assets/story/endstory2.png"},
+ {title:"まだ、終わりじゃない",text:`主人公は種を大地に植えた。
 すると、光が地中を走り、世界のすみずみへ根を伸ばしていく。
-やがて一本の若木は、大きく成長した。",img:"assets/story/endstory3.png"},
- {title:"光が世界を包む",text:"光は世界を包み、荒廃した大地がよみがえった。
+やがて一本の若木は、大きく成長した。`,img:"assets/story/endstory3.png"},
+ {title:"光が世界を包む",text:`光は世界を包み、荒廃した大地がよみがえった。
 空は青く澄み、川には水が戻り、草木が芽吹き、花が咲いた。
-一枚の葉が、世界を変えた。",img:"assets/story/endstory4.png"},
- {title:"人々が戻る",text:"人々が戻り、笑顔があふれた。
+一枚の葉が、世界を変えた。`,img:"assets/story/endstory4.png"},
+ {title:"人々が戻る",text:`人々が戻り、笑顔があふれた。
 畑を耕す人、遊ぶ子ども、風車が回り、鳥が空を舞う。
-みんなで、もう一度、この世界を育てていく。",img:"assets/story/endstory5.png"},
- {title:"世界樹の祝福",text:"主人公は世界樹を見上げた。
+みんなで、もう一度、この世界を育てていく。`,img:"assets/story/endstory5.png"},
+ {title:"世界樹の祝福",text:`主人公は世界樹を見上げた。
 すると、枝から黄金のリンゴが一つ落ちてきた。
 世界樹の声が、心に響いた。
-「ありがとう。」",img:"assets/story/endstory6.png"},
- {title:"次の育樹師へ",text:"主人公はリンゴを食べなかった。
+「ありがとう。」`,img:"assets/story/endstory6.png"},
+ {title:"次の育樹師へ",text:`主人公はリンゴを食べなかった。
 それを、新しい子どもへと渡した。
 その子はにっこりと笑った。
-守る役目は、受け継がれていく。",img:"assets/story/endstory7.png"},
- {title:"Morilingo",text:"世界樹は、これからも育ち続ける。
+守る役目は、受け継がれていく。`,img:"assets/story/endstory7.png"},
+ {title:"Morilingo",text:`世界樹は、これからも育ち続ける。
 新しい未来への希望が広がっていく。
 この物語の続きは、きっと、みんなの手で。
 
-世界は、何度でも育て直せる。",img:"assets/story/endstory8.png"}
+世界は、何度でも育て直せる。`,img:"assets/story/endstory8.png"}
 ];
 let endStoryIndex=0;
 function showEndStory(startIndex=0){
  endStoryIndex=Math.max(0,Math.min(END_STORY_PAGES.length-1,Number(startIndex)||0));
  renderEndStory();
  show("endStory");
- playBgm("worldtree");
+ playBgm("ending");
 }
 function renderEndStory(){
  const page=END_STORY_PAGES[endStoryIndex]||END_STORY_PAGES[0];
