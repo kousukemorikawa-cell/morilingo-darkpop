@@ -3159,6 +3159,7 @@ state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
 state.totalPt??=Number(state.totalPt||0);
 state.totalCorrect??=Number(state.totalCorrect||0);
 let playerDataLoaded=false;
+let playerDataHydrating=false;
 let playerDataSaveTimer=null;
 let playerDataSaving=false;
 let remoteQuestions=null;
@@ -4107,61 +4108,123 @@ function makeSaveData(){
   titleSearch:state.titleSearch||""
  };
 }
+function mergeArrayUnique(a,b){
+ const x=Array.isArray(a)?a:[];
+ const y=Array.isArray(b)?b:[];
+ return [...new Set([...x,...y])];
+}
+function mergeObjectKeepProgress(base,incoming){
+ const out={...(base&&typeof base==="object"&&!Array.isArray(base)?base:{})};
+ const inc=(incoming&&typeof incoming==="object"&&!Array.isArray(incoming))?incoming:{};
+ Object.keys(inc).forEach(k=>{
+  const a=out[k];
+  const b=inc[k];
+  if(typeof a==="number" || typeof b==="number"){
+   out[k]=Math.max(Number(a||0),Number(b||0));
+  }else if(typeof a==="boolean" || typeof b==="boolean"){
+   out[k]=Boolean(a)||Boolean(b);
+  }else if(b && typeof b==="object" && !Array.isArray(b) && a && typeof a==="object" && !Array.isArray(a)){
+   out[k]=mergeObjectKeepProgress(a,b);
+  }else if(b!==undefined && b!==null && b!==""){
+   out[k]=b;
+  }
+ });
+ return out;
+}
+function calcUnlockedFromSaveData(data){
+ let max=Number(data?.unlocked||1);
+ const clears=data?.challengeClears||{};
+ const quest=data?.questUnlocked||{};
+ const qclears=data?.questClears||{};
+ const items=data?.items||{};
+ STAGES.forEach((s,i)=>{
+  if(Number(clears[s.id]||0)>0 || quest[s.id] || Number(qclears[s.id]||0)>0 || Number(items[itemKey?itemKey(s):s.id]||items[s.id]||0)>0){
+   max=Math.max(max,i+1);
+   if(Number(clears[s.id]||0)>0 || quest[s.id] || Number(qclears[s.id]||0)>0)max=Math.max(max,i+2);
+  }
+ });
+ return Math.min(Math.max(1,max),STAGES.length);
+}
 function applySaveData(saveData){
  if(!saveData || typeof saveData!=="object")return;
 
- const keepPlayer=state.player||{name:"",className:"",number:""};
+ playerDataHydrating=true;
+ try{
+  const keepPlayer=state.player||{name:"",className:"",number:""};
 
- state.totalPt=Number(saveData.totalPt ?? saveData.pt ?? saveData.totalScore ?? state.totalPt ?? 0);
- state.totalCorrect=Number(saveData.totalCorrect ?? state.totalCorrect ?? 0);
- state.unlocked=Number(saveData.unlocked || state.unlocked || 1);
+  // クラウドを基本にしつつ、この端末だけに残っている進行も消さない
+  const merged={};
+  Object.assign(merged,saveData);
 
- state.badges=Array.isArray(saveData.badges)?saveData.badges:(state.badges||[]);
- state.items=saveData.items || state.items || {};
- state.skins=saveData.skins || state.skins || {};
- state.skin=saveData.skin || state.skin || {};
+  merged.totalPt=Math.max(Number(saveData.totalPt ?? saveData.pt ?? saveData.totalScore ?? 0),Number(state.totalPt||0));
+  merged.totalCorrect=Math.max(Number(saveData.totalCorrect||0),Number(state.totalCorrect||0));
+  merged.unlocked=Math.max(Number(saveData.unlocked||1),Number(state.unlocked||1));
 
- state.selectedMenuTitles=Array.isArray(saveData.selectedMenuTitles)?saveData.selectedMenuTitles:(state.selectedMenuTitles||[]);
- state.selectedRankingTitles=Array.isArray(saveData.selectedRankingTitles)?saveData.selectedRankingTitles:(state.selectedRankingTitles||[]);
+  merged.badges=mergeArrayUnique(saveData.badges,state.badges);
+  merged.selectedMenuTitles=mergeArrayUnique(saveData.selectedMenuTitles,state.selectedMenuTitles).slice(0,3);
+  merged.selectedRankingTitles=mergeArrayUnique(saveData.selectedRankingTitles,state.selectedRankingTitles).slice(0,2);
 
- state.challengeClears=saveData.challengeClears || state.challengeClears || {};
- state.questClears=saveData.questClears || state.questClears || {};
- state.questUnlocked=saveData.questUnlocked || state.questUnlocked || {};
- state.timeAttackBests=saveData.timeAttackBests || state.timeAttackBests || {};
+  merged.items=mergeObjectKeepProgress(saveData.items,state.items);
+  merged.skins=mergeObjectKeepProgress(saveData.skins,state.skins);
+  merged.skin=Object.keys(saveData.skin||{}).length ? saveData.skin : (state.skin||{});
 
- state.original=Array.isArray(saveData.original)?saveData.original:(state.original||[]);
- state.originalDraft=Array.isArray(saveData.originalDraft)?saveData.originalDraft:(state.originalDraft||[]);
- state.originalQuiz=saveData.originalQuiz || state.originalQuiz || {name:"",mode:"rebuild",stageIndex:0};
- state.originalQuizzes=Array.isArray(saveData.originalQuizzes)?saveData.originalQuizzes:(state.originalQuizzes||[]);
- state.currentOriginalQuizId=String(saveData.currentOriginalQuizId || state.currentOriginalQuizId || "");
+  merged.challengeClears=mergeObjectKeepProgress(saveData.challengeClears,state.challengeClears);
+  merged.questClears=mergeObjectKeepProgress(saveData.questClears,state.questClears);
+  merged.questUnlocked=mergeObjectKeepProgress(saveData.questUnlocked,state.questUnlocked);
+  merged.timeAttackBests=mergeObjectKeepProgress(saveData.timeAttackBests,state.timeAttackBests);
 
- state.zukanTab=saveData.zukanTab || state.zukanTab || "items";
- state.titleCategory=saveData.titleCategory || state.titleCategory || "すべて";
- state.titleSearch=saveData.titleSearch || state.titleSearch || "";
+  state.totalPt=Number(merged.totalPt||0);
+  state.totalCorrect=Number(merged.totalCorrect||0);
+  state.badges=merged.badges||[];
+  state.items=merged.items||{};
+  state.skins=merged.skins||{};
+  state.skin=merged.skin||{};
+  state.selectedMenuTitles=merged.selectedMenuTitles||[];
+  state.selectedRankingTitles=merged.selectedRankingTitles||[];
+  state.challengeClears=merged.challengeClears||{};
+  state.questClears=merged.questClears||{};
+  state.questUnlocked=merged.questUnlocked||{};
+  state.timeAttackBests=merged.timeAttackBests||{};
+  state.unlocked=calcUnlockedFromSaveData(merged);
 
- state.player=keepPlayer;
- state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+  state.original=Array.isArray(saveData.original)?saveData.original:(state.original||[]);
+  state.originalDraft=Array.isArray(saveData.originalDraft)?saveData.originalDraft:(state.originalDraft||[]);
+  state.originalQuiz=saveData.originalQuiz || state.originalQuiz || {name:"",mode:"rebuild",stageIndex:0};
+  state.originalQuizzes=Array.isArray(saveData.originalQuizzes)?saveData.originalQuizzes:(state.originalQuizzes||[]);
+  state.currentOriginalQuizId=String(saveData.currentOriginalQuizId || state.currentOriginalQuizId || "");
 
- ensureSkinState();
- cleanSelectedTitles();
- localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+  state.zukanTab=saveData.zukanTab || state.zukanTab || "items";
+  state.titleCategory=saveData.titleCategory || state.titleCategory || "すべて";
+  state.titleSearch=saveData.titleSearch || state.titleSearch || "";
 
- renderBadges();
- renderMenuTopTitles();
- updatePlayerDisplay();
- updateDevAdminButton();
- applySkinSettings();
- renderItems();
- renderZukan(state.zukanTab||"items");
- renderSkinLists();
- renderStages();
- renderOriginalSummary();
+  state.player=keepPlayer;
+  state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+
+  ensureSkinState();
+  cleanSelectedTitles();
+  localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+
+  renderBadges();
+  renderMenuTopTitles();
+  updatePlayerDisplay();
+  updateDevAdminButton();
+  applySkinSettings();
+  renderItems();
+  renderZukan(state.zukanTab||"items");
+  renderSkinLists();
+  renderStages();
+  renderOriginalSummary();
+  setScoreHud(state.totalPt||0);
+ }finally{
+  playerDataHydrating=false;
+ }
 }
 function loadPlayerData(){
  const key=playerKey();
  if(!GAS_URL || !key.name)return Promise.resolve(false);
 
  $("savePill").textContent="セーブ読込中...";
+ playerDataHydrating=true;
 
  return new Promise(resolve=>{
   const callback="morilingoPlayerDataCallback_"+Date.now();
@@ -4170,14 +4233,22 @@ function loadPlayerData(){
   window[callback]=data=>{
    try{
     if(data && data.ok){
-     if(data.exists===false && hasLocalProgress()){
+     if(data.exists===false){
+      // クラウドにまだ無い場合だけ、端末に進行があれば初回アップロード
       playerDataLoaded=true;
-      savePlayerDataNow();
-      $("savePill").textContent="端末データを同期中";
+      if(hasLocalProgress()){
+       $("savePill").textContent="端末データを初回同期中";
+       savePlayerDataNow();
+      }else{
+       $("savePill").textContent="新規セーブ";
+      }
+     }else if(data.saveData){
+      applySaveData(data.saveData);
+      playerDataLoaded=true;
+      $("savePill").textContent="セーブ読込済み";
      }else{
-      applySaveData(data.saveData||{});
       playerDataLoaded=true;
-      $("savePill").textContent=data.exists===false?"新規セーブ作成":"セーブ読込済み";
+      $("savePill").textContent="セーブデータなし";
      }
      resolve(true);
     }else{
@@ -4185,6 +4256,7 @@ function loadPlayerData(){
      resolve(false);
     }
    }finally{
+    playerDataHydrating=false;
     delete window[callback];
     script.remove();
    }
@@ -4201,6 +4273,7 @@ function loadPlayerData(){
 
   script.src=GAS_URL+"?"+params.toString();
   script.onerror=()=>{
+   playerDataHydrating=false;
    delete window[callback];
    script.remove();
    $("savePill").textContent="セーブ読込失敗";
@@ -4211,6 +4284,7 @@ function loadPlayerData(){
 
   setTimeout(()=>{
    if(window[callback]){
+    playerDataHydrating=false;
     delete window[callback];
     script.remove();
     $("savePill").textContent="セーブ読込タイムアウト";
@@ -4222,7 +4296,14 @@ function loadPlayerData(){
 function savePlayerDataNow(){
  const key=playerKey();
  if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ if(playerDataHydrating)return;
  if(playerDataSaving)return;
+
+ // 空の初期状態をクラウドへ送って、進んだデータを消す事故を防ぐ
+ if(!hasLocalProgress()){
+  $("savePill").textContent="ローカルのみ保存";
+  return;
+ }
 
  playerDataSaving=true;
  const payload=new URLSearchParams({
@@ -4239,7 +4320,7 @@ function savePlayerDataNow(){
   .finally(()=>{playerDataSaving=false;});
 }
 function schedulePlayerDataSave(){
- if(!playerDataLoaded)return;
+ if(!playerDataLoaded || playerDataHydrating)return;
  clearTimeout(playerDataSaveTimer);
  playerDataSaveTimer=setTimeout(savePlayerDataNow,600);
 }
@@ -4327,7 +4408,7 @@ function gasLoginCheck(name,className,number){
  });
 }
 
-async function saveProfileAndMenu(){
+async async function saveProfileAndMenu(){
  const name=$("playerName").value.trim();
  const className=$("playerClass").value.trim();
  const number=$("playerNumber").value.trim();
@@ -4357,18 +4438,18 @@ async function saveProfileAndMenu(){
 
   state.player={name,className,number};
   playerDataLoaded=false;
+  playerDataHydrating=true;
 
-  // クラウド読込前はPlayerDataへ送らない。
-  // ここで save() を使うと、別端末の初期データがクラウドを上書きする危険がある。
+  // ここでは save() を使わない。クラウド読込前に初期データを送らないため。
   localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
   $("savePill").textContent="保存済み";
 
   await loadPlayerData();
-
   loadRemoteQuestions();
   loadRemoteTitles();
   show("menu");
  }finally{
+  playerDataHydrating=false;
   if(btn){
    btn.disabled=false;
    btn.textContent="保存して進む";
@@ -6352,7 +6433,63 @@ function clearOriginalQuestions(){
   updateOriginalLimitText();
  }
 }
-function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
+function resetAll(){
+ if(!confirm("この端末の進捗をリセットしますか？\nクラウドのPlayerDataは消しません。\n同じ名前・クラス・番号で再読込します。"))return;
+
+ const keepPlayer=state.player||{name:"",className:"",number:""};
+ clearTimeout(playerDataSaveTimer);
+ playerDataLoaded=false;
+ playerDataHydrating=true;
+
+ localStorage.removeItem("morilingoCleanQuest");
+
+ state={};
+ state.player=keepPlayer;
+ state.unlocked=1;
+ state.badges=[];
+ state.original=[];
+ state.originalDraft=[];
+ state.originalQuiz={name:"",mode:"rebuild",stageIndex:0};
+ state.originalQuizzes=[];
+ state.currentOriginalQuizId="";
+ state.selectedMenuTitles=[];
+ state.selectedRankingTitles=[];
+ state.titleCategory="すべて";
+ state.titleSearch="";
+ state.remoteTitles=[];
+ state.remoteUnlockedTitleIds=[];
+ state.challengeClears={};
+ state.items={};
+ state.questClears={};
+ state.questUnlocked={};
+ state.timeAttackBests={};
+ state.zukanTab="items";
+ state.skin={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
+ state.skins={};
+ state.skins[DEFAULT_PLAYER_CHARACTER]=true;
+ state.totalPt=0;
+ state.totalCorrect=0;
+
+ localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+ $("savePill").textContent="端末リセット済み・クラウド読込中";
+
+ if(keepPlayer.name){
+  loadPlayerData().then(()=>{
+   playerDataHydrating=false;
+   renderBadges();
+   renderMenuTopTitles();
+   updatePlayerDisplay();
+   renderItems();
+   renderStages();
+   renderZukan(state.zukanTab||"items");
+   setScoreHud(state.totalPt||0);
+   show("menu");
+  });
+ }else{
+  playerDataHydrating=false;
+  showProfile();
+ }
+}
 window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
