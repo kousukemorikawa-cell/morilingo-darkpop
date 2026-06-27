@@ -2739,7 +2739,7 @@ const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbzhN2Zy8EFfksyNyyP4yyiXCMyX9lYgIz5bzdiTTJeAWsvxgHYByfvUOHNEagTNpIphBQ/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbzAgytOxjWV5MDxbxUKVd6GPOTr-2ZwJMRy0VCbuyfdO97ip8GS0P4bUGV-XFnyOO_Kbg/exec";
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
@@ -3120,6 +3120,11 @@ state.zukanTab??="items";
 state.skin??={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
 state.skins??={};
 state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+state.totalPt??=Number(state.totalPt||0);
+state.totalCorrect??=Number(state.totalCorrect||0);
+let playerDataLoaded=false;
+let playerDataSaveTimer=null;
+let playerDataSaving=false;
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -3990,7 +3995,210 @@ function loadRemoteTitles(){
 }
 
 
-function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";}
+
+/* ==========================================================
+   PlayerData同期
+   GAS側 PlayerData:
+   name | className | number | saveData(JSON) | updatedAt
+========================================================== */
+function playerKey(){
+ const p=state.player||{};
+ return {
+  name:String(p.name||"").trim(),
+  className:String(p.className||"").trim(),
+  number:String(p.number||"").trim()
+ };
+}
+function hasLocalProgress(){
+ const hasObj=o=>o && typeof o==="object" && Object.keys(o).length>0;
+ if(Number(state.unlocked||1)>1)return true;
+ if(Number(state.totalPt||0)>0)return true;
+ if(Number(state.totalCorrect||0)>0)return true;
+ if((state.badges||[]).length>0)return true;
+ if(hasObj(state.items))return true;
+ if(hasObj(state.challengeClears))return true;
+ if(hasObj(state.questClears))return true;
+ if(hasObj(state.questUnlocked))return true;
+ if(hasObj(state.timeAttackBests))return true;
+ if(hasObj(state.skins) && Object.keys(state.skins).length>1)return true;
+ if((state.originalQuizzes||[]).length>0)return true;
+ return false;
+}
+function makeSaveData(){
+ ensureSkinState();
+ cleanSelectedTitles();
+ return {
+  schemaVersion:1,
+
+  pt:Number(state.totalPt||0),
+  totalPt:Number(state.totalPt||0),
+  totalScore:Number(state.totalPt||0),
+  totalCorrect:Number(state.totalCorrect||0),
+
+  unlocked:Number(state.unlocked||1),
+  badges:state.badges||[],
+
+  items:state.items||{},
+  skins:state.skins||{},
+  skin:state.skin||{},
+
+  selectedMenuTitles:state.selectedMenuTitles||[],
+  selectedRankingTitles:state.selectedRankingTitles||[],
+
+  challengeClears:state.challengeClears||{},
+  questClears:state.questClears||{},
+  questUnlocked:state.questUnlocked||{},
+  timeAttackBests:state.timeAttackBests||{},
+
+  original:state.original||[],
+  originalDraft:state.originalDraft||[],
+  originalQuiz:state.originalQuiz||{},
+  originalQuizzes:state.originalQuizzes||[],
+  currentOriginalQuizId:state.currentOriginalQuizId||"",
+
+  zukanTab:state.zukanTab||"items",
+  titleCategory:state.titleCategory||"すべて",
+  titleSearch:state.titleSearch||""
+ };
+}
+function applySaveData(saveData){
+ if(!saveData || typeof saveData!=="object")return;
+
+ const keepPlayer=state.player||{name:"",className:"",number:""};
+
+ state.totalPt=Number(saveData.totalPt ?? saveData.pt ?? saveData.totalScore ?? state.totalPt ?? 0);
+ state.totalCorrect=Number(saveData.totalCorrect ?? state.totalCorrect ?? 0);
+ state.unlocked=Number(saveData.unlocked || state.unlocked || 1);
+
+ state.badges=Array.isArray(saveData.badges)?saveData.badges:(state.badges||[]);
+ state.items=saveData.items || state.items || {};
+ state.skins=saveData.skins || state.skins || {};
+ state.skin=saveData.skin || state.skin || {};
+
+ state.selectedMenuTitles=Array.isArray(saveData.selectedMenuTitles)?saveData.selectedMenuTitles:(state.selectedMenuTitles||[]);
+ state.selectedRankingTitles=Array.isArray(saveData.selectedRankingTitles)?saveData.selectedRankingTitles:(state.selectedRankingTitles||[]);
+
+ state.challengeClears=saveData.challengeClears || state.challengeClears || {};
+ state.questClears=saveData.questClears || state.questClears || {};
+ state.questUnlocked=saveData.questUnlocked || state.questUnlocked || {};
+ state.timeAttackBests=saveData.timeAttackBests || state.timeAttackBests || {};
+
+ state.original=Array.isArray(saveData.original)?saveData.original:(state.original||[]);
+ state.originalDraft=Array.isArray(saveData.originalDraft)?saveData.originalDraft:(state.originalDraft||[]);
+ state.originalQuiz=saveData.originalQuiz || state.originalQuiz || {name:"",mode:"rebuild",stageIndex:0};
+ state.originalQuizzes=Array.isArray(saveData.originalQuizzes)?saveData.originalQuizzes:(state.originalQuizzes||[]);
+ state.currentOriginalQuizId=String(saveData.currentOriginalQuizId || state.currentOriginalQuizId || "");
+
+ state.zukanTab=saveData.zukanTab || state.zukanTab || "items";
+ state.titleCategory=saveData.titleCategory || state.titleCategory || "すべて";
+ state.titleSearch=saveData.titleSearch || state.titleSearch || "";
+
+ state.player=keepPlayer;
+ state.skins[DEFAULT_PLAYER_CHARACTER]??=true;
+
+ ensureSkinState();
+ cleanSelectedTitles();
+ localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+
+ renderBadges();
+ renderMenuTopTitles();
+ updatePlayerDisplay();
+ updateDevAdminButton();
+ applySkinSettings();
+ renderItems();
+ renderZukan(state.zukanTab||"items");
+ renderSkinLists();
+ renderStages();
+ renderOriginalSummary();
+}
+function loadPlayerData(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name)return Promise.resolve(false);
+
+ $("savePill").textContent="セーブ読込中...";
+
+ return new Promise(resolve=>{
+  const callback="morilingoPlayerDataCallback_"+Date.now();
+  const script=document.createElement("script");
+
+  window[callback]=data=>{
+   try{
+    if(data && data.ok){
+     if(data.exists===false && hasLocalProgress()){
+      playerDataLoaded=true;
+      savePlayerDataNow();
+      $("savePill").textContent="端末データを同期中";
+     }else{
+      applySaveData(data.saveData||{});
+      playerDataLoaded=true;
+      $("savePill").textContent=data.exists===false?"新規セーブ作成":"セーブ読込済み";
+     }
+     resolve(true);
+    }else{
+     $("savePill").textContent="セーブ読込失敗";
+     resolve(false);
+    }
+   }finally{
+    delete window[callback];
+    script.remove();
+   }
+  };
+
+  const params=new URLSearchParams({
+   action:"loadPlayerData",
+   name:key.name,
+   className:key.className,
+   number:key.number,
+   callback,
+   v:String(Date.now())
+  });
+
+  script.src=GAS_URL+"?"+params.toString();
+  script.onerror=()=>{
+   delete window[callback];
+   script.remove();
+   $("savePill").textContent="セーブ読込失敗";
+   resolve(false);
+  };
+
+  document.body.appendChild(script);
+
+  setTimeout(()=>{
+   if(window[callback]){
+    delete window[callback];
+    script.remove();
+    $("savePill").textContent="セーブ読込タイムアウト";
+    resolve(false);
+   }
+  },9000);
+ });
+}
+function savePlayerDataNow(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ if(playerDataSaving)return;
+
+ playerDataSaving=true;
+ const payload=new URLSearchParams({
+  action:"savePlayerData",
+  name:key.name,
+  className:key.className,
+  number:key.number,
+  saveData:JSON.stringify(makeSaveData())
+ });
+
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload})
+  .then(()=>{$("savePill").textContent="クラウド保存済み";})
+  .catch(()=>{$("savePill").textContent="クラウド保存失敗";})
+  .finally(()=>{playerDataSaving=false;});
+}
+function schedulePlayerDataSave(){
+ if(!playerDataLoaded)return;
+ clearTimeout(playerDataSaveTimer);
+ playerDataSaveTimer=setTimeout(savePlayerDataNow,600);
+}
+
+function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";schedulePlayerDataSave();}
 function show(id){
  document.body.classList.toggle("gameMode",id==="game" || id==="questGame");
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -4102,7 +4310,9 @@ async function saveProfileAndMenu(){
   }
 
   state.player={name,className,number};
+  playerDataLoaded=false;
   save();
+  await loadPlayerData();
   loadRemoteQuestions();
   loadRemoteTitles();
   show("menu");
@@ -4693,6 +4903,9 @@ function checkClear(){
  canAnswer=false;
 
  if(game.mode==="original"){
+  state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
+  save();
   $("feedback").textContent=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
   setTimeout(()=>{game=null;resetScoreHud();renderOriginalSummary();show("original");},1500);
   return true;
@@ -4701,6 +4914,7 @@ function checkClear(){
  if(game.mode==="timeAttack"){
   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
   game.score=0;
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
   const isBest=saveTimeAttackBest();
   submitResult("timeAttackClear");
   const bestMsg=isBest ? " 自己ベスト更新！" : "";
@@ -4710,6 +4924,8 @@ function checkClear(){
  }
 
  addBadge(game.stage.id);
+ state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+ state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
  giveStageClearReward(game.stage);
  const funnyTitle=tryFunnyTitleDropFromRecovery();
  state.challengeClears[game.stage.id]=(state.challengeClears[game.stage.id]||0)+1;
@@ -5541,6 +5757,8 @@ async function questFinish(){
 
  if(!quest.isOriginal){
   state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
+  state.totalPt=Number(state.totalPt||0)+Number(quest.score||0);
+  state.totalCorrect=Number(state.totalCorrect||0)+Number(quest.qIndex||0);
   save();
   applySkinSettings();
   applyWorldTheme("questGame");
@@ -6087,7 +6305,12 @@ window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
-renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();migrateOriginalQuizzesOnce();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();save();
+renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();migrateOriginalQuizzesOnce();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();
+if(state.player?.name){
+ loadPlayerData().then(()=>save());
+}else{
+ save();
+}
 </script>
 </body>
 </html>
