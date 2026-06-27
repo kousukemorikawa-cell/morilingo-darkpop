@@ -2622,6 +2622,117 @@ body.darkTheme .rankTitleChip{
  }
 }
 
+
+
+/* ==========================================================
+   2026-06-27 修正v4
+   ・エンディングBGMは worldtree.mp3
+   ・エンディング画像内に文章があるため、下部文章は非表示
+   ・問題文内の一二点も返り点として小さく表示
+========================================================== */
+.endStoryBody > div:first-child{
+ display:none !important;
+}
+.endStoryBody{
+ flex:0 0 auto !important;
+ padding:10px 14px calc(14px + env(safe-area-inset-bottom)) !important;
+}
+.endStoryViewer{
+ min-height:100vh !important;
+}
+.endStoryImageWrap{
+ flex:1 1 auto !important;
+ height:auto !important;
+ min-height:0 !important;
+ max-height:none !important;
+}
+.endStoryImage{
+ width:100% !important;
+ height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+}
+.ans .kanbun-char{
+ position:relative !important;
+ display:inline-block !important;
+ width:1em !important;
+ height:1em !important;
+ line-height:1 !important;
+ text-align:center !important;
+ margin:0 .02em !important;
+}
+.ans .kaeri-mark{
+ position:absolute !important;
+ left:-.72em !important;
+ bottom:-.18em !important;
+ top:auto !important;
+ display:block !important;
+ font-size:.48em !important;
+ line-height:1 !important;
+ font-weight:1000 !important;
+ letter-spacing:0 !important;
+}
+@media(max-width:560px){
+ .endStoryControls .btn{
+  min-height:46px !important;
+ }
+ .ans .kaeri-mark{
+  left:-.68em !important;
+  bottom:-.16em !important;
+  font-size:.46em !important;
+ }
+}
+
+
+
+/* ==========================================================
+   2026-06-27 修正v5：最終上書き
+   ・エンディング画像はPC/スマホとも全体表示
+   ・下のストーリー文は出さず、操作ボタンだけ表示
+   ・選択肢には返り点処理をかけない
+========================================================== */
+#endStory .endStoryViewer{
+ height:100dvh !important;
+ min-height:100dvh !important;
+ max-height:100dvh !important;
+ overflow:hidden !important;
+}
+#endStory .endStoryImageWrap{
+ flex:1 1 auto !important;
+ min-height:0 !important;
+ height:auto !important;
+ max-height:none !important;
+ display:flex !important;
+ align-items:center !important;
+ justify-content:center !important;
+ background:#000 !important;
+ overflow:hidden !important;
+}
+#endStory .endStoryImage{
+ width:100% !important;
+ height:100% !important;
+ max-width:100% !important;
+ max-height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+ aspect-ratio:auto !important;
+}
+#endStory .endStoryBody > div:first-child{display:none !important;}
+#endStory .endStoryBody{
+ flex:0 0 auto !important;
+ padding:10px 14px calc(14px + env(safe-area-inset-bottom)) !important;
+}
+@media(max-width:560px){
+ #questGame .questControls{
+  position:static !important;
+  transform:none !important;
+  margin:8px 0 8px !important;
+ }
+ body.gameMode #questGame .card{padding-bottom:12px !important;}
+ body.gameMode .app{padding-bottom:230px !important;}
+ #endStory .endStoryBody{padding:8px 10px calc(10px + env(safe-area-inset-bottom)) !important;}
+}
+
 </style>
 </head>
 <body>
@@ -3169,7 +3280,7 @@ const BGM_SCREEN_MAP={
  items:"home",
  worldtreeStory:"worldtree",
  finalStory:"worldtree",
- endStory:"ending"
+ endStory:"worldtree"
 };
 let bgmAudio=null;
 let bgmCurrent="";
@@ -3184,7 +3295,7 @@ function ensureBgm(){
  bgmAudio.preload="auto";
  bgmAudio.addEventListener("error",()=>{
   const hud=$("bgmHud");
-  if(hud)hud.textContent="♪ なし";
+  if(hud)hud.textContent=bgmMuted?"♪ OFF":"♪ BGM";
  });
  return bgmAudio;
 }
@@ -3869,7 +3980,7 @@ function showEndStory(startIndex=0){
  endStoryIndex=Math.max(0,Math.min(END_STORY_PAGES.length-1,Number(startIndex)||0));
  renderEndStory();
  show("endStory");
- playBgm("ending");
+ playBgm("worldtree");
 }
 function renderEndStory(){
  const page=END_STORY_PAGES[endStoryIndex]||END_STORY_PAGES[0];
@@ -5452,11 +5563,26 @@ function renderKanbunQuestionText(text){
   "丙":"kaeri-kouotsu",
   "丁":"kaeri-kouotsu"
  };
- const isMark=ch=>Object.prototype.hasOwnProperty.call(markClass,ch);
+ const markAlias={
+  "1":"一","１":"一","Ⅰ":"一","ⅰ":"一","壱":"一","壹":"一",
+  "2":"二","２":"二","Ⅱ":"二","ⅱ":"二","弐":"二","貳":"二",
+  "3":"三","３":"三","Ⅲ":"三","ⅲ":"三","参":"三","參":"三",
+  "4":"四","４":"四","Ⅳ":"四","ⅳ":"四",
+  "5":"五","５":"五","Ⅴ":"五","ⅴ":"五",
+  "6":"六","６":"六","Ⅵ":"六","ⅵ":"六",
+  "7":"七","７":"七","Ⅶ":"七","ⅶ":"七",
+  "8":"八","８":"八","Ⅷ":"八","ⅷ":"八",
+  "9":"九","９":"九","Ⅸ":"九","ⅸ":"九",
+  "10":"十","１０":"十","Ⅹ":"十","ⅹ":"十",
+  "ﾚ":"レ","ㇾ":"レ"
+ };
+ const normalizeMark=ch=>markAlias[ch] || ch;
+ const isMark=ch=>Object.prototype.hasOwnProperty.call(markClass,normalizeMark(ch));
  const chunks=[];
  for(const ch of raw){
+  const mark=normalizeMark(ch);
   if(isMark(ch) && chunks.length){
-   chunks[chunks.length-1].marks.push(ch);
+   chunks[chunks.length-1].marks.push(mark);
   }else{
    chunks.push({base:ch,marks:[]});
   }
@@ -5469,10 +5595,21 @@ function renderKanbunQuestionText(text){
  }).join("");
 }
 
+function hasKanbunReturnMarks(text){
+ const raw=String(text??"");
+ const normalized=raw
+  .replace(/[１２３４５６７８９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0))
+  .replace(/Ⅰ/g,"一").replace(/Ⅱ/g,"二").replace(/Ⅲ/g,"三").replace(/Ⅳ/g,"四").replace(/Ⅴ/g,"五")
+  .replace(/Ⅵ/g,"六").replace(/Ⅶ/g,"七").replace(/Ⅷ/g,"八").replace(/Ⅸ/g,"九").replace(/Ⅹ/g,"十")
+  .replace(/ㇾ|ﾚ/g,"レ");
+ // レ点、または漢字の直後に一二点・上下点・甲乙点があるものを漢文縦書き対象にする
+ return /レ/.test(normalized) || /[一-龯々][一二三四五六七八九十上下甲乙丙丁]/.test(normalized);
+}
 function applyQuestionLayout(el,q){
  if(!el)return;
  const layout=String((q&&q.layout)||"normal").trim().toLowerCase();
- el.classList.toggle("kanbunVertical",layout==="vertical");
+ const text=String((q&&q.q)||"");
+ el.classList.toggle("kanbunVertical",layout==="vertical" || hasKanbunReturnMarks(text));
 }
 function nextQuestion(){
  stopTimer();clearTimeout(nextId);canAnswer=true;
@@ -5484,7 +5621,7 @@ function nextQuestion(){
  applyQuestionLayout($("question"),q);
  $("feedback").textContent="";
  const colors=["red","blue","green","yellow"], labels=["A","B","C","D"];
- $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${x}</button>`).join("");
+ $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${escapeHtml(x)}</button>`).join("");
  updateStats();
  if(game.mode==="timeAttack"){
   timerId=setInterval(()=>{
@@ -6229,7 +6366,7 @@ function questLoadQuestion(){
  questCanAnswer=true;quest.current=questGetQuestion();
  $("questQuestion").innerHTML=renderKanbunQuestionText(quest.current.q);applyQuestionLayout($("questQuestion"),quest.current);$("questFeedback").textContent="";$("questNextBtn").style.display="none";
  const colors=["red","blue","green","yellow"],labels=["A","B","C","D"];
- $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${x}</button>`).join("");
+ $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${escapeHtml(x)}</button>`).join("");
  questStartTimer();questUpdateUI();
 }
 function questMarkAnswer(selectedIndex){
