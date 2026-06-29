@@ -2795,23 +2795,19 @@ body.darkTheme .resultCard{
  font-weight:1000;
 }
 .loginBonusStamps{
- display:flex;
- gap:6px;
- flex-wrap:wrap;
  margin-top:10px;
 }
-.loginStamp{
- width:34px;
- height:34px;
- display:grid;
- place-items:center;
- border-radius:50%;
- background:#fff;
+.loginStreakText{
+ width:100%;
+ background:linear-gradient(#fff,#fff4c2);
  border:2px solid #f0d36a;
+ border-radius:18px;
+ padding:12px 14px;
+ text-align:center;
+ font-size:24px;
  font-weight:1000;
-}
-.loginStamp.on{
- background:linear-gradient(#ffe78f,#ffbd45);
+ color:#ff6b00;
+ text-shadow:2px 2px 0 #fff;
 }
 .nameSetting{
  margin-top:12px;
@@ -3904,11 +3900,12 @@ function renderLoginBonus(){
  const toggle=$("nameHiddenToggle");
  if(toggle)toggle.checked=!!state.nameHidden;
  const b=state.loginBonus||{};
- if(streakEl)streakEl.textContent=`連続 ${Number(b.streak||0)}日`;
+ const streak=Number(b.streak||0);
+ if(streakEl)streakEl.textContent=`連続 ${streak}日`;
  if(msgEl)msgEl.textContent=`今日の獲得：${Number(b.lastAward||0)}PT`;
  if(stampsEl){
-  const count=Math.min(7,Number(b.streak||0));
-  stampsEl.innerHTML=Array.from({length:7},(_,i)=>`<span class="loginStamp${i<count?" on":""}">${i<count?"🍎":i+1}</span>`).join("");
+  // スタンプではなく、8日目以降もそのまま伝わる連続ログイン表示にする
+  stampsEl.innerHTML=`<div class="loginStreakText">🔥 ${streak}日連続ログイン！</div>`;
  }
 }
 function publicPlayerName(){
