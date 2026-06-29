@@ -117,6 +117,35 @@ body.gameMode #menuHud{
   top:72px;
  }
 }
+#bgmHud{
+ position:fixed;
+ top:180px;
+ right:12px;
+ z-index:99999;
+ background:#111;
+ color:#fff;
+ font-weight:1000;
+ padding:7px 12px 8px;
+ border-radius:16px;
+ border:3px solid #fff;
+ box-shadow:0 0 0 3px #111,0 5px 0 rgba(0,0,0,.35);
+ cursor:pointer;
+ font-size:13px;
+ line-height:1;
+}
+#bgmHud.off{
+ background:#777;
+ box-shadow:0 0 0 3px #777,0 5px 0 rgba(0,0,0,.25);
+}
+#bgmHud:active{transform:translateY(3px)}
+@media(max-width:560px){
+ #bgmHud{
+  top:132px;
+  right:8px;
+  padding:6px 9px 7px;
+  font-size:11px;
+ }
+}
  .app{max-width:880px;margin:0 auto;min-height:100vh;padding:12px 12px 122px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .logo{font-size:24px;font-weight:1000;color:var(--green);text-shadow:0 2px 0 #fff}.pill{background:#fff;border-radius:999px;padding:8px 12px;font-weight:900;box-shadow:0 4px 14px #0001}
@@ -228,7 +257,91 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 }
 .fireOverlay{display:none;position:absolute;inset:0;z-index:7;pointer-events:none;background:radial-gradient(circle at 25% 80%,#ffe65add 0 8%,#ff5f24cc 16%,transparent 32%),radial-gradient(circle at 62% 74%,#fff678dd 0 9%,#ff5220c7 18%,transparent 35%),linear-gradient(0deg,#ff4d28aa,#ff4d2820 58%,transparent);animation:burn 1.05s infinite}.fireOverlay.on{display:block}.world.shake{animation:shake .38s linear 6}
 .status{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.stat{text-align:center;background:#ffffffb8;border-radius:16px;padding:9px;font-weight:1000}.timer{grid-column:1/-1;background:#ffffffb8;border-radius:18px;padding:10px 12px;font-weight:1000}.timerTop{display:flex;justify-content:space-between;margin-bottom:7px}.trackbar{height:16px;background:#edf2f0;border-radius:999px;overflow:hidden;border:2px solid #fff}.fill{height:100%;width:100%;background:linear-gradient(90deg,#40c96b,#f8d84a,#f27657);transition:width .25s linear}
-.question{background:#fff;border:3px solid #e9f4ee;border-radius:20px;padding:14px 16px;margin-top:12px;box-shadow:0 7px 0 #2f7d4b14;font-size:21px;font-weight:1000;line-height:1.5}.feedback{background:#ffffffaa;border-radius:16px;padding:8px 12px;margin-top:8px;min-height:38px;font-weight:1000}
+.question{background:#fff;border:3px solid #e9f4ee;border-radius:20px;padding:14px 16px;margin-top:12px;box-shadow:0 7px 0 #2f7d4b14;font-size:21px;font-weight:1000;line-height:1.5}
+.question.kanbunVertical{
+ writing-mode:vertical-rl;
+ text-orientation:upright;
+ display:flex;
+ align-items:flex-start;
+ justify-content:center;
+ max-height:320px;
+ max-width:min(92vw,520px);
+ min-height:140px;
+ overflow-x:auto;
+ overflow-y:hidden;
+ margin:12px auto 8px;
+ padding:16px 20px;
+ line-height:2;
+ letter-spacing:.08em;
+ background:linear-gradient(180deg,#fff8df,#f3dfab);
+ border:3px solid #8a5a24;
+ box-shadow:0 7px 0 #2f1b081f, inset 0 0 0 2px #fff6d6;
+}
+.question.kanbunVertical .kanbun-char{
+ position:relative;
+ display:inline-block;
+ width:1em;
+ height:1em;
+ line-height:1;
+ text-align:center;
+ vertical-align:middle;
+ margin:.04em 0;
+}
+
+.question.kanbunVertical .kaeri-mark{
+ position:absolute;
+ left:-.78em;
+ top:auto;
+ bottom:-.20em;
+ display:block;
+ font-size:.48em;
+ line-height:1;
+ font-weight:1000;
+ letter-spacing:0;
+ color:inherit;
+ text-align:center;
+ transform:none;
+ pointer-events:none;
+}
+
+.question.kanbunVertical .kaeri-re{
+ left:-.80em;
+ top:auto;
+ bottom:-.20em;
+ font-size:.48em;
+}
+
+.question.kanbunVertical .kaeri-serial,
+.question.kanbunVertical .kaeri-joge,
+.question.kanbunVertical .kaeri-kouotsu{
+ left:-.78em;
+ top:auto;
+ bottom:-.20em;
+ font-size:.48em;
+}
+
+@media(max-width:560px){
+ .question.kanbunVertical .kanbun-char{
+  margin:.03em 0;
+ }
+ .question.kanbunVertical .kaeri-mark{
+  left:-.74em;
+  top:auto;
+  bottom:-.18em;
+  font-size:.46em;
+ }
+}
+@media (max-width:768px){
+ .question.kanbunVertical{
+  max-height:210px;
+  min-height:120px;
+  max-width:94vw;
+  font-size:20px;
+  padding:12px 14px;
+  line-height:1.9;
+ }
+}
+.feedback{background:#ffffffaa;border-radius:16px;padding:8px 12px;margin-top:8px;min-height:38px;font-weight:1000}
 .answerPanel{position:fixed;left:0;right:0;bottom:0;background:#fffffff0;backdrop-filter:blur(10px);padding:12px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -10px 28px #0002;z-index:30}.answers{max-width:880px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}.ans{position:relative;min-height:64px;text-align:left;border:4px solid transparent;overflow:hidden}.ans:before{content:attr(data-label);display:inline-grid;place-items:center;width:28px;height:28px;border-radius:999px;margin-right:8px;color:#fff}.ans.answered{pointer-events:none}.ans.correctChoice:after{content:"〇";position:absolute;inset:0;z-index:3;display:grid;place-items:center;font-weight:1000;line-height:1;pointer-events:none;font-size:58px;color:#19a64a;text-shadow:0 3px 0 #fff,3px 0 0 #fff,0 -3px 0 #fff,-3px 0 0 #fff,0 6px 10px #0003}.ans.wrongChoice:after,.ans.wrongChoice .xLine{content:"";position:absolute;left:8%;right:8%;top:50%;height:9px;z-index:3;background:#e53935;border-radius:999px;box-shadow:0 0 0 4px #fff,0 7px 12px #0003;pointer-events:none;transform-origin:center}.ans.wrongChoice:after{transform:translateY(-50%) rotate(24deg)}.ans.wrongChoice .xLine{transform:translateY(-50%) rotate(-24deg)}.ans.wrongChoice:before,.ans.correctChoice:before{opacity:.35}.red{border-color:#ef5350}.red:before{background:#ef5350}.blue{border-color:#42a5f5}.blue:before{background:#42a5f5}.green{border-color:#66bb6a}.green:before{background:#66bb6a}.yellow{border-color:#f6c945}.yellow:before{background:#f6c945;color:#5d4300}
 input,textarea,select{width:100%;border:2px solid #e6edf0;border-radius:14px;padding:12px;font-size:16px;background:#fff;font-family:inherit}textarea{min-height:92px}.form{display:grid;gap:10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 @keyframes float{50%{transform:translateY(12px)}}@keyframes pop{from{transform:translate(-50%,-50%) scale(.1)}to{transform:translate(-50%,-50%) scale(1)}}@keyframes ninja{0%{left:-90px}45%{left:76px}58%{left:76px;transform:rotate(-8deg)}100%{left:105%}}@keyframes dragon{0%{left:105%;transform:scaleX(1)}40%{left:62%;transform:scaleX(1) translateY(18px)}58%{left:62%;transform:scaleX(1) translateY(18px)}100%{left:-130px;transform:scaleX(1) translateY(-20px)}}@keyframes burn{50%{opacity:.75;filter:saturate(1.3)}}@keyframes shake{25%{transform:translate(4px,-2px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,2px)}}@media(max-width:560px){.app{padding:8px 8px 118px}.world{height:42vh;min-height:240px;max-height:310px;margin:6px 0}.treeArea{left:10px;right:10px;bottom:44px;min-height:170px;gap:8px}.logo{font-size:19px}.header{margin-bottom:6px}.card{padding:10px;border-radius:20px}.question{font-size:16px;line-height:1.35;padding:9px 11px;margin-top:8px}.feedback{font-size:13px;min-height:30px;padding:6px 9px;margin-top:6px}.stage{grid-template-columns:52px 1fr}.stage .btn{grid-column:1/-1}.status{grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.stat{padding:6px 4px;font-size:13px;border-radius:12px}.timer{padding:6px 8px;border-radius:12px;font-size:13px}.timerTop{margin-bottom:4px}.trackbar{height:12px}.obj{width:150px;height:185px}.treeImg{width:150px;bottom:-12px}.saplingImg{width:82px;bottom:0}.fruitImg{width:28px;height:28px}.fruitEmoji{font-size:23px}.chestObj{height:150px}.chestImg{width:125px}.dropItemImg{width:56px;height:56px;bottom:82px}.chestProgress{bottom:-22px;font-size:11px;padding:3px 8px}.chestLabel{bottom:62px;font-size:10px}.crown{width:112px;height:112px}.stageCap{left:8px;top:8px;padding:5px 9px;font-size:12px}.char{bottom:44px;width:88px;height:88px}.dragonFly{width:138px;bottom:108px}.answerPanel{padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.answers{gap:7px}.ans{font-size:15px;min-height:50px;padding:8px;border-width:3px;border-radius:14px}.ans:before{width:24px;height:24px;margin-right:6px}.ans.correctChoice:after{font-size:44px}.ans.wrongChoice:after,.ans.wrongChoice .xLine{height:7px}}
@@ -1771,6 +1884,42 @@ body.goldTheme .answerPanel{
  box-shadow:0 3px 0 rgba(0,0,0,.18);
 }
 .devNewsCard.hasNew .devNewsBadge{display:inline-block}
+.devNewsCard.hasNew{
+ background:linear-gradient(135deg,#fff,#fff1f1 55%,#ffe0e0) !important;
+ border-color:#ff3333 !important;
+ box-shadow:0 0 0 4px rgba(255,51,51,.18),0 10px 24px rgba(255,51,51,.22) !important;
+ animation:devNewsPulse 1.15s ease-in-out infinite;
+}
+.devNewsCard.hasNew .devNewsTitle{
+ color:#d80000 !important;
+}
+.devNewsCard.hasNew .devNewsLatest{
+ color:#8f1b1b !important;
+}
+.devNewsCard.hasNew .devNewsBadge{
+ display:inline-flex !important;
+ align-items:center;
+ justify-content:center;
+ min-width:42px;
+ min-height:42px;
+ border-radius:999px;
+ font-size:12px;
+ border:3px solid #fff;
+ box-shadow:0 0 0 3px #ff3333,0 5px 0 rgba(0,0,0,.20);
+}
+@keyframes devNewsPulse{
+ 0%,100%{transform:translateY(0);filter:brightness(1)}
+ 50%{transform:translateY(-2px);filter:brightness(1.06)}
+}
+body.darkTheme .devNewsCard.hasNew{
+ background:linear-gradient(135deg,#2b1010,#4a1717 58%,#7b1f1f) !important;
+ border-color:#ff5a5a !important;
+ box-shadow:0 0 0 4px rgba(255,90,90,.20),0 10px 24px rgba(255,0,0,.24) !important;
+}
+body.darkTheme .devNewsCard.hasNew .devNewsTitle,
+body.darkTheme .devNewsCard.hasNew .devNewsLatest{
+ color:#fff !important;
+}
 .devNewsModal{
  position:fixed;
  inset:0;
@@ -2260,6 +2409,374 @@ body.darkTheme .rankTitleChip{
  border-color:#f0d58b !important;
 }
 
+
+/* ==========================================================
+   エンディングストーリー：ステージ20クエストクリア後
+========================================================== */
+.endStoryCard{
+ padding:0 !important;
+ overflow:hidden;
+ background:#090703 !important;
+ color:#fff !important;
+ border-color:#fff4b8 !important;
+}
+.endStoryViewer{
+ min-height:calc(100vh - 28px);
+ display:flex;
+ flex-direction:column;
+ background:
+  radial-gradient(circle at 50% 18%,rgba(255,226,108,.22),transparent 38%),
+  linear-gradient(180deg,#16110a,#050403 72%,#000);
+}
+.endStoryImageWrap{
+ position:relative;
+ width:100%;
+ background:#000;
+ border-bottom:3px solid rgba(255,244,184,.55);
+}
+.endStoryImage{
+ display:block;
+ width:100%;
+ aspect-ratio:16/9;
+ object-fit:cover;
+ background:#000;
+}
+.endStoryGlow{
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+ box-shadow:inset 0 -80px 80px rgba(0,0,0,.45),inset 0 0 80px rgba(255,210,80,.18);
+}
+.endStoryBody{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+ gap:14px;
+ padding:18px;
+}
+.endStoryKicker{
+ display:inline-flex;
+ align-items:center;
+ width:max-content;
+ background:rgba(255,220,98,.14);
+ border:2px solid rgba(255,244,184,.45);
+ color:#ffeaa3;
+ border-radius:999px;
+ padding:5px 12px;
+ font-size:12px;
+ font-weight:1000;
+ letter-spacing:.12em;
+}
+.endStoryTitle{
+ margin:10px 0 8px;
+ color:#fff3b8;
+ font-size:26px;
+ text-shadow:0 3px 0 rgba(0,0,0,.55);
+}
+.endStoryText{
+ margin:0;
+ color:#fff;
+ font-size:18px;
+ font-weight:900;
+ line-height:1.85;
+ white-space:pre-line;
+ text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+.endStoryControls{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:8px;
+}
+.endStoryControls .btn:disabled{
+ opacity:.45;
+ filter:grayscale(1);
+ cursor:not-allowed;
+ transform:none !important;
+}
+.endStoryPageDot{
+ text-align:center;
+ color:#ffeaa3;
+ font-size:13px;
+ font-weight:1000;
+ letter-spacing:.2em;
+ opacity:.9;
+}
+@media(max-width:560px){
+ .endStoryViewer{min-height:calc(100vh - 16px)}
+ .endStoryBody{padding:13px 12px 15px;gap:10px}
+ .endStoryTitle{font-size:20px;margin:8px 0 6px}
+ .endStoryText{font-size:15px;line-height:1.7}
+ .endStoryKicker{font-size:10px;padding:4px 9px}
+ .endStoryControls{gap:7px}
+ .endStoryControls .btn{font-size:14px;padding:12px 10px;border-radius:15px}
+}
+
+
+/* ==========================================================
+   2026-06-27 緊急修正
+   ・スマホ版クエストのアイテム/メニューバーが選択肢に被らないよう固定配置を解除
+   ・選択肢が2行以上でも見切れないようにする
+   ・Ending画像を cover ではなく contain で全体表示
+========================================================== */
+
+/* 選択肢：2行・3行でも切らない */
+.ans{
+ height:auto !important;
+ min-height:74px !important;
+ overflow:visible !important;
+ white-space:normal !important;
+ line-height:1.45 !important;
+ display:flex !important;
+ align-items:flex-start !important;
+ gap:6px !important;
+}
+.ans:before{
+ flex:0 0 auto !important;
+ margin-top:0 !important;
+}
+@media(max-width:560px){
+ .answerPanel{
+  padding:8px 8px calc(10px + env(safe-area-inset-bottom)) !important;
+ }
+ .answers{
+  gap:8px !important;
+ }
+ .ans{
+  min-height:74px !important;
+  padding:10px 9px !important;
+  font-size:14px !important;
+  line-height:1.42 !important;
+ }
+ body.gameMode .ans{
+  min-height:74px !important;
+  padding:10px 9px !important;
+  font-size:14px !important;
+  line-height:1.42 !important;
+ }
+}
+
+/* クエストのアイテム・メニュー：スマホでは固定しない。選択肢に重ならない */
+@media(max-width:560px){
+ .questControls{
+  position:static !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  transform:none !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  margin:8px 0 6px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+ }
+ .questControls .btn{
+  min-height:40px !important;
+  padding:9px 8px !important;
+  font-size:13px !important;
+  border-radius:14px !important;
+ }
+ body.gameMode #questGame .card{
+  padding-bottom:10px !important;
+ }
+ body.gameMode .app{
+  padding-bottom:230px !important;
+ }
+}
+
+/* Ending：画像を必ず全体表示 */
+.endStoryImageWrap{
+ display:flex !important;
+ align-items:center !important;
+ justify-content:center !important;
+ height:min(62vh,620px) !important;
+ max-height:620px !important;
+ overflow:hidden !important;
+ background:#000 !important;
+}
+.endStoryImage{
+ width:100% !important;
+ height:100% !important;
+ max-width:100% !important;
+ max-height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+ aspect-ratio:auto !important;
+ background:#000 !important;
+}
+@media(max-width:560px){
+ .endStoryImageWrap{
+  height:42vh !important;
+  max-height:360px !important;
+  min-height:220px !important;
+ }
+ .endStoryImage{
+  object-fit:contain !important;
+ }
+}
+
+
+
+/* ==========================================================
+   2026-06-27 修正v4
+   ・エンディングBGMは worldtree.mp3
+   ・エンディング画像内に文章があるため、下部文章は非表示
+   ・問題文内の一二点も返り点として小さく表示
+========================================================== */
+.endStoryBody > div:first-child{
+ display:none !important;
+}
+.endStoryBody{
+ flex:0 0 auto !important;
+ padding:10px 14px calc(14px + env(safe-area-inset-bottom)) !important;
+}
+.endStoryViewer{
+ min-height:100vh !important;
+}
+.endStoryImageWrap{
+ flex:1 1 auto !important;
+ height:auto !important;
+ min-height:0 !important;
+ max-height:none !important;
+}
+.endStoryImage{
+ width:100% !important;
+ height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+}
+.ans .kanbun-char{
+ position:relative !important;
+ display:inline-block !important;
+ width:1em !important;
+ height:1em !important;
+ line-height:1 !important;
+ text-align:center !important;
+ margin:0 .02em !important;
+}
+.ans .kaeri-mark{
+ position:absolute !important;
+ left:-.72em !important;
+ bottom:-.18em !important;
+ top:auto !important;
+ display:block !important;
+ font-size:.48em !important;
+ line-height:1 !important;
+ font-weight:1000 !important;
+ letter-spacing:0 !important;
+}
+@media(max-width:560px){
+ .endStoryControls .btn{
+  min-height:46px !important;
+ }
+ .ans .kaeri-mark{
+  left:-.68em !important;
+  bottom:-.16em !important;
+  font-size:.46em !important;
+ }
+}
+
+
+
+/* ==========================================================
+   2026-06-27 修正v5：最終上書き
+   ・エンディング画像はPC/スマホとも全体表示
+   ・下のストーリー文は出さず、操作ボタンだけ表示
+   ・選択肢には返り点処理をかけない
+========================================================== */
+#endStory .endStoryViewer{
+ height:100dvh !important;
+ min-height:100dvh !important;
+ max-height:100dvh !important;
+ overflow:hidden !important;
+}
+#endStory .endStoryImageWrap{
+ flex:1 1 auto !important;
+ min-height:0 !important;
+ height:auto !important;
+ max-height:none !important;
+ display:flex !important;
+ align-items:center !important;
+ justify-content:center !important;
+ background:#000 !important;
+ overflow:hidden !important;
+}
+#endStory .endStoryImage{
+ width:100% !important;
+ height:100% !important;
+ max-width:100% !important;
+ max-height:100% !important;
+ object-fit:contain !important;
+ object-position:center center !important;
+ aspect-ratio:auto !important;
+}
+#endStory .endStoryBody > div:first-child{display:none !important;}
+#endStory .endStoryBody{
+ flex:0 0 auto !important;
+ padding:10px 14px calc(14px + env(safe-area-inset-bottom)) !important;
+}
+@media(max-width:560px){
+ #questGame .questControls{
+  position:static !important;
+  transform:none !important;
+  margin:8px 0 8px !important;
+ }
+ body.gameMode #questGame .card{padding-bottom:12px !important;}
+ body.gameMode .app{padding-bottom:230px !important;}
+ #endStory .endStoryBody{padding:8px 10px calc(10px + env(safe-area-inset-bottom)) !important;}
+}
+
+
+/* ==========================================================
+   2026-06-27 追加：復興・クエストクリア画面
+   clear.mp3 を流し、自動で戻らずボタンで戻る
+========================================================== */
+.resultCard{
+ background:linear-gradient(180deg,#fffdf0,#eafff0);
+ border:4px solid #fff;
+ border-radius:24px;
+ padding:18px;
+ text-align:center;
+ box-shadow:0 10px 24px rgba(0,0,0,.16);
+ color:#263238;
+}
+.resultTitle{
+ font-size:40px;
+ font-weight:1000;
+ color:#2f8f57;
+ text-shadow:0 3px 0 rgba(255,255,255,.9);
+}
+.resultSub{
+ margin-top:8px;
+ font-size:16px;
+ font-weight:900;
+ line-height:1.65;
+}
+.resultActions{
+ display:grid;
+ grid-template-columns:1fr;
+ gap:10px;
+ margin-top:14px;
+}
+body.darkTheme .resultCard{
+ background:linear-gradient(180deg,#fffdf0,#eafff0) !important;
+ color:#263238 !important;
+ border-color:#fff !important;
+}
+@media(max-width:560px){
+ .resultCard{padding:14px;border-radius:20px}
+ .resultTitle{font-size:30px}
+ .resultSub{font-size:14px}
+ .resultActions .btn{font-size:14px;padding:12px 10px}
+}
+
 </style>
 </head>
 <body>
@@ -2270,6 +2787,7 @@ body.darkTheme .rankTitleChip{
 <button id="menuHud" class="isHidden" onclick="show('menu')">
 ☰ メニュー
 </button>
+<button id="bgmHud" onclick="toggleBgm()" aria-label="BGM切替">♪ BGM</button>
 <div class="app">
   <div class="header"><div class="logo">🌳 モリリンゴ</div><div class="pill" id="savePill">保存済み</div></div>
  <section id="home" class="screen active">
@@ -2490,10 +3008,36 @@ body.darkTheme .rankTitleChip{
     </div>
   </section>
 
+
+  <section id="endStory" class="screen">
+    <div class="card endStoryCard">
+      <div class="endStoryViewer">
+        <div class="endStoryImageWrap">
+          <img id="endStoryImage" class="endStoryImage" src="assets/story/endstory1.png" alt="エンディング">
+          <div class="endStoryGlow"></div>
+        </div>
+        <div class="endStoryBody">
+          <div>
+            <span class="endStoryKicker">MORILINGO ENDING</span>
+            <h2 id="endStoryTitle" class="endStoryTitle">世界樹の頂へ</h2>
+            <p id="endStoryText" class="endStoryText">長い旅の果てに、主人公は世界樹の根元へたどり着いた。</p>
+          </div>
+          <div>
+            <div id="endStoryPageDot" class="endStoryPageDot">◆ ◇ ◇ ◇ ◇ ◇ ◇ ◇</div>
+            <div class="endStoryControls">
+              <button id="endStoryBackBtn" class="btn ghost" onclick="prevEndStory()">戻る</button>
+              <button id="endStoryNextBtn" class="btn primary" onclick="nextEndStory()">次へ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="titles" class="screen">
   <div class="card">
     <h2>🎖️ 称号</h2>
-    <p class="muted">君の冒険の記録。面白系は復興クリア時だけランダムドロップします。</p>
+    <p class="muted">君の冒険の記録。面白系は復興クリア時やクエスト報酬でランダムドロップします。</p>
     <div class="titleBox">
       <div class="rankingHead">
         <h3>称号一覧</h3>
@@ -2515,7 +3059,7 @@ body.darkTheme .rankTitleChip{
       </div>
 
       <div id="titleList" class="titleList"></div>
-      <div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます。面白系は conditionType を random_drop にすると、復興クリア時だけ抽選されます。</div>
+      <div class="titleHint">メニューは3つまで、ランキング名の横は2つまで表示できます。面白系は conditionType を random_drop にすると、復興クリア時やクエスト報酬で抽選されます。</div>
     </div>
     <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
   </div>
@@ -2739,12 +3283,112 @@ const $=id=>document.getElementById(id);
 
 // Google Apps ScriptのウェブアプリURLをここに貼る
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
-const GAS_URL="https://script.google.com/macros/s/AKfycbzAgytOxjWV5MDxbxUKVd6GPOTr-2ZwJMRy0VCbuyfdO97ip8GS0P4bUGV-XFnyOO_Kbg/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbxkXGIAVLoZpL7MDs42oQsnBmyCMpFB-_FunAAmv2zxBiNUWeMubrO-PKKb4zcXQeHRpw/exec";
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260625-study-pdf-v1";
+const ASSET_VERSION="20260627-clear-bgm-v1";
+
+/* ==========================================================
+   BGM設定
+   assets/bgm/ に7曲を置く
+   title.mp3 / home.mp3 / challenge.mp3 / recovery.mp3 / quest.mp3 / worldtree.mp3 / timeattack.mp3
+========================================================== */
+const BGM_TRACKS={
+ title:"assets/bgm/title.mp3",
+ home:"assets/bgm/home.mp3",
+ challenge:"assets/bgm/challenge.mp3",
+ recovery:"assets/bgm/recovery.mp3",
+ quest:"assets/bgm/quest.mp3",
+ clear:"assets/bgm/clear.mp3",
+ worldtree:"assets/bgm/worldtree.mp3",
+ timeattack:"assets/bgm/timeattack.mp3",
+ ending:"assets/bgm/ending.mp3"
+};
+const BGM_SCREEN_MAP={
+ home:"title",
+ profile:"title",
+ menu:"home",
+ skin:"home",
+ zukan:"home",
+ story:"home",
+ titles:"home",
+ devMessage:"home",
+ guide:"home",
+ answerList:"home",
+ devTools:"home",
+ original:"home",
+ editor:"home",
+ challenge:"challenge",
+ stageMenu:"challenge",
+ items:"home",
+ worldtreeStory:"worldtree",
+ finalStory:"worldtree",
+ endStory:"worldtree"
+};
+let bgmAudio=null;
+let bgmCurrent="";
+let bgmUnlocked=false;
+let bgmMuted=localStorage.getItem("morilingoBgmMuted")==="1";
+
+function ensureBgm(){
+ if(bgmAudio)return bgmAudio;
+ bgmAudio=new Audio();
+ bgmAudio.loop=true;
+ bgmAudio.volume=.42;
+ bgmAudio.preload="auto";
+ bgmAudio.addEventListener("error",()=>{
+  const hud=$("bgmHud");
+  if(hud)hud.textContent=bgmMuted?"♪ OFF":"♪ BGM";
+ });
+ return bgmAudio;
+}
+function bgmTrackForScreen(screenId){
+ if(screenId==="questGame")return "quest";
+ if(screenId==="game"){
+  if(game?.mode==="timeAttack")return "timeattack";
+  return "recovery";
+ }
+ return BGM_SCREEN_MAP[screenId] || "home";
+}
+function updateBgmHud(){
+ const hud=$("bgmHud");
+ if(!hud)return;
+ hud.classList.toggle("off",bgmMuted);
+ hud.textContent=bgmMuted?"♪ OFF":"♪ BGM";
+}
+function playBgm(trackKey){
+ updateBgmHud();
+ if(!trackKey || bgmMuted)return;
+ const src=BGM_TRACKS[trackKey];
+ if(!src)return;
+ const audio=ensureBgm();
+ if(bgmCurrent!==trackKey){
+  bgmCurrent=trackKey;
+  audio.pause();
+  audio.src=src+`?v=${ASSET_VERSION}`;
+  audio.currentTime=0;
+ }
+ if(!bgmUnlocked)return;
+ audio.play().catch(()=>{});
+}
+function pauseBgm(){
+ if(bgmAudio)bgmAudio.pause();
+}
+function unlockBgm(){
+ bgmUnlocked=true;
+ playBgm(bgmTrackForScreen(document.querySelector(".screen.active")?.id || "home"));
+}
+function toggleBgm(){
+ bgmMuted=!bgmMuted;
+ localStorage.setItem("morilingoBgmMuted",bgmMuted?"1":"0");
+ updateBgmHud();
+ if(bgmMuted)pauseBgm();
+ else unlockBgm();
+}
+document.addEventListener("pointerdown",()=>unlockBgm(),{once:true});
+document.addEventListener("keydown",()=>unlockBgm(),{once:true});
 function isAdmin(){
  const p = state?.player || {};
  const name = String(p.name || "").trim();
@@ -2880,7 +3524,7 @@ const QUESTION_BANK={
   {q:"係助詞『こそ』の結びは？",a:["連体形","已然形","終止形","未然形"],c:1}
  ],
  level2:[
-  {q:"『走る』の活用の種類は？",a:["四段","下二段","上一段","サ変"],c:1},
+  {q:"『走る』の活用の種類は？",a:["四段","下二段","上一段","サ変"],c:0},
   {q:"『見る』の活用の種類は？",a:["上一段","下一段","四段","カ変"],c:0}
  ],
  level3:[
@@ -3013,49 +3657,47 @@ function stageRecoveryQuestions(stageIndex,round){
  const source=remoteQuestions||QUESTION_BANK;
  const r=Math.min(RECOVERY_ROUNDS,Math.max(1,Number(round)||1));
  const cfg=recoveryQuestionConfig(stageIndex);
- const THEME_COUNT=cfg.themeCount;
- const VOCAB_COUNT=cfg.vocabCount;
  const TOTAL_COUNT=cfg.totalCount;
 
- // 1. 推奨：stage列を「単元キー_theme_r1」「単元キー_vocab_r1」形式で分けた問題
- let theme=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme"));
- let vocab=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"vocab"));
+ // 復興は「1回目:1〜12 / 2回目:13〜24 / 3回目:25〜36」の固定分割。
+ // kind/round列がある場合は従来どおり優先し、ない場合は登録順で12問ずつ切り出す。
+ const dedicated=uniqueQuestionList([
+  ...collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme")),
+  ...collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"vocab"))
+ ]);
 
- // 2. 1つのstageキー内に kind / round 列がある場合も拾う
- const all=stageAllQuestions(stageIndex);
- if(theme.length<THEME_COUNT || vocab.length<VOCAB_COUNT){
-  const metaTheme=all.filter(q=>{
-   const k=questionKind(q);
-   const qr=questionRound(q);
-   return k==="theme" && (!qr || qr===r);
-  });
-  const metaVocab=all.filter(q=>{
-   const k=questionKind(q);
-   const qr=questionRound(q);
-   return k==="vocab" && (!qr || qr===r);
-  });
-  theme=uniqueQuestionList(theme.concat(metaTheme));
-  vocab=uniqueQuestionList(vocab.concat(metaVocab));
+ const all=uniqueQuestionList(stageAllQuestions(stageIndex));
+ const hasRoundMeta=all.some(q=>questionRound(q)>0);
+
+ if(dedicated.length){
+  return dedicated.slice(0,TOTAL_COUNT);
  }
 
- // 3. 足りない場合は、そのステージの全問題から補充して止まらないようにする
- const used=new Set([...theme,...vocab].map(questionId));
- const rest=all.filter(q=>!used.has(questionId(q)));
- theme=uniqueQuestionList(theme).slice(0,THEME_COUNT);
- vocab=uniqueQuestionList(vocab).slice(0,VOCAB_COUNT);
-
- while(theme.length<THEME_COUNT && rest.length)theme.push(rest.shift());
- while(vocab.length<VOCAB_COUNT && rest.length)vocab.push(rest.shift());
-
- const mixed=[];
- for(let i=0;i<Math.max(THEME_COUNT,VOCAB_COUNT);i++){
-  if(theme[i])mixed.push(theme[i]);
-  if(vocab[i])mixed.push(vocab[i]);
+ if(hasRoundMeta){
+  const roundQuestions=all.filter(q=>{
+   const qr=questionRound(q);
+   return qr===r || !qr;
+  });
+  if(roundQuestions.length){
+   return uniqueQuestionList(roundQuestions).slice(0,TOTAL_COUNT);
+  }
  }
- return mixed.length ? mixed.slice(0,TOTAL_COUNT) : stageQuestionsFallback(stageIndex).slice(0,TOTAL_COUNT);
+
+ const start=(r-1)*TOTAL_COUNT;
+ const fixedRoundQuestions=all.slice(start,start+TOTAL_COUNT);
+ if(fixedRoundQuestions.length){
+  return fixedRoundQuestions;
+ }
+
+ return stageQuestionsFallback(stageIndex).slice(0,TOTAL_COUNT);
 }
+
 function stageQuestQuestions(stageIndex){
- // クエスト・タイムアタックは、復興3回分の36問を候補にする。
+ // クエストは、復興の12問区切りに縛らずステージ登録済みの1〜36問すべてを候補にする。
+ // startQuest側で shuffle(stageQuestQuestions(i)) するため、1〜36問からランダム出題される。
+ const all=uniqueQuestionList(stageAllQuestions(stageIndex));
+ if(all.length)return all;
+
  const qs=[];
  for(let r=1;r<=RECOVERY_ROUNDS;r++)qs.push(...stageRecoveryQuestions(stageIndex,r));
  return uniqueQuestionList(qs);
@@ -3269,6 +3911,9 @@ function renderMenuTopTitles(){
   return t?`<span class="menuTitleChip">🏅 ${t.name}</span>`:"";
  }).join("");
 }
+function unreadNewsPrefix(){
+ return isDevNewsUnread()?"❗ NEW：":"";
+}
 function renderDevNews(){
  const card=$("devNewsCard");
  const latest=$("devNewsLatest");
@@ -3278,11 +3923,18 @@ function renderDevNews(){
  devNewsCache=items;
  if(latest){
   const top=items[0];
-  latest.textContent=top?`${top.date?top.date+"：":""}${top.title}`:"お知らせはまだありません";
+  latest.textContent=top?`${unreadNewsPrefix()}${top.date?top.date+"：":""}${top.title}`:"お知らせはまだありません";
  }
  const unread=isDevNewsUnread();
- if(card)card.classList.toggle("hasNew",unread);
- if(badge)badge.style.display=unread?"inline-block":"none";
+ if(card){
+  card.classList.toggle("hasNew",unread);
+  card.setAttribute("aria-label",unread?"未読のお知らせがあります":"開発者からのお知らせ");
+ }
+ if(badge){
+  badge.textContent=unread?"❗NEW":"";
+  badge.style.display=unread?"inline-flex":"none";
+ }
+ document.title=unread?"❗モリリンゴ":"モリリンゴ";
  if(list){
   list.innerHTML=items.length?items.map(n=>`
    <div class="devNewsItem">
@@ -3335,6 +3987,95 @@ function showTitles(){
 function showStory(){
  show("story");
 }
+
+
+const END_STORY_PAGES=[
+ {title:"世界樹の頂へ",text:`黄金竜アルボルは、光の粒となって静かに消えた。
+主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。`,img:"assets/story/endstory1.png"},
+ {title:"最後の種",text:`世界樹は、まだ枯れ果てていた。
+けれど根元には、小さく黄金に輝く種が一粒だけ残っていた。
+主人公はそれを、そっと両手で包んだ。`,img:"assets/story/endstory2.png"},
+ {title:"まだ、終わりじゃない",text:`主人公は種を大地に植えた。
+すると、光が地中を走り、世界のすみずみへ根を伸ばしていく。
+やがて一本の若木は、大きく成長した。`,img:"assets/story/endstory3.png"},
+ {title:"光が世界を包む",text:`光は世界を包み、荒廃した大地がよみがえった。
+空は青く澄み、川には水が戻り、草木が芽吹き、花が咲いた。
+一枚の葉が、世界を変えた。`,img:"assets/story/endstory4.png"},
+ {title:"人々が戻る",text:`人々が戻り、笑顔があふれた。
+畑を耕す人、遊ぶ子ども、風車が回り、鳥が空を舞う。
+みんなで、もう一度、この世界を育てていく。`,img:"assets/story/endstory5.png"},
+ {title:"世界樹の祝福",text:`主人公は世界樹を見上げた。
+すると、枝から黄金のリンゴが一つ落ちてきた。
+世界樹の声が、心に響いた。
+「ありがとう。」`,img:"assets/story/endstory6.png"},
+ {title:"次の育樹師へ",text:`主人公はリンゴを食べなかった。
+それを、新しい子どもへと渡した。
+その子はにっこりと笑った。
+守る役目は、受け継がれていく。`,img:"assets/story/endstory7.png"},
+ {title:"Morilingo",text:`世界樹は、これからも育ち続ける。
+新しい未来への希望が広がっていく。
+この物語の続きは、きっと、みんなの手で。
+
+世界は、何度でも育て直せる。`,img:"assets/story/endstory8.png"}
+];
+let endStoryIndex=0;
+function showEndStory(startIndex=0){
+ endStoryIndex=Math.max(0,Math.min(END_STORY_PAGES.length-1,Number(startIndex)||0));
+ renderEndStory();
+ show("endStory");
+ playBgm("worldtree");
+}
+function renderEndStory(){
+ const page=END_STORY_PAGES[endStoryIndex]||END_STORY_PAGES[0];
+ const img=$("endStoryImage");
+ const title=$("endStoryTitle");
+ const text=$("endStoryText");
+ const back=$("endStoryBackBtn");
+ const next=$("endStoryNextBtn");
+ const dot=$("endStoryPageDot");
+ if(img){
+  img.onerror=function(){
+   const current=this.dataset.fallbackStep||"png";
+   const base=`assets/story/endstory${endStoryIndex+1}`;
+   if(current==="png"){
+    this.dataset.fallbackStep="jpg";
+    this.src=`${base}.jpg?v=${ASSET_VERSION}`;
+   }else if(current==="jpg"){
+    this.dataset.fallbackStep="jpeg";
+    this.src=`${base}.jpeg?v=${ASSET_VERSION}`;
+   }else if(current==="jpeg"){
+    this.dataset.fallbackStep="webp";
+    this.src=`${base}.webp?v=${ASSET_VERSION}`;
+   }else{
+    this.onerror=null;
+   }
+  };
+  img.dataset.fallbackStep="png";
+  img.src=`${page.img}?v=${ASSET_VERSION}`;
+  img.alt=page.title;
+ }
+ if(title)title.textContent=page.title;
+ if(text)text.textContent=page.text;
+ if(back)back.disabled=endStoryIndex===0;
+ if(next)next.textContent=endStoryIndex===END_STORY_PAGES.length-1?"メニューへ":"次へ";
+ if(dot)dot.textContent=END_STORY_PAGES.map((_,i)=>i===endStoryIndex?"◆":"◇").join(" ");
+}
+function nextEndStory(){
+ if(endStoryIndex>=END_STORY_PAGES.length-1){
+  show("menu");
+  return;
+ }
+ endStoryIndex++;
+ renderEndStory();
+ window.scrollTo({top:0,left:0,behavior:"auto"});
+}
+function prevEndStory(){
+ if(endStoryIndex<=0)return;
+ endStoryIndex--;
+ renderEndStory();
+ window.scrollTo({top:0,left:0,behavior:"auto"});
+}
+
 
 function showDevMessage(){
  if(!$("devMsgText"))return;
@@ -4061,6 +4802,20 @@ function makeSaveData(){
   titleSearch:state.titleSearch||""
  };
 }
+function calcUnlockedFromCloudData(saveData){
+ let max=Number(saveData?.unlocked||1);
+ const clears=saveData?.challengeClears||{};
+ const questUnlocked=saveData?.questUnlocked||{};
+ const questClears=saveData?.questClears||{};
+ const items=saveData?.items||{};
+ STAGES.forEach((stage,i)=>{
+  const id=stage.id;
+  if(Number(clears[id]||0)>0 || questUnlocked[id] || Number(questClears[id]||0)>0 || Number(items[id]||0)>0){
+   max=Math.max(max,i+2);
+  }
+ });
+ return Math.min(Math.max(1,max),STAGES.length);
+}
 function applySaveData(saveData){
  if(!saveData || typeof saveData!=="object")return;
 
@@ -4068,7 +4823,7 @@ function applySaveData(saveData){
 
  state.totalPt=Number(saveData.totalPt ?? saveData.pt ?? saveData.totalScore ?? state.totalPt ?? 0);
  state.totalCorrect=Number(saveData.totalCorrect ?? state.totalCorrect ?? 0);
- state.unlocked=Number(saveData.unlocked || state.unlocked || 1);
+ state.unlocked=calcUnlockedFromCloudData(saveData);
 
  state.badges=Array.isArray(saveData.badges)?saveData.badges:(state.badges||[]);
  state.items=saveData.items || state.items || {};
@@ -4115,32 +4870,54 @@ function loadPlayerData(){
  const key=playerKey();
  if(!GAS_URL || !key.name)return Promise.resolve(false);
 
- $("savePill").textContent="セーブ読込中...";
+ clearTimeout(playerDataSaveTimer);
+ playerDataLoaded=false;
+ $("savePill").textContent="クラウド読込中...";
 
  return new Promise(resolve=>{
   const callback="morilingoPlayerDataCallback_"+Date.now();
   const script=document.createElement("script");
+  let finished=false;
+
+  function finish(ok){
+   if(finished)return;
+   finished=true;
+   delete window[callback];
+   if(script.parentNode)script.remove();
+   resolve(ok);
+  }
 
   window[callback]=data=>{
    try{
+    console.log("PlayerData load response",data);
     if(data && data.ok){
-     if(data.exists===false && hasLocalProgress()){
+     if(data.exists===true && data.saveData){
+      applySaveData(data.saveData);
       playerDataLoaded=true;
-      savePlayerDataNow();
-      $("savePill").textContent="端末データを同期中";
-     }else{
-      applySaveData(data.saveData||{});
-      playerDataLoaded=true;
-      $("savePill").textContent=data.exists===false?"新規セーブ作成":"セーブ読込済み";
+      $("savePill").textContent="クラウド読込済み";
+      finish(true);
+      return;
      }
-     resolve(true);
-    }else{
-     $("savePill").textContent="セーブ読込失敗";
-     resolve(false);
+
+     // サーバーにまだ行がない時だけ、端末内に進行があれば初回アップロードする。
+     if(data.exists===false){
+      playerDataLoaded=true;
+      if(hasLocalProgress()){
+       savePlayerDataNow();
+       $("savePill").textContent="端末データを初回同期中";
+      }else{
+       $("savePill").textContent="新規セーブ";
+      }
+      finish(true);
+      return;
+     }
     }
-   }finally{
-    delete window[callback];
-    script.remove();
+    $("savePill").textContent="クラウド読込失敗";
+    finish(false);
+   }catch(err){
+    console.warn("PlayerData反映エラー",err);
+    $("savePill").textContent="クラウド反映失敗";
+    finish(false);
    }
   };
 
@@ -4155,20 +4932,16 @@ function loadPlayerData(){
 
   script.src=GAS_URL+"?"+params.toString();
   script.onerror=()=>{
-   delete window[callback];
-   script.remove();
-   $("savePill").textContent="セーブ読込失敗";
-   resolve(false);
+   $("savePill").textContent="クラウド読込失敗";
+   finish(false);
   };
 
   document.body.appendChild(script);
 
   setTimeout(()=>{
-   if(window[callback]){
-    delete window[callback];
-    script.remove();
-    $("savePill").textContent="セーブ読込タイムアウト";
-    resolve(false);
+   if(!finished){
+    $("savePill").textContent="クラウド読込タイムアウト";
+    finish(false);
    }
   },9000);
  });
@@ -4206,7 +4979,9 @@ function show(id){
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:"auto"}));
  $("answerPanel").style.display=id==="game"?"block":"none";
  const qPanel=$("questAnswerPanel"); if(qPanel)qPanel.style.display=id==="questGame"?"block":"none";
- if(id!=="game" && id!=="questGame")resetScoreHud();
+ if(id!=="game" && id!=="questGame"){
+  setScoreHud(Number(state.totalPt||0));
+ }
 
  const menuHud=$("menuHud");
  if(menuHud){
@@ -4220,6 +4995,7 @@ function show(id){
  updatePlayerDisplay();
  applySkinSettings();
  applyWorldTheme(id);
+ playBgm(bgmTrackForScreen(id));
  if(id==="menu"){
   loadRemoteTitles();
   loadRanking();
@@ -4311,7 +5087,12 @@ async function saveProfileAndMenu(){
 
   state.player={name,className,number};
   playerDataLoaded=false;
-  save();
+
+  // クラウド読込前はsave()を使わない。
+  // 初期状態のlocalStorageでPlayerDataを上書きしないため。
+  localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+  $("savePill").textContent="保存済み";
+
   await loadPlayerData();
   loadRemoteQuestions();
   loadRemoteTitles();
@@ -4348,6 +5129,17 @@ function loadRemoteQuestions(){
 function submitResult(reason="clear"){
  if(isAdmin())return;
  if(!GAS_URL||!game)return;
+
+ // タイムアタックは、全問クリア時だけランキング登録する。
+ // 中断・メニュー戻り・未クリア秒数はResultsへ送らない。
+ if(game.mode==="timeAttack"){
+  const targetCorrect=recoveryQuestionConfig(game.stageIndex).totalCount;
+  const elapsed=Number(game.elapsedSec||0);
+  if(reason!=="timeAttackClear" || (game.correctCount||0)<targetCorrect || !Number.isFinite(elapsed) || elapsed<=0){
+   return;
+  }
+ }
+
  const p=state.player||{};
  const data=new URLSearchParams({
   action:"result",
@@ -4666,6 +5458,7 @@ function openQuestFromStageMenu(i){
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
 
 function startChallenge(i){
+ unlockBgm();
  const s=STAGES[i];
  const round=currentRecoveryRound(s.id);
  game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageRecoveryQuestions(i,round))};
@@ -4798,20 +5591,153 @@ function setupWorld(cls,sun,label,image,enemyImage){
  }
 }
 function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
-function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);game=null;resetScoreHud();show("menu");}
+function quit(){
+ // タイムアタック中断はランキング登録しない。
+ if(game && game.mode!=="timeAttack")submitResult("quit");
+ stopTimer();
+ clearTimeout(nextId);
+ game=null;
+ setScoreHud(Number(state.totalPt||0));
+ show("menu");
+}
+
+function gameClearDestination(){
+ if(!game)return "challenge";
+ if(game.mode==="original")return "original";
+ return "challenge";
+}
+function returnFromGameClear(dest){
+ stopTimer();
+ clearTimeout(nextId);
+ const target=dest || gameClearDestination();
+ game=null;
+ setScoreHud(Number(state.totalPt||0));
+ renderOriginalSummary();
+ renderStages();
+ if(target==="original")show("original");
+ else openChallenge();
+}
+function gameClearButtonLabel(dest){
+ return dest==="original" ? "オリジナル問題へ戻る" : "ステージ一覧へ戻る";
+}
+function showGameClearResult(title,sub,dest){
+ stopTimer();
+ clearTimeout(nextId);
+ canAnswer=false;
+ const answerPanel=$("answerPanel");
+ if(answerPanel)answerPanel.style.display="none";
+ const answers=$("answers");
+ if(answers)answers.innerHTML="";
+ const question=$("question");
+ if(question){
+  question.classList.remove("kanbunVertical");
+  question.innerHTML=`<div class="resultCard"><div class="resultTitle">${escapeHtml(title)}</div><div class="resultSub">${sub}</div><div class="resultActions"><button class="btn primary" onclick="returnFromGameClear('${dest}')">${gameClearButtonLabel(dest)}</button></div></div>`;
+ }
+ playBgm("clear");
+}
+
+function returnFromQuestClear(dest){
+ questStopTimer();
+ questUsedQueue=[];
+ const target=dest || "challenge";
+ quest=null;
+ document.body.classList.remove("gameMode");
+ setScoreHud(Number(state.totalPt||0));
+ renderStages();
+ renderItems();
+ renderZukan(state.zukanTab||"items");
+ if(target==="original")show("original");
+ else if(target==="endStory")showEndStory(0);
+ else openChallenge();
+}
+function showQuestClearReturnButtons(dest){
+ const label=dest==="original" ? "オリジナル問題へ戻る" : (dest==="endStory" ? "エンディングを見る" : "ステージ一覧へ戻る");
+ return `<div class="resultActions"><button class="btn primary" onclick="returnFromQuestClear('${dest}')">${label}</button></div>`;
+}
 
 function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
 function scheduleNext(ms=850){clearTimeout(nextId);nextId=setTimeout(nextQuestion,ms);}
+function renderKanbunQuestionText(text){
+ const raw=String(text??"");
+ const markClass={
+  "レ":"kaeri-re",
+  "一":"kaeri-serial",
+  "二":"kaeri-serial",
+  "三":"kaeri-serial",
+  "四":"kaeri-serial",
+  "五":"kaeri-serial",
+  "六":"kaeri-serial",
+  "七":"kaeri-serial",
+  "八":"kaeri-serial",
+  "九":"kaeri-serial",
+  "十":"kaeri-serial",
+  "上":"kaeri-joge",
+  "中":"kaeri-joge",
+  "下":"kaeri-joge",
+  "甲":"kaeri-kouotsu",
+  "乙":"kaeri-kouotsu",
+  "丙":"kaeri-kouotsu",
+  "丁":"kaeri-kouotsu"
+ };
+ const markAlias={
+  "1":"一","１":"一","Ⅰ":"一","ⅰ":"一","壱":"一","壹":"一",
+  "2":"二","２":"二","Ⅱ":"二","ⅱ":"二","弐":"二","貳":"二",
+  "3":"三","３":"三","Ⅲ":"三","ⅲ":"三","参":"三","參":"三",
+  "4":"四","４":"四","Ⅳ":"四","ⅳ":"四",
+  "5":"五","５":"五","Ⅴ":"五","ⅴ":"五",
+  "6":"六","６":"六","Ⅵ":"六","ⅵ":"六",
+  "7":"七","７":"七","Ⅶ":"七","ⅶ":"七",
+  "8":"八","８":"八","Ⅷ":"八","ⅷ":"八",
+  "9":"九","９":"九","Ⅸ":"九","ⅸ":"九",
+  "10":"十","１０":"十","Ⅹ":"十","ⅹ":"十",
+  "ﾚ":"レ","ㇾ":"レ"
+ };
+ const normalizeMark=ch=>markAlias[ch] || ch;
+ const isMark=ch=>Object.prototype.hasOwnProperty.call(markClass,normalizeMark(ch));
+ const chunks=[];
+ for(const ch of raw){
+  const mark=normalizeMark(ch);
+  if(isMark(ch) && chunks.length){
+   chunks[chunks.length-1].marks.push(mark);
+  }else{
+   chunks.push({base:ch,marks:[]});
+  }
+ }
+ return chunks.map(chunk=>{
+  const base=escapeHtml(chunk.base);
+  if(!chunk.marks.length)return `<span class="kanbun-char">${base}</span>`;
+  const marks=chunk.marks.map(mark=>`<span class="kaeri-mark ${markClass[mark]||""}">${escapeHtml(mark)}</span>`).join("");
+  return `<span class="kanbun-char">${base}${marks}</span>`;
+ }).join("");
+}
+
+function hasKanbunReturnMarks(text){
+ const raw=String(text??"");
+ const normalized=raw
+  .replace(/[１２３４５６７８９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0))
+  .replace(/Ⅰ/g,"一").replace(/Ⅱ/g,"二").replace(/Ⅲ/g,"三").replace(/Ⅳ/g,"四").replace(/Ⅴ/g,"五")
+  .replace(/Ⅵ/g,"六").replace(/Ⅶ/g,"七").replace(/Ⅷ/g,"八").replace(/Ⅸ/g,"九").replace(/Ⅹ/g,"十")
+  .replace(/ㇾ|ﾚ/g,"レ");
+ // レ点、または漢字の直後に一二点・上下点・甲乙点があるものを漢文縦書き対象にする
+ return /レ/.test(normalized) || /[一-龯々][一二三四五六七八九十上下甲乙丙丁]/.test(normalized);
+}
+function applyQuestionLayout(el,q){
+ if(!el)return;
+ const layout=String((q&&q.layout)||"normal").trim().toLowerCase();
+ const text=String((q&&q.q)||"");
+ el.classList.toggle("kanbunVertical",layout==="vertical" || hasKanbunReturnMarks(text));
+}
 function nextQuestion(){
  stopTimer();clearTimeout(nextId);canAnswer=true;
  game.time=game.timeLimit || 20;
  const q=game.questions[game.qIndex % game.questions.length];
  game.qIndex++;
  game.current=q;
- $("question").textContent=q.q;
+ $("question").innerHTML=renderKanbunQuestionText(q.q);
+ applyQuestionLayout($("question"),q);
  $("feedback").textContent="";
  const colors=["red","blue","green","yellow"], labels=["A","B","C","D"];
- $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${x}</button>`).join("");
+ $("answers").innerHTML=q.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="answer(${i})">${escapeHtml(x)}</button>`).join("");
  updateStats();
  if(game.mode==="timeAttack"){
   timerId=setInterval(()=>{
@@ -4865,30 +5791,48 @@ function answer(i){
   else setTimeout(ninjaEvent,400);
  }
 }
-function randomDropTitlesForRecovery(){
+function randomDropTitlesForReward(place="rebuild"){
  const earned=new Set(earnedTitleIds());
+ const key=String(place||"").trim().toLowerCase();
  return allTitleMaster().filter(t=>{
   if(!isFunnyDropTitle(t))return false;
   if(earned.has(t.id))return false;
-  const place=String(t.conditionValue||"").trim();
-  return !place || place==="rebuild" || place==="復興" || Number.isFinite(Number(place));
+  const value=String(t.conditionValue||"").trim();
+  const lower=value.toLowerCase();
+
+  // conditionValue が空欄・all・any なら、復興/クエスト共通で抽選対象。
+  if(!value || lower==="all" || lower==="any" || value==="共通")return true;
+
+  // 既存データ互換：rebuild/復興 は復興クリア時に抽選。
+  if(key==="rebuild")return lower==="rebuild" || value==="復興" || Number.isFinite(Number(value));
+
+  // クエスト報酬用：quest/クエスト のほか、既に rebuild で作った面白称号も対象にする。
+  if(key==="quest")return lower==="quest" || value==="クエスト" || lower==="rebuild" || value==="復興" || Number.isFinite(Number(value));
+
+  return false;
  });
 }
-function tryFunnyTitleDropFromRecovery(){
- const candidates=randomDropTitlesForRecovery();
+function randomDropTitlesForRecovery(){
+ return randomDropTitlesForReward("rebuild");
+}
+function drawRandomDropTitle(place="rebuild",useIndividualRate=true){
+ const candidates=randomDropTitlesForReward(place);
  if(!candidates.length)return null;
  const shuffled=shuffle(candidates);
  for(const t of shuffled){
-  const rate=titleDropRate(t);
-  if(Math.random()*100 < rate){
-   addBadge(t.badgeId||t.id);
-   cleanSelectedTitles();
-   save();
-   showTitleNotify(t);
-   return t;
-  }
+  const rate=useIndividualRate ? titleDropRate(t) : 100;
+  if(Math.random()*100 < rate)return t;
  }
  return null;
+}
+function tryFunnyTitleDropFromRecovery(){
+ const t=drawRandomDropTitle("rebuild",true);
+ if(!t)return null;
+ addBadge(t.badgeId||t.id);
+ cleanSelectedTitles();
+ save();
+ showTitleNotify(t);
+ return t;
 }
 
 function checkClear(){
@@ -4906,8 +5850,9 @@ function checkClear(){
   state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
   state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
   save();
-  $("feedback").textContent=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
-  setTimeout(()=>{game=null;resetScoreHud();renderOriginalSummary();show("original");},1500);
+  const title=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
+  $("feedback").textContent=title;
+  showGameClearResult("CLEAR!",`${escapeHtml(title)}<br>獲得PT：${Number(game.score||0)}PT`,"original");
   return true;
  }
 
@@ -4918,8 +5863,9 @@ function checkClear(){
   const isBest=saveTimeAttackBest();
   submitResult("timeAttackClear");
   const bestMsg=isBest ? " 自己ベスト更新！" : "";
-  $("feedback").textContent=`⏱️ タイムアタッククリア！ ${game.elapsedSec.toFixed(2)}秒${bestMsg}`;
-  setTimeout(()=>{game=null;resetScoreHud();openChallenge();},1800);
+  const msg=`⏱️ タイムアタッククリア！ ${game.elapsedSec.toFixed(2)}秒${bestMsg}`;
+  $("feedback").textContent=msg;
+  showGameClearResult("CLEAR!",`${escapeHtml(msg)}`,"challenge");
   return true;
  }
 
@@ -4935,8 +5881,9 @@ function checkClear(){
  submitResult("clear");
  const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
  const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
- $("feedback").textContent=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}${funnyMsg}`;
- setTimeout(openChallenge,1500);
+ const clearMsg=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}${funnyMsg}`;
+ $("feedback").textContent=clearMsg;
+ showGameClearResult("STAGE CLEAR!",`${escapeHtml(clearMsg)}<br>獲得PT：${Number(game.score||0)}PT`,"challenge");
  return true;
 }
 function updateStats(){
@@ -5368,6 +6315,7 @@ function renderItems(){
  }).join("");
 }
 function startTimeAttack(i){
+ unlockBgm();
  const s=STAGES[i];
  game={
   mode:"timeAttack",stageIndex:i,stage:s,score:0,streak:0,miss:0,
@@ -5393,6 +6341,7 @@ let questPaused=false;
 let questUsedQueue=[];
 
 function startQuest(i){
+ unlockBgm();
  try{
   const s=STAGES[i];
   if(!s){alert("ステージ情報が見つかりません");return;}
@@ -5552,9 +6501,9 @@ function questGetQuestion(){
 }
 function questLoadQuestion(){
  questCanAnswer=true;quest.current=questGetQuestion();
- $("questQuestion").textContent=quest.current.q;$("questFeedback").textContent="";$("questNextBtn").style.display="none";
+ $("questQuestion").innerHTML=renderKanbunQuestionText(quest.current.q);applyQuestionLayout($("questQuestion"),quest.current);$("questFeedback").textContent="";$("questNextBtn").style.display="none";
  const colors=["red","blue","green","yellow"],labels=["A","B","C","D"];
- $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${x}</button>`).join("");
+ $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${escapeHtml(x)}</button>`).join("");
  questStartTimer();questUpdateUI();
 }
 function questMarkAnswer(selectedIndex){
@@ -5751,6 +6700,7 @@ function questPlayMagic(){
 async function questFinish(){
  questStopTimer();
  quest.phase="finish";
+ playBgm("clear");
  $("questEnemy").style.display="none";
  $("questChest").style.display="none";
  questMoveBg(1);
@@ -5765,20 +6715,22 @@ async function questFinish(){
  }
  const rewardText=quest.isOriginal ? "オリジナルクエストをクリアしました。" : "報酬を獲得します。";
 
- $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">クリア！</div><div style="margin-top:8px;">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}</div><div class="muted" style="margin-top:8px;">${rewardText}</div></div>`;
+ const shouldShowEndStory=!quest.isOriginal && quest.stage?.id==="worldtree";
+ const backToOriginal=!!quest.isOriginal;
+ const dest=backToOriginal ? "original" : (shouldShowEndStory ? "endStory" : "challenge");
+
+ $("questQuestion").innerHTML=`<div class="resultCard"><div class="resultTitle">QUEST CLEAR!</div><div class="resultSub">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}<br>${rewardText}</div></div>`;
  $("questAnswers").innerHTML="";
+ const qPanel=$("questAnswerPanel");
+ if(qPanel)qPanel.style.display="none";
  $("questNextBtn").style.display="none";
  $("questFeedback").textContent="🎉 クエストクリア！";
  questUpdateUI();
 
  if(!quest.isOriginal)await questRewardSequence();
- questUsedQueue=[];
- const backToOriginal=!!quest.isOriginal;
 
- quest=null;
- document.body.classList.remove("gameMode");
- renderStages();
- show(backToOriginal?"original":"challenge");
+ $("questQuestion").innerHTML=`<div class="resultCard"><div class="resultTitle">QUEST CLEAR!</div><div class="resultSub">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}<br>${rewardText}</div>${showQuestClearReturnButtons(dest)}</div>`;
+ $("questFeedback").textContent=shouldShowEndStory ? "🎉 クエストクリア！エンディングへ進めます。" : "🎉 クエストクリア！";
 }
 function questGameOver(){
  questStopTimer();quest.phase="gameover";questUsedQueue=[];$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
@@ -5848,21 +6800,28 @@ function questRewardPool(){
 }
 function randomQuestReward(stage){
  const r=Math.random();
+
+ // クエスト報酬割合：アイテム70% / 味方スキン10% / 敵スキン10% / 称号10%
  if(r<0.70){
   return {kind:"item",stageId:stage.id,name:itemDisplayName(stage),src:itemInfo(stage).img||stage.itemImage};
  }
- if(r<0.90){
+ if(r<0.80){
   const ids=BASE_SKINS.map(x=>x.id);
   const id=ids[Math.floor(Math.random()*ids.length)];
   return {kind:"skin",skinId:id,name:skinName(id),src:`assets/me/me_${id}.png`};
  }
-const enemyId=`enemy_${stage.id}`;
- return {
-  kind:"skin",
-  skinId:enemyId,
-  name:skinName(enemyId),
-  src:stage.enemyImage
- };
+ if(r<0.90){
+  const enemyId=`enemy_${stage.id}`;
+  return {kind:"skin",skinId:enemyId,name:skinName(enemyId),src:stage.enemyImage};
+ }
+
+ const title=drawRandomDropTitle("quest",false);
+ if(title){
+  return {kind:"title",titleId:title.id,name:title.name,desc:title.desc,src:"assets/effects/effect_clear.png"};
+ }
+
+ // すべてのランダム称号を入手済みなら、アイテムへフォールバック。
+ return {kind:"item",stageId:stage.id,name:itemDisplayName(stage),src:itemInfo(stage).img||stage.itemImage};
 }
 function grantQuestReward(reward){
  if(!reward)return "";
@@ -5878,6 +6837,14 @@ function grantQuestReward(reward){
   const isNew=unlockSkin(reward.skinId);
   return isNew ? `${reward.name}のスキンを入手！` : `${reward.name}のスキンは入手済み！`;
  }
+ if(reward.kind==="title"){
+  const t=titleById(reward.titleId) || {id:reward.titleId,name:reward.name,desc:reward.desc,badgeId:reward.titleId};
+  addBadge(t.badgeId||t.id);
+  cleanSelectedTitles();
+  save();
+  showTitleNotify(t);
+  return `称号『${t.name}』を手に入れた！`;
+ }
  return "";
 }
 async function questRewardSequence(){
@@ -5890,7 +6857,7 @@ async function questRewardSequence(){
  for(let n=0;n<dropCount;n++){
   const reward=randomQuestReward(stage);
   const msg=grantQuestReward(reward);
-  await centerFx(reward.src,2000,"dropFx",dropCount>1?`${msg}（${n+1}/${dropCount}）`:msg);
+  await centerFx(reward.src||"assets/effects/effect_clear.png",2000,"dropFx",dropCount>1?`${msg}（${n+1}/${dropCount}）`:msg);
  }
  renderItems();
  renderSkinLists();
@@ -6300,17 +7267,82 @@ function clearOriginalQuestions(){
   updateOriginalLimitText();
  }
 }
-function resetAll(){if(confirm("進捗をリセットしますか？")){localStorage.removeItem("morilingoCleanQuest");location.reload();}}
+function resetAll(){
+ if(!confirm("この端末の進捗をリセットしますか？\nクラウドのPlayerDataは消しません。\n同じ名前・クラス・番号で再読込します。"))return;
+
+ const keepPlayer=state.player||{name:"",className:"",number:""};
+ clearTimeout(playerDataSaveTimer);
+ playerDataLoaded=false;
+
+ localStorage.removeItem("morilingoCleanQuest");
+
+ state={};
+ state.player=keepPlayer;
+ state.unlocked=1;
+ state.badges=[];
+ state.original=[];
+ state.originalDraft=[];
+ state.originalQuiz={name:"",mode:"rebuild",stageIndex:0};
+ state.originalQuizzes=[];
+ state.currentOriginalQuizId="";
+ state.selectedMenuTitles=[];
+ state.selectedRankingTitles=[];
+ state.titleCategory="すべて";
+ state.titleSearch="";
+ state.remoteTitles=[];
+ state.remoteUnlockedTitleIds=[];
+ state.challengeClears={};
+ state.items={};
+ state.questClears={};
+ state.questUnlocked={};
+ state.timeAttackBests={};
+ state.zukanTab="items";
+ state.skin={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
+ state.skins={};
+ state.skins[DEFAULT_PLAYER_CHARACTER]=true;
+ state.totalPt=0;
+ state.totalCorrect=0;
+
+ localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+ $("savePill").textContent="端末リセット済み";
+
+ if(keepPlayer.name){
+  loadPlayerData().then(()=>{
+   renderBadges();
+   renderMenuTopTitles();
+   updatePlayerDisplay();
+   renderItems();
+   renderStages();
+   renderZukan(state.zukanTab||"items");
+   renderSkinLists();
+   renderOriginalSummary();
+   setScoreHud(state.totalPt||0);
+   show("menu");
+  });
+ }else{
+  showProfile();
+ }
+}
 window.addEventListener("resize",()=>{
  const bgImg=$("questBgImg");
  if(bgImg)questMoveBg(Number(bgImg.dataset.questRate||0));
 });
 renderBadges();renderMenuTopTitles();updatePlayerDisplay();updateDevAdminButton();applySkinSettings();migrateOriginalQuizzesOnce();initOriginalQuizStageSelect();renderOriginalSummary();loadRemoteQuestions();loadDevNews();loadRemoteTitles();
 if(state.player?.name){
- loadPlayerData().then(()=>save());
-}else{
- save();
+ loadPlayerData().then(()=>{
+  renderBadges();
+  renderMenuTopTitles();
+  updatePlayerDisplay();
+  renderItems();
+  renderStages();
+  renderZukan(state.zukanTab||"items");
+  renderSkinLists();
+  renderOriginalSummary();
+  setScoreHud(state.totalPt||0);
+ });
 }
+updateBgmHud();
+playBgm(bgmTrackForScreen("home"));
 </script>
 </body>
 </html>
