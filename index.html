@@ -2777,6 +2777,66 @@ body.darkTheme .resultCard{
  .resultActions .btn{font-size:14px;padding:12px 10px}
 }
 
+
+/* ===== ログインボーナス / 名前表示設定 ===== */
+.loginBonusCard{
+ background:#fff7d8;
+ border:3px solid #fff;
+ border-radius:22px;
+ padding:12px;
+ margin:12px 0;
+ box-shadow:0 8px 0 #0001;
+}
+.loginBonusHead{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ align-items:center;
+ font-weight:1000;
+}
+.loginBonusStamps{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+ margin-top:10px;
+}
+.loginStamp{
+ width:34px;
+ height:34px;
+ display:grid;
+ place-items:center;
+ border-radius:50%;
+ background:#fff;
+ border:2px solid #f0d36a;
+ font-weight:1000;
+}
+.loginStamp.on{
+ background:linear-gradient(#ffe78f,#ffbd45);
+}
+.nameSetting{
+ margin-top:12px;
+ margin-bottom:10px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:flex-start;
+ gap:8px;
+ width:auto;
+ max-width:100%;
+ font-weight:900;
+ line-height:1.5;
+ cursor:pointer;
+}
+/* チェックボックスにも全体の input{width:100%} が当たっていたため、
+   横幅を自動に戻してラベル文字が縦に潰れないようにする */
+.nameSetting input[type="checkbox"]{
+ flex:0 0 auto;
+ width:auto !important;
+ min-width:18px;
+ height:18px;
+ margin:0;
+ transform:scale(1.25);
+}
+
 </style>
 </head>
 <body>
@@ -2822,6 +2882,15 @@ body.darkTheme .resultCard{
         </div>
         <span id="devNewsBadge" class="devNewsBadge">NEW</span>
       </button>
+    </div>
+
+    <div class="loginBonusCard">
+      <div class="loginBonusHead">
+        <span>🎁 ログインボーナス</span>
+        <span id="loginBonusStreak">連続 0日</span>
+      </div>
+      <div id="loginBonusMessage" class="muted">今日のログインを確認中...</div>
+      <div id="loginBonusStamps" class="loginBonusStamps"></div>
     </div>
 
     <div class="menuImageGrid">
@@ -2907,6 +2976,11 @@ body.darkTheme .resultCard{
 
     <h3>表示中の称号</h3>
     <div id="badges" class="badges"></div>
+
+    <label class="nameSetting">
+      <input id="nameHiddenToggle" type="checkbox" onchange="toggleNameHidden(this.checked)">
+      名前をランキング・メニューで非表示にする
+    </label>
 
     <div class="toolbar">
       <button class="btn ghost" onclick="resetAll()">進捗リセット</button>
@@ -3746,6 +3820,8 @@ state.unlocked??=1;state.badges??=[];state.original??=[];state.originalDraft??=[
 state.originalQuizzes??=[];
 state.currentOriginalQuizId??="";
 state.player??={name:"",className:"",number:""};
+state.nameHidden??=false;
+state.loginBonus??={lastDate:"",streak:0,stamps:[],lastAward:0};
  
 state.selectedMenuTitles??=[];
 state.selectedRankingTitles??=[];
@@ -3773,13 +3849,77 @@ let timerId=null;
 let nextId=null;
 let canAnswer=false;
 let currentRankingPeriod="total";
+function localDateKey(offset=0){
+ const d=new Date();
+ d.setDate(d.getDate()+offset);
+ const y=d.getFullYear();
+ const m=String(d.getMonth()+1).padStart(2,"0");
+ const day=String(d.getDate()).padStart(2,"0");
+ return `${y}-${m}-${day}`;
+}
+function currentTodayScore(){
+ const b=state.loginBonus||{};
+ return b.lastDate===localDateKey() ? Number(b.lastAward||0) : 0;
+}
 function setScoreHud(value){
  const el=$("scoreHudValue");
- if(el)el.textContent=String(value||0);
+ const n=Number(value||0);
+ if(el)el.textContent=String(Number.isFinite(n) ? Math.max(0,Math.floor(n)) : 0);
  const unit=document.querySelector(".scoreUnit");
  if(unit)unit.textContent="PT";
 }
-function resetScoreHud(){setScoreHud(0);}
+function resetScoreHud(){setScoreHud(currentTodayScore());}
+function addTodayScore(amount){
+ const n=Number(amount||0);
+ if(!Number.isFinite(n) || n<=0)return;
+ const today=localDateKey();
+ state.loginBonus??={lastDate:"",streak:0,stamps:[],lastAward:0};
+ if(state.loginBonus.lastDate!==today){
+  state.loginBonus.lastDate=today;
+  state.loginBonus.lastAward=0;
+ }
+ state.loginBonus.lastAward=Number(state.loginBonus.lastAward||0)+n;
+}
+function updateLoginBonus(){
+ if(!state.player?.name)return;
+ const today=localDateKey();
+ const yesterday=localDateKey(-1);
+ state.loginBonus??={lastDate:"",streak:0,stamps:[],lastAward:0};
+
+ if(state.loginBonus.lastDate!==today){
+  const nextStreak=state.loginBonus.lastDate===yesterday ? Number(state.loginBonus.streak||0)+1 : 1;
+  state.loginBonus.lastDate=today;
+  state.loginBonus.streak=nextStreak;
+  state.loginBonus.stamps=Array.from({length:Math.min(7,nextStreak)},(_,i)=>i+1);
+  state.loginBonus.lastAward=10;
+  state.totalPt=Number(state.totalPt||0)+10;
+  save();
+ }
+ renderLoginBonus();
+}
+function renderLoginBonus(){
+ const streakEl=$("loginBonusStreak");
+ const msgEl=$("loginBonusMessage");
+ const stampsEl=$("loginBonusStamps");
+ const toggle=$("nameHiddenToggle");
+ if(toggle)toggle.checked=!!state.nameHidden;
+ const b=state.loginBonus||{};
+ if(streakEl)streakEl.textContent=`連続 ${Number(b.streak||0)}日`;
+ if(msgEl)msgEl.textContent=`今日の獲得：${Number(b.lastAward||0)}PT`;
+ if(stampsEl){
+  const count=Math.min(7,Number(b.streak||0));
+  stampsEl.innerHTML=Array.from({length:7},(_,i)=>`<span class="loginStamp${i<count?" on":""}">${i<count?"🍎":i+1}</span>`).join("");
+ }
+}
+function publicPlayerName(){
+ return state.nameHidden ? "匿名" : (state.player?.name||"");
+}
+function toggleNameHidden(checked){
+ state.nameHidden=!!checked;
+ save();
+ updatePlayerDisplay();
+ loadRanking(currentRankingPeriod||"total");
+}
 let timeAttackChampionsCache={};
 let timeAttackChampionsLoaded=false;
 
@@ -4979,8 +5119,9 @@ function show(id){
  requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:"auto"}));
  $("answerPanel").style.display=id==="game"?"block":"none";
  const qPanel=$("questAnswerPanel"); if(qPanel)qPanel.style.display=id==="questGame"?"block":"none";
+ if(id==="menu")updateLoginBonus();
  if(id!=="game" && id!=="questGame"){
-  setScoreHud(Number(state.totalPt||0));
+  setScoreHud(currentTodayScore());
  }
 
  const menuHud=$("menuHud");
@@ -4992,6 +5133,7 @@ function show(id){
  renderTitles();
  renderMenuTopTitles();
  renderDevNews();
+ renderLoginBonus();
  updatePlayerDisplay();
  applySkinSettings();
  applyWorldTheme(id);
@@ -5111,7 +5253,12 @@ function updatePlayerDisplay(){
  }
  if(!$("playerDisplay"))return;
  const p=state.player||{};
- $("playerDisplay").textContent=p.name?`プレイヤー：${p.className||"クラス未入力"} ${p.number? p.number+"番 " : ""}${p.name}`:"プレイヤー未登録";
+ if(!p.name){
+  $("playerDisplay").textContent="プレイヤー未登録";
+  return;
+ }
+ const shownName=state.nameHidden ? "匿名（名前非表示中）" : p.name;
+ $("playerDisplay").textContent=`プレイヤー：${p.className||"クラス未入力"} ${p.number? p.number+"番 " : ""}${shownName}`;
 }
 function loadRemoteQuestions(){
  if(!GAS_URL)return;
@@ -5143,7 +5290,7 @@ function submitResult(reason="clear"){
  const p=state.player||{};
  const data=new URLSearchParams({
   action:"result",
-  name:p.name||"",
+  name:publicPlayerName(),
   className:p.className||"",
   number:p.number||"",
   mode:game.mode||"",
@@ -5216,7 +5363,7 @@ function renderRanking(data){
    : [];
 
  const me=list.find(x=>{
-  const sameName=x.name===myName;
+  const sameName=x.name===myName || (state.nameHidden && String(x.name||"").trim()==="匿名");
   const sameNumber=!myNumber || !x.number || String(x.number||"")===myNumber;
   return sameName && sameNumber;
  });
@@ -5244,10 +5391,11 @@ function renderRanking(data){
    item.rank===3?"🥉":
    `${item.rank}位`;
 
-  const sameName=item.name===myName;
+  const sameName=item.name===myName || (state.nameHidden && String(item.name||"").trim()==="匿名");
   const sameNumber=!myNumber || !item.number || String(item.number||"")===myNumber;
   const meClass=(sameName && sameNumber)?" me":"";
   const numberText=item.number?`${item.number}番 `:"";
+  const displayName=(meClass && state.nameHidden) ? "匿名" : escapeHtml(item.name||"名前なし");
 
   const rankingTitleIds=(sameName && sameNumber)
    ? (state.selectedRankingTitles||[])
@@ -5255,7 +5403,7 @@ function renderRanking(data){
   const titleHtml=rankingTitleIds.map(titleChipHtml).join("");
   const rankTitleClass=rankingTitleIds.length ? " hasRankingTitle" : "";
 
-  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine${rankTitleClass}">${numberText}${item.name}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
+  return `<div class="rankingItem${meClass}"><span class="rankNo">${medal}</span><span class="rankNameLine${rankTitleClass}">${numberText}${displayName}${titleHtml}</span><span class="rankScore">${item.score} PT</span></div>`;
  }).join("");
 }
 
@@ -5597,7 +5745,7 @@ function quit(){
  stopTimer();
  clearTimeout(nextId);
  game=null;
- setScoreHud(Number(state.totalPt||0));
+ setScoreHud(currentTodayScore());
  show("menu");
 }
 
@@ -5611,7 +5759,7 @@ function returnFromGameClear(dest){
  clearTimeout(nextId);
  const target=dest || gameClearDestination();
  game=null;
- setScoreHud(Number(state.totalPt||0));
+ setScoreHud(currentTodayScore());
  renderOriginalSummary();
  renderStages();
  if(target==="original")show("original");
@@ -5642,7 +5790,7 @@ function returnFromQuestClear(dest){
  const target=dest || "challenge";
  quest=null;
  document.body.classList.remove("gameMode");
- setScoreHud(Number(state.totalPt||0));
+ setScoreHud(currentTodayScore());
  renderStages();
  renderItems();
  renderZukan(state.zukanTab||"items");
@@ -5848,6 +5996,7 @@ function checkClear(){
 
  if(game.mode==="original"){
   state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+  addTodayScore(game.score||0);
   state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
   save();
   const title=`${game.originalQuizName||currentOriginalQuiz()?.name||"オリジナル問題"}クリア！`;
@@ -5871,6 +6020,7 @@ function checkClear(){
 
  addBadge(game.stage.id);
  state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
+ addTodayScore(game.score||0);
  state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
  giveStageClearReward(game.stage);
  const funnyTitle=tryFunnyTitleDropFromRecovery();
@@ -5888,7 +6038,7 @@ function checkClear(){
 }
 function updateStats(){
  $("score").textContent=game?(game.mode==="timeAttack" ? 0 : game.score):0;
- setScoreHud(game?(game.mode==="timeAttack" ? 0 : game.score):0);
+ setScoreHud(game?(game.mode==="timeAttack" ? currentTodayScore() : currentTodayScore()+Number(game.score||0)):currentTodayScore());
  $("streak").textContent=game?game.streak:0;
  $("miss").textContent=game?game.miss:0;
  if(game?.mode==="timeAttack"){
@@ -6708,6 +6858,7 @@ async function questFinish(){
  if(!quest.isOriginal){
   state.questClears[quest.stage.id]=(state.questClears[quest.stage.id]||0)+1;
   state.totalPt=Number(state.totalPt||0)+Number(quest.score||0);
+  addTodayScore(quest.score||0);
   state.totalCorrect=Number(state.totalCorrect||0)+Number(quest.qIndex||0);
   save();
   applySkinSettings();
@@ -6732,13 +6883,39 @@ async function questFinish(){
  $("questQuestion").innerHTML=`<div class="resultCard"><div class="resultTitle">QUEST CLEAR!</div><div class="resultSub">残りHP：${"❤️".repeat(Math.max(0,quest.playerHp))}${"🖤".repeat((quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-Math.max(0,quest.playerHp))}<br>${rewardText}</div>${showQuestClearReturnButtons(dest)}</div>`;
  $("questFeedback").textContent=shouldShowEndStory ? "🎉 クエストクリア！エンディングへ進めます。" : "🎉 クエストクリア！";
 }
+function retryQuestFromGameOver(){
+ if(!quest)return;
+ const stageIndex=quest.stageIndex||0;
+ const isOriginal=!!quest.isOriginal;
+ const quizName=quest.originalQuizName||"オリジナル問題";
+ const qs=(quest.questions||[]).slice();
+ quest=null;
+ questUsedQueue=[];
+ if(isOriginal)startOriginalQuest(stageIndex,quizName,qs);
+ else startQuest(stageIndex);
+}
+function backToQuestListFromGameOver(){
+ questStopTimer();
+ questUsedQueue=[];
+ quest=null;
+ document.body.classList.remove("gameMode");
+ setScoreHud(currentTodayScore());
+ openChallenge();
+}
 function questGameOver(){
- questStopTimer();quest.phase="gameover";questUsedQueue=[];$("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div></div>`;$("questAnswers").innerHTML="";$("questNextBtn").style.display="none";$("questFeedback").textContent="";questUpdateUI();
+ questStopTimer();
+ quest.phase="gameover";
+ questUsedQueue=[];
+ $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div><div class="resultActions"><button class="btn primary" onclick="retryQuestFromGameOver()">再チャレンジ</button><button class="btn ghost" onclick="backToQuestListFromGameOver()">ステージ一覧へ戻る</button></div></div>`;
+ $("questAnswers").innerHTML="";
+ $("questNextBtn").style.display="none";
+ $("questFeedback").textContent="";
+ questUpdateUI();
 }
 function questUpdateUI(){
  if(!quest)return;
  const playerMaxHp=quest.playerMaxHp||QUEST_PLAYER_MAX_HP;
- setScoreHud(quest.score||0);
+ setScoreHud(currentTodayScore()+Number(quest.score||0));
  $("questPlayerText").textContent=`自分HP ${Math.max(0,quest.playerHp)}/${playerMaxHp}`;
  $("questHeroHpText").textContent=`HP ${Math.max(0,quest.playerHp)}/${playerMaxHp}`;
  $("questHeroHpFill").style.width=(Math.max(0,quest.playerHp)/playerMaxHp*100)+"%";
@@ -7302,6 +7479,7 @@ function resetAll(){
  state.skins[DEFAULT_PLAYER_CHARACTER]=true;
  state.totalPt=0;
  state.totalCorrect=0;
+ state.loginBonus={lastDate:"",streak:0,stamps:[],lastAward:0};
 
  localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
  $("savePill").textContent="端末リセット済み";
