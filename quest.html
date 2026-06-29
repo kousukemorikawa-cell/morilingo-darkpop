@@ -2878,10 +2878,6 @@ body.darkTheme .resultCard{
       </div>
       <div id="loginBonusMessage" class="muted">今日のログインを確認中...</div>
       <div id="loginBonusStamps" class="loginBonusStamps"></div>
-      <label class="nameSetting">
-        <input id="nameHiddenToggle" type="checkbox" onchange="toggleNameHidden(this.checked)">
-        名前をランキング・メニューで非表示にする
-      </label>
     </div>
 
     <div class="menuImageGrid">
@@ -2967,6 +2963,11 @@ body.darkTheme .resultCard{
 
     <h3>表示中の称号</h3>
     <div id="badges" class="badges"></div>
+
+    <label class="nameSetting">
+      <input id="nameHiddenToggle" type="checkbox" onchange="toggleNameHidden(this.checked)">
+      名前をランキング・メニューで非表示にする
+    </label>
 
     <div class="toolbar">
       <button class="btn ghost" onclick="resetAll()">進捗リセット</button>
