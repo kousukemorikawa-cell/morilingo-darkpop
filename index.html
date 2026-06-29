@@ -3657,49 +3657,47 @@ function stageRecoveryQuestions(stageIndex,round){
  const source=remoteQuestions||QUESTION_BANK;
  const r=Math.min(RECOVERY_ROUNDS,Math.max(1,Number(round)||1));
  const cfg=recoveryQuestionConfig(stageIndex);
- const THEME_COUNT=cfg.themeCount;
- const VOCAB_COUNT=cfg.vocabCount;
  const TOTAL_COUNT=cfg.totalCount;
 
- // 1. 推奨：stage列を「単元キー_theme_r1」「単元キー_vocab_r1」形式で分けた問題
- let theme=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme"));
- let vocab=collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"vocab"));
+ // 復興は「1回目:1〜12 / 2回目:13〜24 / 3回目:25〜36」の固定分割。
+ // kind/round列がある場合は従来どおり優先し、ない場合は登録順で12問ずつ切り出す。
+ const dedicated=uniqueQuestionList([
+  ...collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"theme")),
+  ...collectQuestionsByKeys(source,stageRoundKeys(stageIndex,r,"vocab"))
+ ]);
 
- // 2. 1つのstageキー内に kind / round 列がある場合も拾う
- const all=stageAllQuestions(stageIndex);
- if(theme.length<THEME_COUNT || vocab.length<VOCAB_COUNT){
-  const metaTheme=all.filter(q=>{
-   const k=questionKind(q);
-   const qr=questionRound(q);
-   return k==="theme" && (!qr || qr===r);
-  });
-  const metaVocab=all.filter(q=>{
-   const k=questionKind(q);
-   const qr=questionRound(q);
-   return k==="vocab" && (!qr || qr===r);
-  });
-  theme=uniqueQuestionList(theme.concat(metaTheme));
-  vocab=uniqueQuestionList(vocab.concat(metaVocab));
+ const all=uniqueQuestionList(stageAllQuestions(stageIndex));
+ const hasRoundMeta=all.some(q=>questionRound(q)>0);
+
+ if(dedicated.length){
+  return dedicated.slice(0,TOTAL_COUNT);
  }
 
- // 3. 足りない場合は、そのステージの全問題から補充して止まらないようにする
- const used=new Set([...theme,...vocab].map(questionId));
- const rest=all.filter(q=>!used.has(questionId(q)));
- theme=uniqueQuestionList(theme).slice(0,THEME_COUNT);
- vocab=uniqueQuestionList(vocab).slice(0,VOCAB_COUNT);
-
- while(theme.length<THEME_COUNT && rest.length)theme.push(rest.shift());
- while(vocab.length<VOCAB_COUNT && rest.length)vocab.push(rest.shift());
-
- const mixed=[];
- for(let i=0;i<Math.max(THEME_COUNT,VOCAB_COUNT);i++){
-  if(theme[i])mixed.push(theme[i]);
-  if(vocab[i])mixed.push(vocab[i]);
+ if(hasRoundMeta){
+  const roundQuestions=all.filter(q=>{
+   const qr=questionRound(q);
+   return qr===r || !qr;
+  });
+  if(roundQuestions.length){
+   return uniqueQuestionList(roundQuestions).slice(0,TOTAL_COUNT);
+  }
  }
- return mixed.length ? mixed.slice(0,TOTAL_COUNT) : stageQuestionsFallback(stageIndex).slice(0,TOTAL_COUNT);
+
+ const start=(r-1)*TOTAL_COUNT;
+ const fixedRoundQuestions=all.slice(start,start+TOTAL_COUNT);
+ if(fixedRoundQuestions.length){
+  return fixedRoundQuestions;
+ }
+
+ return stageQuestionsFallback(stageIndex).slice(0,TOTAL_COUNT);
 }
+
 function stageQuestQuestions(stageIndex){
- // クエスト・タイムアタックは、復興3回分の36問を候補にする。
+ // クエストは、復興の12問区切りに縛らずステージ登録済みの1〜36問すべてを候補にする。
+ // startQuest側で shuffle(stageQuestQuestions(i)) するため、1〜36問からランダム出題される。
+ const all=uniqueQuestionList(stageAllQuestions(stageIndex));
+ if(all.length)return all;
+
  const qs=[];
  for(let r=1;r<=RECOVERY_ROUNDS;r++)qs.push(...stageRecoveryQuestions(stageIndex,r));
  return uniqueQuestionList(qs);
@@ -5131,6 +5129,17 @@ function loadRemoteQuestions(){
 function submitResult(reason="clear"){
  if(isAdmin())return;
  if(!GAS_URL||!game)return;
+
+ // タイムアタックは、全問クリア時だけランキング登録する。
+ // 中断・メニュー戻り・未クリア秒数はResultsへ送らない。
+ if(game.mode==="timeAttack"){
+  const targetCorrect=recoveryQuestionConfig(game.stageIndex).totalCount;
+  const elapsed=Number(game.elapsedSec||0);
+  if(reason!=="timeAttackClear" || (game.correctCount||0)<targetCorrect || !Number.isFinite(elapsed) || elapsed<=0){
+   return;
+  }
+ }
+
  const p=state.player||{};
  const data=new URLSearchParams({
   action:"result",
@@ -5582,7 +5591,15 @@ function setupWorld(cls,sun,label,image,enemyImage){
  }
 }
 function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
-function quit(){if(game)submitResult("quit");stopTimer();clearTimeout(nextId);game=null;setScoreHud(Number(state.totalPt||0));show("menu");}
+function quit(){
+ // タイムアタック中断はランキング登録しない。
+ if(game && game.mode!=="timeAttack")submitResult("quit");
+ stopTimer();
+ clearTimeout(nextId);
+ game=null;
+ setScoreHud(Number(state.totalPt||0));
+ show("menu");
+}
 
 function gameClearDestination(){
  if(!game)return "challenge";
