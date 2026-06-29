@@ -2826,8 +2826,13 @@ body.darkTheme .resultCard{
  line-height:1.5;
  cursor:pointer;
 }
-.nameSetting input{
+/* チェックボックスにも全体の input{width:100%} が当たっていたため、
+   横幅を自動に戻してラベル文字が縦に潰れないようにする */
+.nameSetting input[type="checkbox"]{
  flex:0 0 auto;
+ width:auto !important;
+ min-width:18px;
+ height:18px;
  margin:0;
  transform:scale(1.25);
 }
