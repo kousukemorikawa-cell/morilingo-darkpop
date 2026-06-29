@@ -2793,10 +2793,16 @@ body.darkTheme .resultCard{
  gap:10px;
  align-items:center;
  font-weight:1000;
+ color:#000;
 }
 .loginBonusStamps{
  margin-top:10px;
 }
+.loginBonusHead span,
+#loginBonusMessage{
+ color:#000;
+}
+
 .loginStreakText{
  width:100%;
  background:linear-gradient(#fff,#fff4c2);
@@ -2832,7 +2838,11 @@ body.darkTheme .resultCard{
  margin:0;
  transform:scale(1.25);
 }
-
+/* ログインボーナスの文字色を黒に統一 */
+.loginBonusCard,
+.loginBonusCard *{
+  color:#000 !important;
+}
 </style>
 </head>
 <body>
