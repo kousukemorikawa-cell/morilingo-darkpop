@@ -5280,6 +5280,171 @@ function loadRemoteQuestions(){
  script.onerror=()=>{$("savePill").textContent="問題読込失敗";delete window[callback];script.remove();};
  document.body.appendChild(script);
 }
+
+/* ==========================================================
+   研究用ログ送信
+   ・SessionLogs：1プレイにつき1行
+   ・QuestionLogs：1問につき1行
+   GAS側では action=sessionLog / action=questionLogs を受け取る
+========================================================== */
+function researchPlayerId(){
+ const p=state.player||{};
+ const cls=String(p.className||"").trim();
+ const num=String(p.number||"").trim();
+ const name=String(p.name||"").trim();
+ if(cls || num)return `${cls}-${num}`.replace(/^-|-$/g,"");
+ return name || "unknown";
+}
+function researchDevice(){
+ const ua=navigator.userAgent||"";
+ if(/iPhone|iPad|iPod/i.test(ua))return "iPhone";
+ if(/Android/i.test(ua))return "Android";
+ if(/Windows/i.test(ua))return "Windows";
+ if(/Macintosh|Mac OS/i.test(ua))return "Mac";
+ return "Other";
+}
+function makeSessionId(prefix){
+ return `${prefix||"session"}_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+}
+function normalizeQuestionForLog(q){
+ const choices=Array.isArray(q?.a)?q.a:[];
+ const correctIndex=Number(q?.c);
+ const answer=choices[correctIndex] ?? q?.answer ?? "";
+ return {
+  questionId:String(q?.id||q?.questionId||q?.qid||questionId(q)||""),
+  word:String(q?.word||q?.q||q?.question||""),
+  answer:String(answer||""),
+  type:String(q?.type||q?.kind||q?.category||q?.questionType||""),
+  choices
+ };
+}
+function currentResearchContext(){
+ if(game){
+  return {
+   obj:game,
+   mode:game.mode||"",
+   stageIndex:game.stageIndex,
+   stage:game.stage||STAGES[game.stageIndex]||{},
+   score:game.score||0,
+   answeredCount:game.sessionAnswered||0,
+   correctCount:game.sessionCorrect||0,
+   miss:game.miss||0,
+   sessionId:game.sessionId||""
+  };
+ }
+ if(quest){
+  return {
+   obj:quest,
+   mode:quest.isOriginal?"originalQuest":"quest",
+   stageIndex:quest.stageIndex,
+   stage:quest.stage||STAGES[quest.stageIndex]||{},
+   score:quest.score||0,
+   answeredCount:quest.sessionAnswered||0,
+   correctCount:quest.sessionCorrect||0,
+   miss:Math.max(0,(quest.playerMaxHp||QUEST_PLAYER_MAX_HP)-(quest.playerHp||0)),
+   sessionId:quest.sessionId||""
+  };
+ }
+ return null;
+}
+function startResearchSession(target,modeOverride){
+ if(!target || isAdmin())return;
+ target.mode=modeOverride || target.mode || target.mode;
+ target.sessionId=makeSessionId(modeOverride||target.mode||"play");
+ target.sessionStartAt=Date.now();
+ target.sessionStartPerf=performance.now();
+ target.sessionAnswered=0;
+ target.sessionCorrect=0;
+ target.questionLogs=[];
+ target.currentQuestionStartAt=performance.now();
+ target.sessionSubmitted=false;
+ target.questionLogsSubmitted=false;
+}
+function markResearchQuestionStart(target){
+ if(!target || isAdmin())return;
+ target.currentQuestionStartAt=performance.now();
+}
+function recordResearchQuestion(target,q,selectedIndex,isCorrect){
+ if(!target || !q || isAdmin())return;
+ const p=state.player||{};
+ const s=target.stage||STAGES[target.stageIndex]||{};
+ const qlog=normalizeQuestionForLog(q);
+ const choices=qlog.choices||[];
+ const selectedAnswer=selectedIndex>=0 ? String(choices[selectedIndex] ?? "") : "TIMEOUT";
+ const responseTime=((performance.now()-(target.currentQuestionStartAt||performance.now()))/1000);
+ target.sessionAnswered=Number(target.sessionAnswered||0)+1;
+ if(isCorrect)target.sessionCorrect=Number(target.sessionCorrect||0)+1;
+ target.questionLogs??=[];
+ target.questionLogs.push({
+  timestamp:new Date().toISOString(),
+  playerId:researchPlayerId(),
+  name:publicPlayerName(),
+  className:p.className||"",
+  number:p.number||"",
+  mode:target.isOriginal && target.mode!=="original" ? "originalQuest" : (target.mode||"quest"),
+  stageId:s.id||"",
+  stageName:s.name||"",
+  questionId:qlog.questionId,
+  word:qlog.word,
+  answer:qlog.answer,
+  type:qlog.type,
+  selectedAnswer,
+  isCorrect:isCorrect ? "TRUE" : "FALSE",
+  responseTime:responseTime.toFixed(2),
+  playTimeSec:Math.floor((Date.now()-(target.sessionStartAt||Date.now()))/1000),
+  sessionId:target.sessionId||"",
+  device:researchDevice()
+ });
+}
+function postResearchSessionLog(reason){
+ const ctx=currentResearchContext();
+ if(!ctx || !GAS_URL || isAdmin() || ctx.obj.sessionSubmitted)return;
+ const p=state.player||{};
+ const playTimeSec=Math.floor((Date.now()-(ctx.obj.sessionStartAt||Date.now()))/1000);
+ const answered=Number(ctx.obj.sessionAnswered||ctx.answeredCount||0);
+ const correct=Number(ctx.obj.sessionCorrect||ctx.correctCount||0);
+ const accuracy=answered ? correct/answered : 0;
+ const data=new URLSearchParams({
+  action:"sessionLog",
+  timestamp:new Date().toISOString(),
+  playerId:researchPlayerId(),
+  name:publicPlayerName(),
+  className:p.className||"",
+  number:p.number||"",
+  mode:ctx.mode||"",
+  stageId:ctx.stage?.id||"",
+  stageName:ctx.stage?.name||"",
+  playTimeSec:String(playTimeSec),
+  answeredCount:String(answered),
+  correctCount:String(correct),
+  accuracy:accuracy.toFixed(4),
+  score:String(ctx.score||0),
+  miss:String(ctx.miss||0),
+  reason:String(reason||""),
+  sessionId:ctx.sessionId||"",
+  device:researchDevice()
+ });
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).catch(()=>{});
+ ctx.obj.sessionSubmitted=true;
+}
+function postResearchQuestionLogs(target){
+ if(!target || !GAS_URL || isAdmin() || target.questionLogsSubmitted)return;
+ const logs=target.questionLogs||[];
+ if(!logs.length)return;
+ const data=new URLSearchParams({
+  action:"questionLogs",
+  logs:JSON.stringify(logs)
+ });
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).catch(()=>{});
+ target.questionLogsSubmitted=true;
+}
+function finishResearchSession(reason){
+ const ctx=currentResearchContext();
+ if(!ctx || isAdmin())return;
+ postResearchSessionLog(reason);
+ postResearchQuestionLogs(ctx.obj);
+}
+
 function submitResult(reason="clear"){
  if(isAdmin())return;
  if(!GAS_URL||!game)return;
@@ -5707,6 +5872,7 @@ function startOriginalQuest(stageIndex,quizName,qs){
  };
 
  questUsedQueue=[];
+ startResearchSession(quest,"originalQuest");
 
  show("questGame");
  document.body.classList.add("gameMode");
@@ -5745,10 +5911,11 @@ function setupWorld(cls,sun,label,image,enemyImage){
    $("dragon").src = "assets/enemies/dragon.png";
  }
 }
-function startGame(){show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
+function startGame(){startResearchSession(game,game?.mode||"challenge");show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
 function quit(){
  // タイムアタック中断はランキング登録しない。
  if(game && game.mode!=="timeAttack")submitResult("quit");
+ if(game)finishResearchSession("quit");
  stopTimer();
  clearTimeout(nextId);
  game=null;
@@ -5888,6 +6055,7 @@ function nextQuestion(){
  const q=game.questions[game.qIndex % game.questions.length];
  game.qIndex++;
  game.current=q;
+ markResearchQuestionStart(game);
  $("question").innerHTML=renderKanbunQuestionText(q.q);
  applyQuestionLayout($("question"),q);
  $("feedback").textContent="";
@@ -5920,6 +6088,7 @@ function answer(i){
  stopTimer();
  markAnswer(i);
  const ok=i===game.current.c;
+ recordResearchQuestion(game,game.current,i,ok);
  if(ok){
   if(game.mode==="timeAttack"){
    game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
@@ -6002,6 +6171,7 @@ function checkClear(){
  canAnswer=false;
 
  if(game.mode==="original"){
+  finishResearchSession("clear");
   state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
   addTodayScore(game.score||0);
   state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
@@ -6013,6 +6183,7 @@ function checkClear(){
  }
 
  if(game.mode==="timeAttack"){
+  finishResearchSession("timeAttackClear");
   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
   game.score=0;
   state.totalCorrect=Number(state.totalCorrect||0)+Number(game.correctCount||0);
@@ -6025,6 +6196,7 @@ function checkClear(){
   return true;
  }
 
+ finishResearchSession("clear");
  addBadge(game.stage.id);
  state.totalPt=Number(state.totalPt||0)+Number(game.score||0);
  addTodayScore(game.score||0);
@@ -6527,6 +6699,7 @@ function startQuest(i){
    timeFrozen:0,missGuard:false,enemyDodgeDebuff:0,pendingEnemyDodgeDebuff:0,extraDrops:0,passive
   };
   questUsedQueue=[];
+  startResearchSession(quest,"quest");
 
   show("questGame");
   document.body.classList.add("gameMode");
@@ -6636,6 +6809,7 @@ function restoreQuestUsedItems(){
 function quitQuest(){
  const shouldRestore=!!quest && quest.phase!=="gameover" && quest.phase!=="finish";
  questStopTimer();
+ if(quest)finishResearchSession("quit");
  if(shouldRestore)restoreQuestUsedItems();
  else questUsedQueue=[];
  const backToOriginal=!!quest?.isOriginal;
@@ -6658,6 +6832,7 @@ function questGetQuestion(){
 }
 function questLoadQuestion(){
  questCanAnswer=true;quest.current=questGetQuestion();
+ markResearchQuestionStart(quest);
  $("questQuestion").innerHTML=renderKanbunQuestionText(quest.current.q);applyQuestionLayout($("questQuestion"),quest.current);$("questFeedback").textContent="";$("questNextBtn").style.display="none";
  const colors=["red","blue","green","yellow"],labels=["A","B","C","D"];
  $("questAnswers").innerHTML=quest.current.a.map((x,i)=>`<button class="btn ans ${colors[i]}" data-label="${labels[i]}" onclick="questAnswer(${i})">${escapeHtml(x)}</button>`).join("");
@@ -6674,6 +6849,7 @@ function questAnswer(i){
  if(!questCanAnswer||!quest||quest.phase==="finish"||quest.phase==="gameover")return;
  questCanAnswer=false;questStopTimer();questMarkAnswer(i);
  const ok=i===quest.current.c;
+ recordResearchQuestion(quest,quest.current,i,ok);
  if(!ok){
   if(quest.missGuard){
    quest.missGuard=false;
@@ -6857,6 +7033,7 @@ function questPlayMagic(){
 async function questFinish(){
  questStopTimer();
  quest.phase="finish";
+ finishResearchSession("clear");
  playBgm("clear");
  $("questEnemy").style.display="none";
  $("questChest").style.display="none";
@@ -6912,6 +7089,7 @@ function backToQuestListFromGameOver(){
 function questGameOver(){
  questStopTimer();
  quest.phase="gameover";
+ finishResearchSession("gameover");
  questUsedQueue=[];
  $("questQuestion").innerHTML=`<div class="resultCard"><div style="font-size:38px;font-weight:1000;">ゲームオーバー</div><div style="margin-top:10px;">HPが0になった……。</div><div style="font-size:60px;margin:12px;">💀</div><div class="resultActions"><button class="btn primary" onclick="retryQuestFromGameOver()">再チャレンジ</button><button class="btn ghost" onclick="backToQuestListFromGameOver()">ステージ一覧へ戻る</button></div></div>`;
  $("questAnswers").innerHTML="";
