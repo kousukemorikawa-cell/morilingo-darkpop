@@ -3366,38 +3366,14 @@ const $=id=>document.getElementById(id);
 const GAS_URL="https://script.google.com/macros/s/AKfycbz_kJFt03fXiryaPGG4g0KELkBttryVyhp_EbFD3Jbum68bYVnyXJVE9QbDYJ4t7Nvs1Q/exec";
 
 // ==========================================================
-// GAS通信ヘルパー：まずfetchで取得し、失敗時だけJSONPにフォールバック
-// GoogleのBOT判定/CAPTCHAでJSONPが止まる問題を避けるため。
+// GAS通信ヘルパー：GET通信は最初からJSONPで取得する
+// GitHub Pages → Google Apps Script のCORSエラー対策。
+// fetch() を使うとPC/学校回線で CORS により止まることがあるため、
+// questions / titles / loadPlayerData / ranking などのGETはJSONPに統一する。
 // ==========================================================
 function gasGet(params, options={}){
  const timeoutMs=options.timeoutMs || 9000;
- const allowJsonpFallback=options.allowJsonpFallback !== false;
- const query=new URLSearchParams({...params, v:String(Date.now())});
- const url=GAS_URL+"?"+query.toString();
-
- const fetchPromise=fetch(url,{
-  method:"GET",
-  cache:"no-store",
-  redirect:"follow"
- }).then(async res=>{
-  const text=await res.text();
-  if(!res.ok)throw new Error("HTTP "+res.status);
-  try{
-   return JSON.parse(text);
-  }catch(err){
-   const m=text.match(/^[^(]+\((.*)\);?\s*$/s);
-   if(m)return JSON.parse(m[1]);
-   throw new Error("GASの返答をJSONとして読めません");
-  }
- });
-
- const timedFetch=new Promise((resolve,reject)=>{
-  const t=setTimeout(()=>reject(new Error("fetch timeout")),timeoutMs);
-  fetchPromise.then(v=>{clearTimeout(t);resolve(v);}).catch(e=>{clearTimeout(t);reject(e);});
- });
-
- if(!allowJsonpFallback)return timedFetch;
- return timedFetch.catch(()=>gasJsonp(params, timeoutMs));
+ return gasJsonp(params, timeoutMs);
 }
 
 function gasJsonp(params, timeoutMs=9000){
