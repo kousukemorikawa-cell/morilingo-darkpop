@@ -5158,51 +5158,59 @@ function showProfile(){
  $("playerNumber").value=state.player.number||"";
  show("profile");
 }
-function gasLoginCheck(name,className,number){
- return new Promise(resolve=>{
-  // GAS_URLが空なら、通信できないので止める
+function gasJsonGet(action, params={}, timeoutMs=8000){
+ return new Promise(async (resolve)=>{
   if(!GAS_URL){
    resolve({ok:false,message:"GAS_URLが未設定です"});
    return;
   }
 
-  const callback="morilingoLoginCallback_"+Date.now();
-  const script=document.createElement("script");
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
 
-  window[callback]=data=>{
+  try{
+   const qs=new URLSearchParams({
+    action,
+    ...params,
+    v:String(Date.now())
+   });
+
+   const res=await fetch(GAS_URL+"?"+qs.toString(),{
+    method:"GET",
+    mode:"cors",
+    cache:"no-store",
+    redirect:"follow",
+    signal:controller.signal
+   });
+
+   const text=await res.text();
+
+   if(/通常と異なるトラフィック|captcha|ロボット/i.test(text)){
+    resolve({ok:false,message:"Googleの確認画面が出ています。CAPTCHAを通してから再読み込みしてください。"});
+    return;
+   }
+
    try{
-    resolve(data||{ok:false,message:"ログイン確認に失敗しました"});
-   }finally{
-    delete window[callback];
-    script.remove();
+    resolve(JSON.parse(text));
+   }catch(err){
+    resolve({ok:false,message:"GASの返答を読み取れませんでした"});
    }
-  };
+  }catch(err){
+   resolve({
+    ok:false,
+    message:"GASへの通信に失敗しました。ページを再読み込みするか、別ブラウザ・別回線で試してください。"
+   });
+  }finally{
+   clearTimeout(timer);
+  }
+ });
+}
 
-  const params=new URLSearchParams({
-   action:"login",
-   name:name||"",
-   className:className||"",
-   number:number||"",
-   callback,
-   v:String(Date.now())
-  });
-
-  script.src=GAS_URL+"?"+params.toString();
-  script.onerror=()=>{
-   delete window[callback];
-   script.remove();
-   resolve({ok:false,message:"ログイン確認に失敗しました。GASを再デプロイしてください。"});
-  };
-
-  document.body.appendChild(script);
-
-  setTimeout(()=>{
-   if(window[callback]){
-    delete window[callback];
-    script.remove();
-    resolve({ok:false,message:"ログイン確認がタイムアウトしました"});
-   }
-  },8000);
+async function gasLoginCheck(name,className,number){
+ return await gasJsonGet("login",{
+  name:name||"",
+  className:className||"",
+  number:number||""
  });
 }
 
