@@ -3365,6 +3365,40 @@ const $=id=>document.getElementById(id);
 // 例：https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
 const GAS_URL="https://script.google.com/macros/s/AKfycbz8GtMeWQvzov2Uh_-PYuffbipTggAZVttfwf7EUJvp2yTIUwro3lRo8dtwet2r-VqJiw/exec";
 
+// ==========================================================
+// GAS通信ヘルパー：GET通信は最初からJSONPで取得する
+// GitHub Pages → Google Apps Script のCORSエラー対策。
+// fetch() を使うとPC/学校回線で CORS により止まることがあるため、
+// questions / titles / loadPlayerData / ranking などのGETはJSONPに統一する。
+// ==========================================================
+function gasGet(params, options={}){
+ const timeoutMs=options.timeoutMs || 9000;
+ return gasJsonp(params, timeoutMs);
+}
+
+function gasJsonp(params, timeoutMs=9000){
+ return new Promise((resolve,reject)=>{
+  if(!GAS_URL){reject(new Error("GAS_URLが未設定です"));return;}
+  const callback="morilingoCallback_"+Date.now()+"_"+Math.floor(Math.random()*100000);
+  const script=document.createElement("script");
+  let finished=false;
+  function finish(ok,value){
+   if(finished)return;
+   finished=true;
+   delete window[callback];
+   if(script.parentNode)script.remove();
+   ok?resolve(value):reject(value);
+  }
+  window[callback]=data=>finish(true,data);
+  const query=new URLSearchParams({...params, callback, v:String(Date.now())});
+  script.src=GAS_URL+"?"+query.toString();
+  script.onerror=()=>finish(false,new Error("JSONP読み込み失敗"));
+  document.body.appendChild(script);
+  setTimeout(()=>finish(false,new Error("JSONP timeout")),timeoutMs);
+ });
+}
+
+
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
@@ -3590,35 +3624,14 @@ a = 選択肢4つ
 c = 正解番号。0が1つ目、1が2つ目、2が3つ目、3が4つ目
 ============================================================
 */
-const QUESTION_BANK={
- basic:[
-  {q:"『書く』の未然形は？",a:["書か","書き","書く","書け"],c:0},
-  {q:"『書く』の連用形は？",a:["書か","書き","書く","書け"],c:1},
-  {q:"『読む』の已然形は？",a:["読ま","読み","読む","読め"],c:3},
-  {q:"『ず』に接続する活用形は？",a:["未然形","連用形","終止形","已然形"],c:0},
-  {q:"『けり』に接続する活用形は？",a:["未然形","連用形","連体形","命令形"],c:1},
-  {q:"『む』に接続する活用形は？",a:["未然形","連用形","終止形","已然形"],c:0},
-  {q:"『念ず』の活用の種類は？",a:["四段活用","上一段活用","サ行変格活用","ナ行変格活用"],c:2},
-  {q:"『来』の活用の種類は？",a:["カ行変格活用","サ行変格活用","ラ行変格活用","四段活用"],c:0},
-  {q:"係助詞『ぞ』の結びは？",a:["連体形","已然形","命令形","未然形"],c:0},
-  {q:"係助詞『こそ』の結びは？",a:["連体形","已然形","終止形","未然形"],c:1}
- ],
- level2:[
-  {q:"『走る』の活用の種類は？",a:["四段","下二段","上一段","サ変"],c:0},
-  {q:"『見る』の活用の種類は？",a:["上一段","下一段","四段","カ変"],c:0}
- ],
- level3:[
-  {q:"『あり』の活用の種類は？",a:["四段","ラ変","ナ変","サ変"],c:1},
-  {q:"ラ変型活用の終止形は？",a:["る","り","れ","ら"],c:1}
- ],
- level4:[
-  {q:"『死ぬ』の活用の種類は？",a:["四段","ナ変","ラ変","下二段"],c:1},
-  {q:"『す』の活用の種類は？",a:["サ変","カ変","四段","上一段"],c:0}
- ],
- level5:[
-  {q:"『べし』の接続は？",a:["未然形","連用形","終止形","已然形"],c:2},
-  {q:"『らむ』の接続は？",a:["未然形","連用形","終止形","命令形"],c:2}
- ]
+const QUESTION_BANK = {
+  // HTML内の固定問題が各ステージに出続けるのを防ぐため、予備問題は空にする。
+  // 問題はGAS / Google Spreadsheet の Questions から取得する。
+  basic: [],
+  level2: [],
+  level3: [],
+  level4: [],
+  level5: []
 };
 
 const RECOVERY_ROUNDS=3;
@@ -3787,12 +3800,9 @@ function currentRecoveryRound(stageId){
  return (clears%RECOVERY_ROUNDS)+1;
 }
 function stageQuestionsFallback(stageIndex){
- let qs=[...QUESTION_BANK.basic];
- if(stageIndex>=1)qs=qs.concat(QUESTION_BANK.level2);
- if(stageIndex>=2)qs=qs.concat(QUESTION_BANK.level3);
- if(stageIndex>=3)qs=qs.concat(QUESTION_BANK.level4);
- if(stageIndex>=4)qs=qs.concat(QUESTION_BANK.level5);
- return qs;
+ // HTML内の固定問題は使わない。
+ // GAS / Spreadsheet 取得に失敗した場合は、誤った共通問題を出さず0問として扱う。
+ return [];
 }
 
 const FRUITS={apple:"🍎",banana:"🍌",gem:"🔴",star:"⭐"};
@@ -3849,6 +3859,7 @@ state.totalCorrect??=Number(state.totalCorrect||0);
 let playerDataLoaded=false;
 let playerDataSaveTimer=null;
 let playerDataSaving=false;
+let playerDataSaveQueued=false;
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -4095,21 +4106,13 @@ function loadDevNews(){
  devNewsCache=DEV_NEWS_MASTER.slice();
  renderDevNews();
  if(!GAS_URL)return;
- const callback="morilingoNewsCallback_"+Date.now();
- window[callback]=data=>{
-  try{
+ gasGet({action:"news"})
+  .then(data=>{
    const remote=normalizeNewsItems(data?.news||data?.items||data?.messages);
    if(remote.length)devNewsCache=remote;
    renderDevNews();
-  }finally{
-   delete window[callback];
-   script.remove();
-  }
- };
- const script=document.createElement("script");
- script.src=GAS_URL+`?action=news&callback=${callback}&v=${Date.now()}`;
- script.onerror=()=>{delete window[callback];script.remove();renderDevNews();};
- document.body.appendChild(script);
+  })
+  .catch(()=>renderDevNews());
 }
 function openDevNews(){
  if(!devNewsCache.length)devNewsCache=DEV_NEWS_MASTER.slice();
@@ -4275,26 +4278,14 @@ function fetchAnswerStage(index,keys,pos=0){
   return;
  }
  const stageKey=keys[pos];
- const callback="morilingoAnswersCallback_"+Date.now()+"_"+pos;
- window[callback]=data=>{
-  try{
-   const answers=normalizeAnswerItems(data?.answers||[]);
-   if(answers.length){
-    renderAnswerItems(index,answers,"スプレッドシート");
-   }else{
-    fetchAnswerStage(index,keys,pos+1);
-   }
-  }finally{
-   delete window[callback];
-   script.remove();
-  }
- };
- const script=document.createElement("script");
- const params=new URLSearchParams({action:"answers",stage:stageKey,callback,v:String(Date.now())});
- script.src=GAS_URL+"?"+params.toString();
- script.onerror=()=>{delete window[callback];script.remove();fetchAnswerStage(index,keys,pos+1);};
- document.body.appendChild(script);
  if(box)box.innerHTML=`<div class="rankingEmpty">答え一覧を読み込み中...（${escapeHtml(stageKey)}）</div>`;
+ gasGet({action:"answers",stage:stageKey})
+  .then(data=>{
+   const answers=normalizeAnswerItems(data?.answers||[]);
+   if(answers.length)renderAnswerItems(index,answers,"スプレッドシート");
+   else fetchAnswerStage(index,keys,pos+1);
+  })
+  .catch(()=>fetchAnswerStage(index,keys,pos+1));
 }
 function openAnswerList(index){
  selectedStageIndex=index;
@@ -4851,9 +4842,8 @@ function closeTitleNotify(){
 function loadRemoteTitles(){
  if(!GAS_URL||!state.player?.name)return;
  const p=state.player;
- const callback="morilingoTitlesCallback_"+Date.now();
- window[callback]=data=>{
-  try{
+ gasGet({action:"titles",name:p.name||"",className:p.className||"",number:p.number||""})
+  .then(data=>{
    if(data&&data.ok!==false){
     state.remoteTitles=(data.titles||[]).map(t=>({
      id:t.titleId||t.id,
@@ -4873,13 +4863,8 @@ function loadRemoteTitles(){
     renderMenuTopTitles();
     checkNewTitleNotification();
    }
-  }finally{delete window[callback];script.remove();}
- };
- const script=document.createElement("script");
- const params=new URLSearchParams({action:"titles",name:p.name||"",className:p.className||"",number:p.number||"",callback,v:String(Date.now())});
- script.src=GAS_URL+"?"+params.toString();
- script.onerror=()=>{delete window[callback];script.remove();};
- document.body.appendChild(script);
+  })
+  .catch(()=>{});
 }
 
 
@@ -4963,6 +4948,76 @@ function calcUnlockedFromCloudData(saveData){
  });
  return Math.min(Math.max(1,max),STAGES.length);
 }
+function maxSaveNumber(a,b,def=0){
+ const na=Number(a);
+ const nb=Number(b);
+ const va=Number.isFinite(na)?na:def;
+ const vb=Number.isFinite(nb)?nb:def;
+ return Math.max(va,vb);
+}
+function mergeSaveNumberObject(localObj={},remoteObj={}){
+ const result={...(remoteObj||{})};
+ Object.keys(localObj||{}).forEach(key=>{
+  result[key]=maxSaveNumber(localObj[key],result[key],0);
+ });
+ return result;
+}
+function mergeSaveBooleanObject(localObj={},remoteObj={}){
+ return {...(remoteObj||{}),...(localObj||{})};
+}
+function mergeSaveArrayUnique(localArr=[],remoteArr=[]){
+ return [...new Set([
+  ...(Array.isArray(remoteArr)?remoteArr:[]),
+  ...(Array.isArray(localArr)?localArr:[])
+ ])];
+}
+function mergeTimeAttackBests(localObj={},remoteObj={}){
+ const result={...(remoteObj||{})};
+ Object.keys(localObj||{}).forEach(key=>{
+  const local=localObj[key];
+  const remote=result[key];
+  if(!remote){
+   result[key]=local;
+   return;
+  }
+  const lt=Number(local?.time ?? local);
+  const rt=Number(remote?.time ?? remote);
+  if(Number.isFinite(lt) && (!Number.isFinite(rt) || lt<rt)){
+   result[key]=local;
+  }
+ });
+ return result;
+}
+function mergeSaveDataClient(localData={},remoteData={}){
+ const merged={...(remoteData||{}),...(localData||{})};
+
+ merged.totalPt=maxSaveNumber(localData.totalPt ?? localData.pt ?? localData.totalScore,remoteData.totalPt ?? remoteData.pt ?? remoteData.totalScore,0);
+ merged.pt=merged.totalPt;
+ merged.totalScore=merged.totalPt;
+ merged.totalCorrect=maxSaveNumber(localData.totalCorrect,remoteData.totalCorrect,0);
+ merged.unlocked=maxSaveNumber(localData.unlocked,calcUnlockedFromCloudData(remoteData),1);
+
+ merged.badges=mergeSaveArrayUnique(localData.badges,remoteData.badges);
+ merged.selectedMenuTitles=mergeSaveArrayUnique(localData.selectedMenuTitles,remoteData.selectedMenuTitles);
+ merged.selectedRankingTitles=mergeSaveArrayUnique(localData.selectedRankingTitles,remoteData.selectedRankingTitles);
+
+ merged.items=mergeSaveNumberObject(localData.items,remoteData.items);
+ merged.challengeClears=mergeSaveNumberObject(localData.challengeClears,remoteData.challengeClears);
+ merged.questClears=mergeSaveNumberObject(localData.questClears,remoteData.questClears);
+
+ merged.questUnlocked=mergeSaveBooleanObject(localData.questUnlocked,remoteData.questUnlocked);
+ merged.skins=mergeSaveBooleanObject(localData.skins,remoteData.skins);
+ merged.timeAttackBests=mergeTimeAttackBests(localData.timeAttackBests,remoteData.timeAttackBests);
+
+ // オリジナル問題・画面設定は端末側の最新操作を優先する。
+ merged.original=Array.isArray(localData.original)&&localData.original.length ? localData.original : (remoteData.original||[]);
+ merged.originalDraft=Array.isArray(localData.originalDraft)&&localData.originalDraft.length ? localData.originalDraft : (remoteData.originalDraft||[]);
+ merged.originalQuiz=localData.originalQuiz || remoteData.originalQuiz || {};
+ merged.originalQuizzes=Array.isArray(localData.originalQuizzes)&&localData.originalQuizzes.length ? localData.originalQuizzes : (remoteData.originalQuizzes||[]);
+ merged.currentOriginalQuizId=localData.currentOriginalQuizId || remoteData.currentOriginalQuizId || "";
+
+ return merged;
+}
 function applySaveData(saveData){
  if(!saveData || typeof saveData!=="object")return;
 
@@ -5021,84 +5076,54 @@ function loadPlayerData(){
  playerDataLoaded=false;
  $("savePill").textContent="クラウド読込中...";
 
- return new Promise(resolve=>{
-  const callback="morilingoPlayerDataCallback_"+Date.now();
-  const script=document.createElement("script");
-  let finished=false;
-
-  function finish(ok){
-   if(finished)return;
-   finished=true;
-   delete window[callback];
-   if(script.parentNode)script.remove();
-   resolve(ok);
-  }
-
-  window[callback]=data=>{
-   try{
-    console.log("PlayerData load response",data);
-    if(data && data.ok){
-     if(data.exists===true && data.saveData){
-      applySaveData(data.saveData);
-      playerDataLoaded=true;
-      $("savePill").textContent="クラウド読込済み";
-      finish(true);
-      return;
-     }
-
-     // サーバーにまだ行がない時だけ、端末内に進行があれば初回アップロードする。
-     if(data.exists===false){
-      playerDataLoaded=true;
-      if(hasLocalProgress()){
-       savePlayerDataNow();
-       $("savePill").textContent="端末データを初回同期中";
-      }else{
-       $("savePill").textContent="新規セーブ";
-      }
-      finish(true);
-      return;
-     }
-    }
-    $("savePill").textContent="クラウド読込失敗";
-    finish(false);
-   }catch(err){
-    console.warn("PlayerData反映エラー",err);
-    $("savePill").textContent="クラウド反映失敗";
-    finish(false);
-   }
-  };
-
-  const params=new URLSearchParams({
+ return gasGet({
    action:"loadPlayerData",
    name:key.name,
    className:key.className,
-   number:key.number,
-   callback,
-   v:String(Date.now())
-  });
-
-  script.src=GAS_URL+"?"+params.toString();
-  script.onerror=()=>{
-   $("savePill").textContent="クラウド読込失敗";
-   finish(false);
-  };
-
-  document.body.appendChild(script);
-
-  setTimeout(()=>{
-   if(!finished){
-    $("savePill").textContent="クラウド読込タイムアウト";
-    finish(false);
+   number:key.number
+  },{timeoutMs:9000})
+  .then(data=>{
+   console.log("PlayerData load response",data);
+   if(data && data.ok){
+    if(data.exists===true && data.saveData){
+     applySaveData(mergeSaveDataClient(makeSaveData(),data.saveData));
+     playerDataLoaded=true;
+     $("savePill").textContent="クラウド読込済み";
+     return true;
+    }
+    if(data.exists===false){
+     playerDataLoaded=true;
+     if(hasLocalProgress()){
+      savePlayerDataNow();
+      $("savePill").textContent="端末データを初回同期中";
+     }else{
+      $("savePill").textContent="新規セーブ";
+     }
+     return true;
+    }
    }
-  },9000);
- });
+   $("savePill").textContent="クラウド読込失敗";
+   return false;
+  })
+  .catch(err=>{
+   console.warn("PlayerData読込エラー",err);
+   $("savePill").textContent="クラウド読込失敗";
+   return false;
+  });
 }
-function savePlayerDataNow(){
+function savePlayerDataNow(force=false){
  const key=playerKey();
- if(!GAS_URL || !key.name || !playerDataLoaded)return;
- if(playerDataSaving)return;
+ if(!GAS_URL || !key.name)return;
+ if(!force && !playerDataLoaded)return;
+
+ if(playerDataSaving && !force){
+  playerDataSaveQueued=true;
+  return;
+ }
 
  playerDataSaving=true;
+ playerDataSaveQueued=false;
+
  const payload=new URLSearchParams({
   action:"savePlayerData",
   name:key.name,
@@ -5107,11 +5132,35 @@ function savePlayerDataNow(){
   saveData:JSON.stringify(makeSaveData())
  });
 
- fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload})
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload,keepalive:true})
   .then(()=>{$("savePill").textContent="クラウド保存済み";})
   .catch(()=>{$("savePill").textContent="クラウド保存失敗";})
-  .finally(()=>{playerDataSaving=false;});
+  .finally(()=>{
+   playerDataSaving=false;
+   if(playerDataSaveQueued){
+    playerDataSaveQueued=false;
+    savePlayerDataNow();
+   }
+  });
 }
+function flushPlayerDataOnUnload(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ clearTimeout(playerDataSaveTimer);
+ try{
+  const payload=new URLSearchParams({
+   action:"savePlayerData",
+   name:key.name,
+   className:key.className,
+   number:key.number,
+   saveData:JSON.stringify(makeSaveData())
+  });
+  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload,keepalive:true});
+ }catch(e){
+  console.warn("終了時クラウド保存に失敗",e);
+ }
+}
+window.addEventListener("pagehide",flushPlayerDataOnUnload);
 function schedulePlayerDataSave(){
  if(!playerDataLoaded)return;
  clearTimeout(playerDataSaveTimer);
@@ -5159,51 +5208,20 @@ function showProfile(){
  show("profile");
 }
 function gasLoginCheck(name,className,number){
- return new Promise(resolve=>{
-  // GAS_URLが空なら、通信できないので止める
-  if(!GAS_URL){
-   resolve({ok:false,message:"GAS_URLが未設定です"});
-   return;
-  }
-
-  const callback="morilingoLoginCallback_"+Date.now();
-  const script=document.createElement("script");
-
-  window[callback]=data=>{
-   try{
-    resolve(data||{ok:false,message:"ログイン確認に失敗しました"});
-   }finally{
-    delete window[callback];
-    script.remove();
-   }
-  };
-
-  const params=new URLSearchParams({
+ if(!GAS_URL){
+  return Promise.resolve({ok:false,message:"GAS_URLが未設定です"});
+ }
+ return gasGet({
    action:"login",
    name:name||"",
    className:className||"",
-   number:number||"",
-   callback,
-   v:String(Date.now())
+   number:number||""
+  },{timeoutMs:9000})
+  .then(data=>data||{ok:false,message:"ログイン確認に失敗しました"})
+  .catch(err=>{
+   console.warn("login check error",err);
+   return {ok:false,message:"ログイン確認に失敗しました。時間をおいて再読み込みしてください。"};
   });
-
-  script.src=GAS_URL+"?"+params.toString();
-  script.onerror=()=>{
-   delete window[callback];
-   script.remove();
-   resolve({ok:false,message:"ログイン確認に失敗しました。GASを再デプロイしてください。"});
-  };
-
-  document.body.appendChild(script);
-
-  setTimeout(()=>{
-   if(window[callback]){
-    delete window[callback];
-    script.remove();
-    resolve({ok:false,message:"ログイン確認がタイムアウトしました"});
-   }
-  },8000);
- });
 }
 
 async function saveProfileAndMenu(){
@@ -5269,16 +5287,20 @@ function updatePlayerDisplay(){
 }
 function loadRemoteQuestions(){
  if(!GAS_URL)return;
- const callback="morilingoQuestionsCallback_"+Date.now();
- window[callback]=data=>{
-  try{
-   if(data && data.questions){remoteQuestions=data.questions;$("savePill").textContent="問題読込済み";}
-  }finally{delete window[callback];script.remove();}
- };
- const script=document.createElement("script");
- script.src=GAS_URL+`?action=questions&callback=${callback}&v=${Date.now()}`;
- script.onerror=()=>{$("savePill").textContent="問題読込失敗";delete window[callback];script.remove();};
- document.body.appendChild(script);
+ $("savePill").textContent="問題読込中...";
+ gasGet({action:"questions"},{timeoutMs:9000})
+  .then(data=>{
+   if(data && data.questions){
+    remoteQuestions=data.questions;
+    $("savePill").textContent="問題読込済み";
+   }else{
+    $("savePill").textContent="問題データなし";
+   }
+  })
+  .catch(err=>{
+   console.warn("questions load error",err);
+   $("savePill").textContent="問題読込失敗";
+  });
 }
 
 /* ==========================================================
@@ -5473,9 +5495,10 @@ function submitResult(reason="clear"){
   correctCount:String(game.correctCount||0),
   answeredCount:String(Math.max(0,(game.qIndex||1)-1)),
   miss:String(game.miss||0),
-  reason
+  reason,
+  saveData:JSON.stringify(makeSaveData())
  });
- fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data,keepalive:true}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
 }
 
 function loadRanking(period=currentRankingPeriod){
@@ -5499,28 +5522,13 @@ function loadRanking(period=currentRankingPeriod){
  if(!GAS_URL){$("rankingList").textContent="GAS_URLが未設定です";return;}
  $("rankingList").className="rankingEmpty";
  $("rankingList").textContent="ランキング読み込み中...";
- const callback="morilingoRankingCallback_"+Date.now();
- window[callback]=data=>{
-  try{renderRanking(data||{});}
-  finally{delete window[callback];script.remove();}
- };
- const script=document.createElement("script");
- const params=new URLSearchParams({
-  action:"ranking",
-  period:currentRankingPeriod,
-  // ここで name / number / className を送ると、GAS側の実装によっては
-  // 「自分だけ」または「自分のクラスだけ」に絞り込まれることがある。
-  // ランキング表は全体を取得し、画面側で自分の行だけ強調する。
-  callback,
-  v:String(Date.now())
- });
- script.src=GAS_URL+"?"+params.toString();
- script.onerror=()=>{
-  $("rankingList").className="rankingEmpty";
-  $("rankingList").textContent="ランキング読込失敗。GASを保存→新しいバージョンで再デプロイしてください。";
-  delete window[callback];script.remove();
- };
- document.body.appendChild(script);
+ gasGet({action:"ranking",period:currentRankingPeriod},{timeoutMs:9000})
+  .then(data=>renderRanking(data||{}))
+  .catch(err=>{
+   console.warn("ranking load error",err);
+   $("rankingList").className="rankingEmpty";
+   $("rankingList").textContent="ランキング読込失敗。時間をおいて再読み込みしてください。";
+  });
 }
 function renderRanking(data){
  const p=state.player||{};
@@ -5615,35 +5623,20 @@ function loadTimeAttackChampions(){
   if($("stageMenu")?.classList.contains("active"))openStageMenu(selectedStageIndex||0);
  };
  STAGES.forEach((s,i)=>{
-  const callback=`morilingoTimeAttackChampion_${i}_${Date.now()}`;
-  const script=document.createElement("script");
-  window[callback]=data=>{
-   try{
-    const list=Array.isArray(data?.ranking)?data.ranking.filter(item=>String(item.name||"").trim()!=="Kosuke"):[];
-    if(list[0])results[s.id]=list[0];
-   }finally{
-    delete window[callback];
-    script.remove();
-    finish();
-   }
-  };
-  const params=new URLSearchParams({
+  gasGet({
    action:"ranking",
    period:"timeAttack",
    mode:"timeAttack",
    stageId:s.id,
    stageName:s.name,
-   limit:"1",
-   callback,
-   v:String(Date.now())
-  });
-  script.src=GAS_URL+"?"+params.toString();
-  script.onerror=()=>{
-   delete window[callback];
-   script.remove();
-   finish();
-  };
-  document.body.appendChild(script);
+   limit:"1"
+  },{timeoutMs:9000})
+   .then(data=>{
+    const list=Array.isArray(data?.ranking)?data.ranking.filter(item=>String(item.name||"").trim()!=="Kosuke"):[];
+    if(list[0])results[s.id]=list[0];
+   })
+   .catch(()=>{})
+   .finally(finish);
  });
 }
 
@@ -5776,12 +5769,22 @@ function openQuestFromStageMenu(i){
  startQuest(i);
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
+function cloneQuestionForPlay(q){
+ if(!q || typeof q!=="object")return q;
+ return {...q,a:Array.isArray(q.a)?[...q.a]:q.a};
+}
+function cloneQuestionsForPlay(list){
+ return (Array.isArray(list)?list:[]).map(cloneQuestionForPlay);
+}
+function questionsForStagePlay(stageIndex,round){
+ return cloneQuestionsForPlay(stageRecoveryQuestions(stageIndex,round));
+}
 
 function startChallenge(i){
  unlockBgm();
  const s=STAGES[i];
  const round=currentRecoveryRound(s.id);
- game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageRecoveryQuestions(i,round))};
+ game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(questionsForStagePlay(i,round))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=`${s.name} 復興${round}`;
  if($("timeLabel"))$("timeLabel").textContent="残り時間";
@@ -6046,8 +6049,10 @@ function hasKanbunReturnMarks(text){
 function applyQuestionLayout(el,q){
  if(!el)return;
  const layout=String((q&&q.layout)||"normal").trim().toLowerCase();
- const text=String((q&&q.q)||"");
- el.classList.toggle("kanbunVertical",layout==="vertical" || hasKanbunReturnMarks(text));
+
+ // 自動判定で通常問題が縦書き化する事故を防ぐ。
+ // 縦書きにしたい問題だけ、スプレッドシート側で layout=vertical を指定する。
+ el.classList.toggle("kanbunVertical",layout==="vertical");
 }
 function nextQuestion(){
  stopTimer();clearTimeout(nextId);canAnswer=true;
@@ -6207,6 +6212,7 @@ function checkClear(){
  if(state.challengeClears[game.stage.id]>=3)state.questUnlocked[game.stage.id]=true;
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
  save();
+ savePlayerDataNow(true);
  submitResult("clear");
  const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
  const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
