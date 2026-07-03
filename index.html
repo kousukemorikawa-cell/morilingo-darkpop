@@ -5111,11 +5111,12 @@ function loadPlayerData(){
    return false;
   });
 }
-function savePlayerDataNow(){
+function savePlayerDataNow(force=false){
  const key=playerKey();
- if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ if(!GAS_URL || !key.name)return;
+ if(!force && !playerDataLoaded)return;
 
- if(playerDataSaving){
+ if(playerDataSaving && !force){
   playerDataSaveQueued=true;
   return;
  }
@@ -5131,7 +5132,7 @@ function savePlayerDataNow(){
   saveData:JSON.stringify(makeSaveData())
  });
 
- fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload})
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload,keepalive:true})
   .then(()=>{$("savePill").textContent="クラウド保存済み";})
   .catch(()=>{$("savePill").textContent="クラウド保存失敗";})
   .finally(()=>{
@@ -5497,7 +5498,7 @@ function submitResult(reason="clear"){
   reason,
   saveData:JSON.stringify(makeSaveData())
  });
- fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
+ fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data,keepalive:true}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
 }
 
 function loadRanking(period=currentRankingPeriod){
@@ -6211,6 +6212,7 @@ function checkClear(){
  if(state.challengeClears[game.stage.id]>=3)state.questUnlocked[game.stage.id]=true;
  if(state.unlocked<game.stageIndex+2 && game.stageIndex<STAGES.length-1)state.unlocked=game.stageIndex+2;
  save();
+ savePlayerDataNow(true);
  submitResult("clear");
  const questMsg=state.challengeClears[game.stage.id]>=3 ? " クエスト解放！" : "";
  const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
