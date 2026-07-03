@@ -3883,6 +3883,7 @@ state.totalCorrect??=Number(state.totalCorrect||0);
 let playerDataLoaded=false;
 let playerDataSaveTimer=null;
 let playerDataSaving=false;
+let playerDataSaveQueued=false;
 let remoteQuestions=null;
 let game=null;
 let timerId=null;
@@ -4971,6 +4972,76 @@ function calcUnlockedFromCloudData(saveData){
  });
  return Math.min(Math.max(1,max),STAGES.length);
 }
+function maxSaveNumber(a,b,def=0){
+ const na=Number(a);
+ const nb=Number(b);
+ const va=Number.isFinite(na)?na:def;
+ const vb=Number.isFinite(nb)?nb:def;
+ return Math.max(va,vb);
+}
+function mergeSaveNumberObject(localObj={},remoteObj={}){
+ const result={...(remoteObj||{})};
+ Object.keys(localObj||{}).forEach(key=>{
+  result[key]=maxSaveNumber(localObj[key],result[key],0);
+ });
+ return result;
+}
+function mergeSaveBooleanObject(localObj={},remoteObj={}){
+ return {...(remoteObj||{}),...(localObj||{})};
+}
+function mergeSaveArrayUnique(localArr=[],remoteArr=[]){
+ return [...new Set([
+  ...(Array.isArray(remoteArr)?remoteArr:[]),
+  ...(Array.isArray(localArr)?localArr:[])
+ ])];
+}
+function mergeTimeAttackBests(localObj={},remoteObj={}){
+ const result={...(remoteObj||{})};
+ Object.keys(localObj||{}).forEach(key=>{
+  const local=localObj[key];
+  const remote=result[key];
+  if(!remote){
+   result[key]=local;
+   return;
+  }
+  const lt=Number(local?.time ?? local);
+  const rt=Number(remote?.time ?? remote);
+  if(Number.isFinite(lt) && (!Number.isFinite(rt) || lt<rt)){
+   result[key]=local;
+  }
+ });
+ return result;
+}
+function mergeSaveDataClient(localData={},remoteData={}){
+ const merged={...(remoteData||{}),...(localData||{})};
+
+ merged.totalPt=maxSaveNumber(localData.totalPt ?? localData.pt ?? localData.totalScore,remoteData.totalPt ?? remoteData.pt ?? remoteData.totalScore,0);
+ merged.pt=merged.totalPt;
+ merged.totalScore=merged.totalPt;
+ merged.totalCorrect=maxSaveNumber(localData.totalCorrect,remoteData.totalCorrect,0);
+ merged.unlocked=maxSaveNumber(localData.unlocked,calcUnlockedFromCloudData(remoteData),1);
+
+ merged.badges=mergeSaveArrayUnique(localData.badges,remoteData.badges);
+ merged.selectedMenuTitles=mergeSaveArrayUnique(localData.selectedMenuTitles,remoteData.selectedMenuTitles);
+ merged.selectedRankingTitles=mergeSaveArrayUnique(localData.selectedRankingTitles,remoteData.selectedRankingTitles);
+
+ merged.items=mergeSaveNumberObject(localData.items,remoteData.items);
+ merged.challengeClears=mergeSaveNumberObject(localData.challengeClears,remoteData.challengeClears);
+ merged.questClears=mergeSaveNumberObject(localData.questClears,remoteData.questClears);
+
+ merged.questUnlocked=mergeSaveBooleanObject(localData.questUnlocked,remoteData.questUnlocked);
+ merged.skins=mergeSaveBooleanObject(localData.skins,remoteData.skins);
+ merged.timeAttackBests=mergeTimeAttackBests(localData.timeAttackBests,remoteData.timeAttackBests);
+
+ // オリジナル問題・画面設定は端末側の最新操作を優先する。
+ merged.original=Array.isArray(localData.original)&&localData.original.length ? localData.original : (remoteData.original||[]);
+ merged.originalDraft=Array.isArray(localData.originalDraft)&&localData.originalDraft.length ? localData.originalDraft : (remoteData.originalDraft||[]);
+ merged.originalQuiz=localData.originalQuiz || remoteData.originalQuiz || {};
+ merged.originalQuizzes=Array.isArray(localData.originalQuizzes)&&localData.originalQuizzes.length ? localData.originalQuizzes : (remoteData.originalQuizzes||[]);
+ merged.currentOriginalQuizId=localData.currentOriginalQuizId || remoteData.currentOriginalQuizId || "";
+
+ return merged;
+}
 function applySaveData(saveData){
  if(!saveData || typeof saveData!=="object")return;
 
@@ -5039,7 +5110,7 @@ function loadPlayerData(){
    console.log("PlayerData load response",data);
    if(data && data.ok){
     if(data.exists===true && data.saveData){
-     applySaveData(data.saveData);
+     applySaveData(mergeSaveDataClient(makeSaveData(),data.saveData));
      playerDataLoaded=true;
      $("savePill").textContent="クラウド読込済み";
      return true;
@@ -5067,9 +5138,15 @@ function loadPlayerData(){
 function savePlayerDataNow(){
  const key=playerKey();
  if(!GAS_URL || !key.name || !playerDataLoaded)return;
- if(playerDataSaving)return;
+
+ if(playerDataSaving){
+  playerDataSaveQueued=true;
+  return;
+ }
 
  playerDataSaving=true;
+ playerDataSaveQueued=false;
+
  const payload=new URLSearchParams({
   action:"savePlayerData",
   name:key.name,
@@ -5081,8 +5158,32 @@ function savePlayerDataNow(){
  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload})
   .then(()=>{$("savePill").textContent="クラウド保存済み";})
   .catch(()=>{$("savePill").textContent="クラウド保存失敗";})
-  .finally(()=>{playerDataSaving=false;});
+  .finally(()=>{
+   playerDataSaving=false;
+   if(playerDataSaveQueued){
+    playerDataSaveQueued=false;
+    savePlayerDataNow();
+   }
+  });
 }
+function flushPlayerDataOnUnload(){
+ const key=playerKey();
+ if(!GAS_URL || !key.name || !playerDataLoaded)return;
+ clearTimeout(playerDataSaveTimer);
+ try{
+  const payload=new URLSearchParams({
+   action:"savePlayerData",
+   name:key.name,
+   className:key.className,
+   number:key.number,
+   saveData:JSON.stringify(makeSaveData())
+  });
+  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:payload,keepalive:true});
+ }catch(e){
+  console.warn("終了時クラウド保存に失敗",e);
+ }
+}
+window.addEventListener("pagehide",flushPlayerDataOnUnload);
 function schedulePlayerDataSave(){
  if(!playerDataLoaded)return;
  clearTimeout(playerDataSaveTimer);
@@ -5417,7 +5518,8 @@ function submitResult(reason="clear"){
   correctCount:String(game.correctCount||0),
   answeredCount:String(Math.max(0,(game.qIndex||1)-1)),
   miss:String(game.miss||0),
-  reason
+  reason,
+  saveData:JSON.stringify(makeSaveData())
  });
  fetch(GAS_URL,{method:"POST",mode:"no-cors",body:data}).then(()=>{$("savePill").textContent="結果送信済み";}).catch(()=>{$("savePill").textContent="結果未送信";});
 }
@@ -5690,12 +5792,22 @@ function openQuestFromStageMenu(i){
  startQuest(i);
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
+function cloneQuestionForPlay(q){
+ if(!q || typeof q!=="object")return q;
+ return {...q,a:Array.isArray(q.a)?[...q.a]:q.a};
+}
+function cloneQuestionsForPlay(list){
+ return (Array.isArray(list)?list:[]).map(cloneQuestionForPlay);
+}
+function questionsForStagePlay(stageIndex,round){
+ return cloneQuestionsForPlay(stageRecoveryQuestions(stageIndex,round));
+}
 
 function startChallenge(i){
  unlockBgm();
  const s=STAGES[i];
  const round=currentRecoveryRound(s.id);
- game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(stageRecoveryQuestions(i,round))};
+ game={mode:"challenge",stageIndex:i,stage:s,recoveryRound:round,score:0,streak:0,miss:0,time:20,qIndex:0,correctCount:0,objects:[0],worldtreeItems:0,finalWorldtreeDropped:false,unit:s.unit,plant:s.plant,questions:shuffle(questionsForStagePlay(i,round))};
  setupWorld(s.cls,s.sun,s.name,s.image,s.enemyImage);
  $("modeTitle").textContent=`${s.name} 復興${round}`;
  if($("timeLabel"))$("timeLabel").textContent="残り時間";
@@ -5960,8 +6072,10 @@ function hasKanbunReturnMarks(text){
 function applyQuestionLayout(el,q){
  if(!el)return;
  const layout=String((q&&q.layout)||"normal").trim().toLowerCase();
- const text=String((q&&q.q)||"");
- el.classList.toggle("kanbunVertical",layout==="vertical" || hasKanbunReturnMarks(text));
+
+ // 自動判定で通常問題が縦書き化する事故を防ぐ。
+ // 縦書きにしたい問題だけ、スプレッドシート側で layout=vertical を指定する。
+ el.classList.toggle("kanbunVertical",layout==="vertical");
 }
 function nextQuestion(){
  stopTimer();clearTimeout(nextId);canAnswer=true;
