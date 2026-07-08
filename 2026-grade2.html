@@ -4998,8 +4998,20 @@ function mergeSaveDataClient(localData={},remoteData={}){
  merged.unlocked=maxSaveNumber(localData.unlocked,calcUnlockedFromCloudData(remoteData),1);
 
  merged.badges=mergeSaveArrayUnique(localData.badges,remoteData.badges);
- merged.selectedMenuTitles=mergeSaveArrayUnique(localData.selectedMenuTitles,remoteData.selectedMenuTitles);
- merged.selectedRankingTitles=mergeSaveArrayUnique(localData.selectedRankingTitles,remoteData.selectedRankingTitles);
+// 装備中の称号は「最新の保存内容」を優先する
+ merged.selectedMenuTitles =
+    Array.isArray(localData.selectedMenuTitles)
+        ? [...localData.selectedMenuTitles]
+        : (Array.isArray(remoteData.selectedMenuTitles)
+            ? [...remoteData.selectedMenuTitles]
+            : []);
+
+ merged.selectedRankingTitles =
+    Array.isArray(localData.selectedRankingTitles)
+        ? [...localData.selectedRankingTitles]
+        : (Array.isArray(remoteData.selectedRankingTitles)
+            ? [...remoteData.selectedRankingTitles]
+            : []);
 
  merged.items=mergeSaveNumberObject(localData.items,remoteData.items);
  merged.challengeClears=mergeSaveNumberObject(localData.challengeClears,remoteData.challengeClears);
