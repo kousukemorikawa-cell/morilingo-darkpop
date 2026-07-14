@@ -3827,7 +3827,28 @@ const POS6_MOBILE = [
 function fruitPositions(){
  return window.matchMedia("(max-width:560px)").matches ? POS6_MOBILE : POS6_DESKTOP;
 }
-let state=JSON.parse(localStorage.getItem("morilingoCleanQuest")||"{}");
+// 2年生版専用の保存キー。1年生版とのlocalStorage共有を防ぐ。
+const MORILINGO_STORAGE_KEY="morilingoCleanQuest_grade2_2026";
+const MORILINGO_LEGACY_STORAGE_KEY="morilingoCleanQuest";
+
+// 旧共通キーに2年生データがある場合だけ、安全に初回移行する。
+let initialSavedData=localStorage.getItem(MORILINGO_STORAGE_KEY);
+if(!initialSavedData){
+ try{
+  const legacyRaw=localStorage.getItem(MORILINGO_LEGACY_STORAGE_KEY);
+  const legacyData=legacyRaw ? JSON.parse(legacyRaw) : null;
+  const legacyClass=String(legacyData?.player?.className||"").trim();
+
+  if(/^2[-－−ー―‐]/.test(legacyClass)){
+   initialSavedData=legacyRaw;
+   localStorage.setItem(MORILINGO_STORAGE_KEY,legacyRaw);
+  }
+ }catch(e){
+  console.warn("旧保存データの移行に失敗しました",e);
+ }
+}
+
+let state=JSON.parse(initialSavedData||"{}");
 state.unlocked??=1;state.badges??=[];state.original??=[];state.originalDraft??=[];state.originalQuiz??={
   name:"",
   mode:"rebuild",
@@ -5067,7 +5088,7 @@ function applySaveData(saveData){
 
  ensureSkinState();
  cleanSelectedTitles();
- localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+ localStorage.setItem(MORILINGO_STORAGE_KEY,JSON.stringify(state));
 
  renderBadges();
  renderMenuTopTitles();
@@ -5179,7 +5200,7 @@ function schedulePlayerDataSave(){
  playerDataSaveTimer=setTimeout(savePlayerDataNow,600);
 }
 
-function save(){localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));$("savePill").textContent="保存済み";schedulePlayerDataSave();}
+function save(){localStorage.setItem(MORILINGO_STORAGE_KEY,JSON.stringify(state));$("savePill").textContent="保存済み";schedulePlayerDataSave();}
 function show(id){
  document.body.classList.toggle("gameMode",id==="game" || id==="questGame");
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
@@ -5269,7 +5290,7 @@ async function saveProfileAndMenu(){
 
   // クラウド読込前はsave()を使わない。
   // 初期状態のlocalStorageでPlayerDataを上書きしないため。
-  localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+  localStorage.setItem(MORILINGO_STORAGE_KEY,JSON.stringify(state));
   $("savePill").textContent="保存済み";
 
   await loadPlayerData();
@@ -7654,7 +7675,7 @@ function resetAll(){
  clearTimeout(playerDataSaveTimer);
  playerDataLoaded=false;
 
- localStorage.removeItem("morilingoCleanQuest");
+ localStorage.removeItem(MORILINGO_STORAGE_KEY);
 
  state={};
  state.player=keepPlayer;
@@ -7684,7 +7705,7 @@ function resetAll(){
  state.totalCorrect=0;
  state.loginBonus={lastDate:"",streak:0,stamps:[],lastAward:0};
 
- localStorage.setItem("morilingoCleanQuest",JSON.stringify(state));
+ localStorage.setItem(MORILINGO_STORAGE_KEY,JSON.stringify(state));
  $("savePill").textContent="端末リセット済み";
 
  if(keepPlayer.name){
