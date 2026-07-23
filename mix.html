@@ -3798,7 +3798,176 @@ function gasJsonp(params, timeoutMs=9000){
   setTimeout(()=>finish(false,new Error("JSONP timeout")),timeoutMs);
  });
 }
+// ==========================================================
+// 世界樹図書館専用：JSONP通信
+// GAS_URLではなくLIBRARY_GAS_URLを使用する
+// ==========================================================
+function libraryGasJsonp(params, timeoutMs = 9000) {
+  return new Promise((resolve, reject) => {
+    if (!LIBRARY_GAS_URL) {
+      reject(new Error("LIBRARY_GAS_URLが未設定です"));
+      return;
+    }
 
+    const callback =
+      "morilingoLibraryCallback_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 100000);
+
+    const script = document.createElement("script");
+    let finished = false;
+
+    function finish(ok, value) {
+      if (finished) return;
+
+      finished = true;
+      delete window[callback];
+
+      if (script.parentNode) {
+        script.remove();
+      }
+
+      ok ? resolve(value) : reject(value);
+    }
+
+    window[callback] = data => finish(true, data);
+
+    const query = new URLSearchParams({
+      ...params,
+      callback,
+      v: String(Date.now())
+    });
+
+    script.src = LIBRARY_GAS_URL + "?" + query.toString();
+
+    script.onerror = () => {
+      finish(false, new Error("図書館APIの読み込みに失敗しました"));
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(() => {
+      finish(false, new Error("図書館APIがタイムアウトしました"));
+    }, timeoutMs);
+  });
+}
+
+
+// ==========================================================
+// 世界樹図書館：プレイヤー進捗読み込み
+// ==========================================================
+async function loadLibraryProgressFromGas(playerId) {
+  const normalizedPlayerId = String(playerId || "").trim();
+
+  if (!normalizedPlayerId) {
+    console.warn("図書館進捗を読み込めません：playerIdがありません");
+    return [];
+  }
+
+  try {
+    const result = await libraryGasJsonp({
+      action: "progress",
+      playerId: normalizedPlayerId
+    });
+
+    if (!result || result.ok !== true) {
+      throw new Error(
+        result && result.message
+          ? result.message
+          : "図書館進捗の読み込みに失敗しました"
+      );
+    }
+
+    return Array.isArray(result.progress)
+      ? result.progress
+      : [];
+
+  } catch (error) {
+    console.error("図書館進捗読み込みエラー:", error);
+    return [];
+  }
+}
+
+
+// ==========================================================
+// 世界樹図書館：プレイヤー進捗保存
+// ==========================================================
+async function saveLibraryProgressToGas(progressData) {
+  const data = progressData || {};
+
+  const playerId = String(data.playerId || "").trim();
+  const bookId = String(data.bookId || "").trim();
+
+  if (!playerId || !bookId) {
+    console.warn(
+      "図書館進捗を保存できません：playerIdまたはbookIdがありません"
+    );
+
+    return {
+      ok: false,
+      message: "playerIdまたはbookIdがありません"
+    };
+  }
+
+  try {
+    const response = await fetch(LIBRARY_GAS_URL, {
+      method: "POST",
+
+      // application/jsonにするとCORSの事前通信が発生しやすいため、
+      // GASへの送信ではtext/plainを使用する
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+
+      body: JSON.stringify({
+        action: "saveProgress",
+        playerId,
+        bookId,
+
+        reading: Boolean(data.reading),
+
+        contentScore:
+          Number(data.contentScore) || 0,
+
+        vocabularyScore:
+          Number(data.vocabularyScore) || 0,
+
+        grammarScore:
+          Number(data.grammarScore) || 0,
+
+        progress:
+          Math.max(0, Math.min(100, Number(data.progress) || 0))
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        "図書館API通信エラー：" + response.status
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result || result.ok !== true) {
+      throw new Error(
+        result && result.message
+          ? result.message
+          : "図書館進捗の保存に失敗しました"
+      );
+    }
+
+    return result;
+
+  } catch (error) {
+    console.error("図書館進捗保存エラー:", error);
+
+    return {
+      ok: false,
+      message: error.message
+    };
+  }
+}
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
