@@ -2973,8 +2973,153 @@ body.darkTheme .resultCard{
 .libraryBook.lock p{
     color:#ddd;
 }
- 
+/* ===========================
+   世界樹図書館
+=========================== */
+
+/* ヘッダー */
+
+#library header{
+    background:#4d6b45;
+    padding:20px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    border-bottom:4px solid #90c36b;
+}
+
+#library .subtitle{
+    font-size:14px;
+    color:#d8f3d0;
+}
+
+/* ステータス */
+
+#library .status{
+    display:flex;
+    justify-content:space-around;
+    padding:15px;
+    background:#3c5339;
+}
+
+#library .status div{
+    text-align:center;
+}
+
+#library .status span{
+    display:block;
+    font-size:24px;
+    font-weight:bold;
+}
+
+/* タブ */
+
+#library .tabs{
+    display:flex;
+    overflow-x:auto;
+    background:#425942;
+}
+
+#library .tab{
+    padding:12px 18px;
+    white-space:nowrap;
+    cursor:pointer;
+}
+
+#library .tab.active{
+    background:#7da768;
+    color:#fff;
+}
+
+/* 本棚 */
+
+#library .library{
+    padding:15px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:15px;
+}
+
+/* 本 */
+
+#library .book{
+    background:#efe2b9;
+    color:#333;
+    border-radius:10px;
+    padding:15px;
+    min-height:170px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+
+#library .book h3{
+    margin:0;
+    font-size:18px;
+}
+
+#library .book p{
+    font-size:13px;
+    color:#555;
+}
+
+/* ジャンルタグ */
+
+#library .tag{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:20px;
+    background:#6fbf73;
+    color:#fff;
+    font-size:12px;
+    margin-top:5px;
+}
+
+/* 読書進捗バー */
+
+#library .progress{
+    height:8px;
+    background:#ccc;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+#library .progress div{
+    height:100%;
+    background:#4caf50;
+}
+
+/* 未発見の本 */
+
+#library .lock{
+    background:#666;
+    color:#ddd;
+    text-align:center;
+}
+
+#library .lock h3{
+    color:#fff;
+}
+
+/* ボタン */
+
+#library button{
+    margin-top:10px;
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    background:#4d6b45;
+    color:#fff;
+    cursor:pointer;
+}
+
+#library button:hover{
+    background:#6c8d60;
+}
 </style>
+ 
 </head>
 <body>
 <div id="scoreHud">
