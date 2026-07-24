@@ -2908,6 +2908,10 @@ body.darkTheme .resultCard{
         <img src="assets/btn/btn_items.png" alt="アイテム">
       </button>
 
+      <button class="imgBtn" onclick="showLibrary()">
+         <img src="assets/btn/btn_library2.png" alt="世界樹図書館">
+      </button>
+
       <button class="imgBtn" onclick="showStory()">
         <img src="assets/btn/btn_story.png" alt="ストーリーを見る">
       </button>
@@ -3044,6 +3048,23 @@ body.darkTheme .resultCard{
     </div>
   </section>
 
+ <section id="library" class="screen">
+  <div class="card">
+    <h2>📚 世界樹図書館</h2>
+
+    <p class="muted">
+      世界樹に集められた知識を閲覧できます。
+    </p>
+
+    <div class="toolbar">
+      <button class="btn ghost" onclick="show('menu')">
+        メニューへ戻る
+      </button>
+    </div>
+
+  </div>
+ </section>
+ 
   <section id="story" class="screen">
     <div class="card">
       <h2>📖 ストーリー</h2>
@@ -4138,6 +4159,9 @@ function showStory(){
  show("story");
 }
 
+ function showLibrary(){
+ show("library");
+}
 
 const END_STORY_PAGES=[
  {title:"世界樹の頂へ",text:`黄金竜アルボルは、光の粒となって静かに消えた。
