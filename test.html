@@ -2843,6 +2843,137 @@ body.darkTheme .resultCard{
 .loginBonusCard *{
   color:#000 !important;
 }
+/* ==========================
+   世界樹図書館
+========================== */
+
+.libraryStatus{
+    display:flex;
+    justify-content:space-around;
+    gap:12px;
+    margin:18px 0;
+    text-align:center;
+}
+
+.libraryStat{
+    flex:1;
+    background:rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:12px;
+}
+
+.libraryStat span{
+    display:block;
+    font-size:26px;
+    font-weight:bold;
+    color:#ffe8a3;
+    margin-bottom:4px;
+}
+
+.libraryStat small{
+    color:#ddd;
+}
+
+/* ジャンル */
+
+.libraryTabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    margin-bottom:18px;
+    padding-bottom:4px;
+}
+
+.libraryTabs::-webkit-scrollbar{
+    display:none;
+}
+
+.libraryTab{
+    flex:none;
+    padding:8px 16px;
+    border-radius:20px;
+    background:#35553b;
+    color:#fff;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:.2s;
+}
+
+.libraryTab.active{
+    background:#7db86f;
+    color:#fff;
+}
+
+/* 本棚 */
+
+.libraryGrid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+    gap:16px;
+}
+
+/* 本 */
+
+.libraryBook{
+    background:#efe2b9;
+    color:#333;
+    border-radius:12px;
+    padding:16px;
+    min-height:180px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
+}
+
+.libraryBook h3{
+    margin:0;
+    font-size:18px;
+}
+
+.libraryBook p{
+    margin:10px 0;
+    color:#555;
+    font-size:13px;
+}
+
+/* タグ */
+
+.libraryTag{
+    display:inline-block;
+    background:#5da96c;
+    color:white;
+    border-radius:20px;
+    padding:3px 10px;
+    font-size:12px;
+}
+
+/* 進捗バー */
+
+.libraryProgress{
+    margin-top:10px;
+    height:8px;
+    border-radius:20px;
+    background:#d7d7d7;
+    overflow:hidden;
+}
+
+.libraryProgress div{
+    height:100%;
+    background:#4caf50;
+}
+
+/* 未開放 */
+
+.libraryBook.lock{
+    background:#666;
+    color:#eee;
+}
+
+.libraryBook.lock p{
+    color:#ddd;
+}
+ 
 </style>
 </head>
 <body>
@@ -3050,11 +3181,47 @@ body.darkTheme .resultCard{
 
  <section id="library" class="screen">
   <div class="card">
-    <h2>📚 世界樹図書館</h2>
+   <h2>📚 世界樹図書館</h2>
 
-    <p class="muted">
-      世界樹に集められた知識を閲覧できます。
-    </p>
+<p class="muted">
+  魂から受け継いだ知識が眠る場所
+</p>
+
+<!-- ステータス -->
+<div class="libraryStatus">
+
+  <div class="libraryStat">
+    <span id="libraryBooksRead">--</span>
+    <small>読了冊数</small>
+  </div>
+
+  <div class="libraryStat">
+    <span id="libraryVocabularyCount">--</span>
+    <small>登録単語</small>
+  </div>
+
+  <div class="libraryStat">
+    <span id="libraryQuestionCount">--</span>
+    <small>問題数</small>
+  </div>
+
+</div>
+
+<!-- ジャンル -->
+<div id="libraryGenreTabs" class="libraryTabs">
+  <!-- GASから自動生成 -->
+</div>
+
+<!-- 本棚 -->
+<div id="libraryBookList" class="libraryGrid">
+  <!-- GASから自動生成 -->
+</div>
+
+<div class="toolbar">
+  <button class="btn ghost" onclick="show('menu')">
+    メニューへ戻る
+  </button>
+</div>
 
     <div class="toolbar">
       <button class="btn ghost" onclick="show('menu')">
@@ -4159,10 +4326,110 @@ function showStory(){
  show("story");
 }
 
- function showLibrary(){
- show("library");
+function showLibrary(){
+    show("library");
+    loadLibraryHome();
 }
+async function loadLibraryHome(){
 
+  console.log("世界樹図書館を読み込みます");
+
+  try{
+
+    const data = await gasGet({
+      action:"library"
+    });
+
+    console.log(data);
+
+    renderLibraryHome(data);
+
+  }catch(error){
+
+    console.error(error);
+    alert("世界樹図書館の読み込みに失敗しました。");
+
+  }
+
+}
+let libraryData = null;
+
+function renderLibraryHome(data){
+
+  libraryData = data;
+
+  renderLibraryGenres(data.genres);
+  renderLibraryBooks(data.books);
+
+}
+function renderLibraryGenres(genres){
+
+  const tabs = document.getElementById("libraryGenreTabs");
+
+  tabs.innerHTML = "";
+
+  genres.forEach(function(genre){
+
+    const button = document.createElement("button");
+
+    button.className = "libraryTab";
+
+    button.textContent =
+      `${genre.icon} ${genre.genreName}`;
+
+    button.dataset.genreId = genre.genreId;
+
+    button.style.backgroundColor =
+      genre.backgroundColor;
+
+    button.style.color =
+      genre.color;
+
+    // ★追加
+    button.onclick = function(){
+
+      const books = libraryData.books.filter(function(book){
+
+        return book.genreId === genre.genreId;
+
+      });
+
+      renderLibraryBooks(books);
+
+    };
+
+    tabs.appendChild(button);
+
+  });
+
+}
+function renderLibraryBooks(books){
+
+  const list = document.getElementById("libraryBookList");
+
+  list.innerHTML = "";
+
+  books.forEach(function(book){
+
+    const card = document.createElement("div");
+
+    card.className = "libraryBook";
+
+    card.innerHTML = `
+      <h3>${book.titleJa}</h3>
+
+      <div class="libraryTag">
+        ${book.difficultyLabel}
+      </div>
+
+      <p>${book.summaryJa}</p>
+    `;
+
+    list.appendChild(card);
+
+  });
+
+}
 const END_STORY_PAGES=[
  {title:"世界樹の頂へ",text:`黄金竜アルボルは、光の粒となって静かに消えた。
 主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。`,img:"assets/story/endstory1.png"},
