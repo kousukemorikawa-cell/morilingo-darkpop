@@ -3585,7 +3585,53 @@ function gasJsonp(params, timeoutMs=9000){
   setTimeout(()=>finish(false,new Error("JSONP timeout")),timeoutMs);
  });
 }
+function libraryGasGet(params, options = {}){
+  const timeoutMs = options.timeoutMs || 9000;
+  return libraryGasJsonp(params, timeoutMs);
+}
 
+function libraryGasJsonp(params, timeoutMs = 9000){
+  return new Promise((resolve, reject)=>{
+
+    if(!LIBRARY_GAS_URL){
+      reject(new Error("LIBRARY_GAS_URLが未設定です"));
+      return;
+    }
+
+    const callback = "libraryCallback_" + Date.now() + "_" + Math.floor(Math.random()*100000);
+    const script = document.createElement("script");
+    let finished = false;
+
+    function finish(ok, value){
+      if(finished) return;
+      finished = true;
+      delete window[callback];
+      if(script.parentNode) script.remove();
+      ok ? resolve(value) : reject(value);
+    }
+
+    window[callback] = data => finish(true, data);
+
+    const query = new URLSearchParams({
+      ...params,
+      callback,
+      v: String(Date.now())
+    });
+
+    script.src = LIBRARY_GAS_URL + "?" + query.toString();
+
+    script.onerror = ()=>{
+      finish(false, new Error("Library JSONP読み込み失敗"));
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(()=>{
+      finish(false, new Error("Library JSONP timeout"));
+    }, timeoutMs);
+
+  });
+}
 
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
@@ -4336,8 +4382,8 @@ async function loadLibraryHome(){
 
   try{
 
-    const data = await gasGet({
-      action:"library"
+    const data = await libraryGasGet({
+     action:"library"
     });
 
     console.log(data);
