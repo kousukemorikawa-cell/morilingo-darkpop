@@ -3515,6 +3515,49 @@ body.darkTheme .resultCard{
     min-height:165px;
   }
 }
+/* ===== 本カード追加 ===== */
+
+#library .libraryBookTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+#library .libraryBookIcon{
+    font-size:34px;
+    line-height:1;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.2));
+}
+
+#library .libraryOpenBtn{
+
+    margin-top:auto;
+
+    width:100%;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:linear-gradient(#5e8f57,#3f6d3c);
+
+    color:#fff;
+
+    font-weight:1000;
+
+    cursor:pointer;
+}
+
+#library .libraryOpenBtn:hover{
+    filter:brightness(1.05);
+}
+
+#library .libraryOpenBtn:active{
+    transform:translateY(2px);
+}
 </style>
  
 </head>
@@ -4997,14 +5040,26 @@ function renderLibraryBooks(books){
     card.className = "libraryBook";
 
     card.innerHTML = `
-      <h3>${book.titleJa}</h3>
+    <div class="libraryBookTop">
 
-      <div class="libraryTag">
-        ${book.difficultyLabel}
-      </div>
+        <div class="libraryBookIcon">
+            📖
+        </div>
 
-      <p>${book.summaryJa}</p>
-    `;
+        <div class="libraryTag">
+            ${book.difficultyLabel}
+        </div>
+
+    </div>
+
+    <h3>${book.titleJa}</h3>
+
+    <p>${book.summaryJa}</p>
+
+    <button class="libraryOpenBtn">
+        読む
+    </button>
+`;
 
     list.appendChild(card);
 
