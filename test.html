@@ -3118,6 +3118,403 @@ body.darkTheme .resultCard{
 #library button:hover{
     background:#6c8d60;
 }
+/* ==========================================================
+   世界樹図書館：本一覧デザイン 最終上書き
+   ※既存HTML・GAS通信・JavaScriptは変更しない
+========================================================== */
+
+/* 図書館画面全体 */
+#library{
+  color:#f8f3dc;
+}
+
+#library > .card{
+  position:relative;
+  overflow:hidden;
+  padding:0 0 18px;
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      rgba(152,196,116,.20),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #435b40 0%,
+      #2e4030 55%,
+      #243326 100%
+    );
+  border:3px solid #759367;
+  border-radius:24px;
+  box-shadow:
+    0 18px 38px rgba(0,0,0,.32),
+    inset 0 0 30px rgba(255,255,255,.04);
+}
+
+/* タイトル部分 */
+#library > .card > h2{
+  margin:0;
+  padding:22px 18px 6px;
+  text-align:center;
+  font-size:28px;
+  color:#fff;
+  background:linear-gradient(
+    180deg,
+    rgba(84,115,76,.98),
+    rgba(65,91,60,.92)
+  );
+  border-bottom:0;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.35),
+    0 0 12px rgba(197,238,160,.18);
+}
+
+#library > .card > .muted{
+  margin:0;
+  padding:0 14px 18px;
+  text-align:center;
+  color:#d9efcf;
+  background:linear-gradient(
+    180deg,
+    rgba(65,91,60,.92),
+    rgba(55,76,52,.90)
+  );
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* 読了冊数・登録単語・問題数 */
+#library .libraryStatus{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:0;
+  padding:14px;
+  background:rgba(31,47,33,.78);
+  border-top:1px solid rgba(255,255,255,.08);
+  border-bottom:2px solid rgba(137,174,111,.45);
+}
+
+#library .libraryStat{
+  min-width:0;
+  padding:12px 6px;
+  text-align:center;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(225,244,210,.20);
+  border-radius:14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+#library .libraryStat span{
+  display:block;
+  margin-bottom:3px;
+  color:#ffe59a;
+  font-size:25px;
+  font-weight:1000;
+  line-height:1.1;
+  text-shadow:0 2px 0 rgba(0,0,0,.28);
+}
+
+#library .libraryStat small{
+  display:block;
+  color:#e1eadc;
+  font-size:12px;
+  font-weight:900;
+}
+
+/* ジャンルタブ */
+#library .libraryTabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  margin:0;
+  padding:13px 14px;
+  background:rgba(56,78,53,.94);
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+
+#library .libraryTabs::-webkit-scrollbar{
+  display:none;
+}
+
+#library .libraryTab{
+  flex:0 0 auto;
+  min-height:40px;
+  margin:0;
+  padding:9px 15px;
+  border:2px solid rgba(255,255,255,.20);
+  border-radius:999px;
+  color:#fff;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:1000;
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:
+    0 4px 0 rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.16);
+  transition:
+    transform .15s ease,
+    filter .15s ease,
+    border-color .15s ease;
+}
+
+#library .libraryTab:hover{
+  filter:brightness(1.08);
+}
+
+#library .libraryTab:active{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 rgba(0,0,0,.18);
+}
+
+#library .libraryTab.active{
+  border-color:#fff3b0;
+  box-shadow:
+    0 0 0 3px rgba(255,227,122,.26),
+    0 4px 0 rgba(0,0,0,.20);
+}
+
+/* 本一覧 */
+#library .libraryGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:15px;
+  padding:16px 14px 20px;
+}
+
+/* 本カード */
+#library .libraryBook{
+  position:relative;
+  overflow:hidden;
+  min-height:210px;
+  padding:17px 16px 15px;
+  color:#352f21;
+  background:
+    linear-gradient(
+      105deg,
+      rgba(255,255,255,.24),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      #f8edc9,
+      #e8d39c
+    );
+  border:2px solid #fff1bd;
+  border-radius:14px 20px 20px 14px;
+  box-shadow:
+    -6px 0 0 #8d663c,
+    0 8px 16px rgba(0,0,0,.28),
+    inset 0 0 0 2px rgba(139,94,42,.12);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  cursor:pointer;
+  transition:
+    transform .18s ease,
+    filter .18s ease,
+    box-shadow .18s ease;
+}
+
+/* 本の背表紙風 */
+#library .libraryBook::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:8px;
+  width:3px;
+  background:rgba(114,74,35,.28);
+  box-shadow:3px 0 0 rgba(255,255,255,.22);
+}
+
+#library .libraryBook::after{
+  content:"";
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:26px;
+  height:26px;
+  border-top:2px solid rgba(110,74,38,.20);
+  border-right:2px solid rgba(110,74,38,.20);
+  border-radius:0 8px 0 0;
+}
+
+#library .libraryBook:hover{
+  transform:translateY(-4px);
+  filter:brightness(1.03);
+  box-shadow:
+    -6px 0 0 #8d663c,
+    0 13px 22px rgba(0,0,0,.34),
+    inset 0 0 0 2px rgba(139,94,42,.12);
+}
+
+#library .libraryBook:active{
+  transform:translateY(1px);
+}
+
+/* 本のタイトル */
+#library .libraryBook h3{
+  position:relative;
+  z-index:1;
+  margin:0 0 10px;
+  padding-left:5px;
+  color:#3b2c18;
+  font-size:19px;
+  font-weight:1000;
+  line-height:1.45;
+  word-break:break-word;
+}
+
+/* 難易度タグ */
+#library .libraryTag{
+  position:relative;
+  z-index:1;
+  align-self:flex-start;
+  display:inline-flex;
+  align-items:center;
+  min-height:25px;
+  margin:0 0 10px 5px;
+  padding:4px 10px;
+  color:#fff;
+  background:#5c945c;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:999px;
+  font-size:11px;
+  font-weight:1000;
+  line-height:1;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+
+/* 本の説明 */
+#library .libraryBook p{
+  position:relative;
+  z-index:1;
+  margin:0;
+  padding:9px 5px 0;
+  color:#5b4c35;
+  border-top:1px dashed rgba(92,67,34,.30);
+  font-size:13px;
+  font-weight:800;
+  line-height:1.65;
+}
+
+/* メニューへ戻る */
+#library > .card > .toolbar{
+  justify-content:center;
+  margin:0;
+  padding:0 14px;
+}
+
+#library > .card > .toolbar .btn{
+  min-width:190px;
+  color:#fff;
+  background:linear-gradient(#67865d,#405d43);
+  border:2px solid rgba(255,255,255,.55);
+}
+
+/* GAS読込前の空欄が潰れないようにする */
+#library .libraryGrid:empty::before{
+  content:"本棚を読み込んでいます…";
+  grid-column:1 / -1;
+  padding:28px 14px;
+  color:#dcebd6;
+  text-align:center;
+  font-weight:900;
+}
+
+/* スマホ */
+@media(max-width:560px){
+
+  #library > .card{
+    border-radius:20px;
+  }
+
+  #library > .card > h2{
+    padding:18px 12px 5px;
+    font-size:23px;
+  }
+
+  #library > .card > .muted{
+    padding:0 10px 14px;
+    font-size:12px;
+  }
+
+  #library .libraryStatus{
+    gap:6px;
+    padding:10px 8px;
+  }
+
+  #library .libraryStat{
+    padding:9px 3px;
+    border-radius:11px;
+  }
+
+  #library .libraryStat span{
+    font-size:21px;
+  }
+
+  #library .libraryStat small{
+    font-size:10px;
+  }
+
+  #library .libraryTabs{
+    gap:6px;
+    padding:10px 8px;
+  }
+
+  #library .libraryTab{
+    min-height:36px;
+    padding:8px 12px;
+    font-size:12px;
+  }
+
+  #library .libraryGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    padding:12px 9px 17px;
+  }
+
+  #library .libraryBook{
+    min-height:190px;
+    padding:14px 11px 12px;
+    border-radius:12px 17px 17px 12px;
+    box-shadow:
+      -4px 0 0 #8d663c,
+      0 7px 13px rgba(0,0,0,.26),
+      inset 0 0 0 1px rgba(139,94,42,.12);
+  }
+
+  #library .libraryBook h3{
+    font-size:16px;
+    line-height:1.4;
+  }
+
+  #library .libraryBook p{
+    font-size:11px;
+    line-height:1.55;
+  }
+
+  #library .libraryTag{
+    margin-left:3px;
+    padding:4px 8px;
+    font-size:10px;
+  }
+}
+
+/* 幅がかなり狭い端末 */
+@media(max-width:360px){
+
+  #library .libraryGrid{
+    grid-template-columns:1fr;
+  }
+
+  #library .libraryBook{
+    min-height:165px;
+  }
+}
 </style>
  
 </head>
