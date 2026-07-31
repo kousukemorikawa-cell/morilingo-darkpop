@@ -6532,12 +6532,7 @@ function autoLinkVocabulary(text,vocabulary){
 
         html=html.replace(regex,match=>{
 
-            return `
-<span
-class="libraryWordLink"
-data-word="${word}">
-${match}
-</span>`;
+        return `<span class="libraryWordLink" data-word="${word}">${match}</span>`;
 
         });
 
