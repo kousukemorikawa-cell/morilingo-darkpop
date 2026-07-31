@@ -6583,13 +6583,13 @@ function renderLibraryVocabulary(list){
 
     item.className =
       "libraryVocabularyItem";
-　　item.id=
-"vocab-"+word.toLowerCase();
-    const word =
+　　const word =
       vocabulary.word ||
       vocabulary.vocabulary ||
       vocabulary.term ||
       "名称未設定";
+
+    item.id = "vocab-" + word.toLowerCase();
 
     const partOfSpeech =
       vocabulary.partOfSpeech ||
