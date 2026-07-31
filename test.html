@@ -6458,13 +6458,13 @@ function renderLibraryKnowledge(
         ? vocabulary
         : [];
 
-summaryEn.innerHTML =
+    summaryEn.innerHTML =
     autoLinkVocabulary(
         safeBook.summaryEn ||
         "English summary has not been registered yet.",
         vocabularyList
     );
-
+  } 
   if(vocabularyMessage){
     vocabularyMessage.textContent = "";
   }
