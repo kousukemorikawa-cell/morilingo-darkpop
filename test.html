@@ -5353,42 +5353,6 @@ function renderLibraryBooks(books){
  * localStorageや既存stateの構造は変更しません。
  */
 let currentLibraryBook = null;
-function openLibraryBook(book){
-
-    currentLibraryBook = book;
-
-    document.getElementById("libraryBookMenuTitle").textContent =
-        "📖 " + book.titleJa;
-
-    show("libraryBookMenu");
-
-}
-
-function openLibraryKnowledge(){
-
-    if(!currentLibraryBook){
-        return;
-    }
-
-    document.getElementById("libraryKnowledgeTitle").textContent =
-        currentLibraryBook.titleJa;
-
-    document.getElementById("librarySummaryJa").textContent =
-        currentLibraryBook.summaryJa || "";
-
-    document.getElementById("librarySummaryEn").textContent =
-        currentLibraryBook.summaryEn || "";
-
-    const vocabulary = libraryData.vocabulary.filter(function(v){
-        return String(v.bookId).trim() ===
-               String(currentLibraryBook.bookId).trim();
-    });
-
-    renderLibraryVocabulary(vocabulary);
-
-    show("libraryKnowledge");
-
-}
 
 /* ==========================================================
    「読む」ボタンから読書メニューを開く
