@@ -4095,6 +4095,33 @@ body.darkTheme .libraryVocabularyEmpty{
   }
 
 }
+.libraryWordLink{
+
+color:#0c6ddf;
+
+font-weight:900;
+
+text-decoration:underline;
+
+text-decoration-style:dotted;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.libraryWordLink:hover{
+
+background:#fff7a8;
+
+}
+
+.libraryVocabularyItem{
+
+scroll-margin-top:90px;
+
+}
 </style>
  
 </head>
@@ -6426,11 +6453,17 @@ function renderLibraryKnowledge(
 
   if(summaryEn){
 
-    summaryEn.textContent =
-      safeBook.summaryEn ||
-      "English summary has not been registered yet.";
+    const vocabularyList =
+    Array.isArray(vocabulary)
+        ? vocabulary
+        : [];
 
-  }
+summaryEn.innerHTML =
+    autoLinkVocabulary(
+        safeBook.summaryEn ||
+        "English summary has not been registered yet.",
+        vocabularyList
+    );
 
   if(vocabularyMessage){
     vocabularyMessage.textContent = "";
@@ -6441,9 +6474,78 @@ function renderLibraryKnowledge(
     vocabulary :
     []
   );
-
+  setupVocabularyLinks();
 }
 
+function setupVocabularyLinks(){
+
+    document
+    .querySelectorAll(".libraryWordLink")
+    .forEach(link=>{
+
+        link.onclick=()=>{
+
+            const word=link.dataset.word.toLowerCase();
+
+            const target=document.getElementById(
+                "vocab-"+word
+            );
+
+            if(target){
+
+                target.scrollIntoView({
+                    behavior:"smooth",
+                    block:"center"
+                });
+
+            }
+
+        };
+
+    });
+
+}
+// ============================
+// 本文中の単語を自動リンク
+// ============================
+
+function autoLinkVocabulary(text,vocabulary){
+
+    if(!text) return "";
+
+    let html=text;
+
+    vocabulary.forEach(v=>{
+
+        if(!v.word) return;
+
+        const word=v.word.trim();
+
+        if(!word) return;
+
+        const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
+        const regex=new RegExp(
+            "\\b"+escaped+"\\b",
+            "gi"
+        );
+
+        html=html.replace(regex,match=>{
+
+            return `
+<span
+class="libraryWordLink"
+data-word="${word}">
+${match}
+</span>`;
+
+        });
+
+    });
+
+    return html;
+
+}
 
 /* ==========================================================
    語彙一覧
@@ -6481,7 +6583,8 @@ function renderLibraryVocabulary(list){
 
     item.className =
       "libraryVocabularyItem";
-
+　　item.id=
+"vocab-"+word.toLowerCase();
     const word =
       vocabulary.word ||
       vocabulary.vocabulary ||
@@ -6536,7 +6639,25 @@ function renderLibraryVocabulary(list){
 
       </div>
     `;
+　　item.addEventListener("click",()=>{
 
+    const target=document.querySelector(
+        '.libraryWordLink[data-word="'+word+'"]'
+    );
+
+    if(target){
+
+        target.scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"center"
+
+        });
+
+    }
+
+});
     area.appendChild(item);
 
   });
