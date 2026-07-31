@@ -5297,7 +5297,8 @@ function renderLibraryBooks(books){
      * 既存のescapeHtml()を使用します。
      */
     const titleJa = escapeHtml(book.titleJa || "名称未設定");
-    const summaryJa = escapeHtml(book.summaryJa || "");
+    const curiosityQuestion =
+      escapeHtml(book.curiosityQuestion || "");
     const difficultyLabel =
       escapeHtml(book.difficultyLabel || "");
 
@@ -5316,7 +5317,7 @@ function renderLibraryBooks(books){
 
       <h3>${titleJa}</h3>
 
-      <p>${summaryJa}</p>
+      <p>${curiosityQuestion}</p>
 
       <button
         type="button"
