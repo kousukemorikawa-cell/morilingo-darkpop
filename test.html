@@ -3729,6 +3729,372 @@ body.darkTheme .resultCard{
     grid-column:auto;
   }
 }
+/* ==========================================================
+   世界樹図書館：読書画面
+========================================================== */
+
+#libraryBookMenu,
+#libraryKnowledge{
+  padding-bottom:40px;
+}
+
+.libraryReaderMenuCard,
+.libraryKnowledgeCard{
+  position:relative;
+}
+
+.libraryBackButton{
+  padding:10px 14px;
+  font-size:14px;
+}
+
+.libraryReaderHeader{
+  display:grid;
+  grid-template-columns:84px minmax(0,1fr);
+  gap:16px;
+  align-items:center;
+  margin:20px 0;
+  padding:18px;
+  background:linear-gradient(135deg,#f7fff9,#e4f7e9);
+  border:3px solid #fff;
+  border-radius:22px;
+}
+
+.libraryReaderIcon{
+  width:84px;
+  height:84px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  border:3px solid #dceee2;
+  border-radius:22px;
+  font-size:46px;
+  box-shadow:0 7px 0 rgba(47,143,87,.12);
+}
+
+.libraryReaderHeader h2{
+  margin:0 0 6px;
+}
+
+.libraryReaderHeader p{
+  margin:0;
+}
+
+.libraryReaderChoices{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:18px;
+}
+
+.libraryReaderChoice{
+  min-height:130px;
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  gap:12px;
+  align-items:center;
+  text-align:left;
+  padding:18px;
+}
+
+.libraryReaderChoiceIcon{
+  width:64px;
+  height:64px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.76);
+  border-radius:18px;
+  font-size:36px;
+}
+
+.libraryReaderChoiceText{
+  display:grid;
+  gap:6px;
+}
+
+.libraryReaderChoiceText strong{
+  font-size:20px;
+}
+
+.libraryReaderChoiceText small{
+  font-size:13px;
+  font-weight:900;
+  line-height:1.45;
+  opacity:.85;
+}
+
+
+/* 知識画面上部 */
+
+.libraryKnowledgeTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.libraryKnowledgeHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.libraryDifficulty{
+  background:#fff7d7;
+  border:2px solid #efd987;
+  border-radius:999px;
+  padding:7px 12px;
+  color:#654700;
+  font-size:13px;
+  font-weight:1000;
+}
+
+
+/* 左右の要約 */
+
+.librarySummaryGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  align-items:stretch;
+}
+
+.librarySummaryPage{
+  min-width:0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(138,90,36,.06),
+      transparent 9%,
+      transparent 91%,
+      rgba(138,90,36,.06)
+    ),
+    #fffdf5;
+  border:3px solid #f1e4bc;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:
+    inset 0 0 0 2px #fff,
+    0 8px 18px rgba(79,56,16,.10);
+}
+
+.librarySummaryHeading{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-bottom:2px dashed #e2cf96;
+  margin-bottom:12px;
+  padding-bottom:9px;
+}
+
+.librarySummaryHeading span{
+  font-size:25px;
+}
+
+.librarySummaryHeading h3{
+  margin:0;
+  color:#5d4317;
+}
+
+.librarySummaryText{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:16px;
+  font-weight:800;
+  line-height:1.85;
+}
+
+
+/* 語彙一覧 */
+
+.libraryVocabularySection{
+  margin-top:20px;
+  padding-top:16px;
+  border-top:3px dashed #dce8df;
+}
+
+.libraryVocabularyHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.libraryVocabularyHeader h3{
+  margin:0;
+}
+
+#libraryVocabularyList{
+  display:grid;
+  gap:12px;
+}
+
+.libraryVocabularyItem{
+  display:grid;
+  grid-template-columns:minmax(140px,210px) minmax(0,1fr);
+  gap:14px;
+  align-items:stretch;
+  background:#fff;
+  border:2px solid #e4eee8;
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.06);
+}
+
+.libraryVocabularyWord{
+  display:grid;
+  place-items:center;
+  min-height:100px;
+  padding:14px;
+  background:linear-gradient(145deg,#eaffef,#c9f1d4);
+  border:2px solid #b5e4c3;
+  border-radius:16px;
+  color:#256f43;
+  font-size:22px;
+  font-weight:1000;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+
+.libraryVocabularyMeaning{
+  min-width:0;
+  padding:8px 6px;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+}
+
+.libraryVocabularyMeaning strong{
+  color:#2f8f57;
+}
+
+.libraryVocabularyEmpty{
+  background:#fffdf4;
+  border:2px dashed #decf93;
+  border-radius:16px;
+  padding:16px;
+  color:#6b5a18;
+  font-weight:900;
+  text-align:center;
+}
+
+
+/* ダークテーマ */
+
+body.darkTheme .libraryReaderHeader{
+  background:#1d2b21;
+  border-color:#35473a;
+}
+
+body.darkTheme .libraryReaderIcon,
+body.darkTheme .librarySummaryPage,
+body.darkTheme .libraryVocabularyItem{
+  background:#222;
+  color:#fff;
+  border-color:#414141;
+}
+
+body.darkTheme .librarySummaryHeading h3,
+body.darkTheme .libraryVocabularyMeaning strong{
+  color:#9be5ae;
+}
+
+body.darkTheme .libraryVocabularyWord{
+  background:#263b2c;
+  color:#baf2c8;
+  border-color:#46684f;
+}
+
+body.darkTheme .libraryDifficulty,
+body.darkTheme .libraryVocabularyEmpty{
+  background:#292410;
+  color:#f4df8d;
+  border-color:#73652c;
+}
+
+
+/* スマホ */
+
+@media(max-width:560px){
+
+  .libraryReaderHeader{
+    grid-template-columns:60px minmax(0,1fr);
+    gap:10px;
+    padding:13px;
+    margin:14px 0;
+  }
+
+  .libraryReaderIcon{
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    font-size:34px;
+  }
+
+  .libraryReaderHeader h2{
+    font-size:19px;
+  }
+
+  .libraryReaderChoices{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .libraryReaderChoice{
+    min-height:100px;
+    grid-template-columns:52px minmax(0,1fr);
+    padding:13px;
+  }
+
+  .libraryReaderChoiceIcon{
+    width:52px;
+    height:52px;
+    font-size:29px;
+  }
+
+  .libraryReaderChoiceText strong{
+    font-size:17px;
+  }
+
+  .librarySummaryGrid{
+    grid-template-columns:1fr;
+  }
+
+  .librarySummaryPage{
+    padding:13px;
+  }
+
+  .librarySummaryText{
+    font-size:14px;
+    line-height:1.75;
+  }
+
+  .libraryVocabularyItem{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .libraryVocabularyWord{
+    min-height:auto;
+    padding:10px;
+    font-size:19px;
+  }
+
+  .libraryKnowledgeTop{
+    align-items:stretch;
+  }
+
+  .libraryKnowledgeTop .btn{
+    flex:1;
+  }
+
+}
 </style>
  
 </head>
@@ -3934,119 +4300,231 @@ body.darkTheme .resultCard{
       <div class="toolbar"><button class="btn ghost" onclick="show('menu')">メニューへ戻る</button></div>
     </div>
   </section>
-
- <section id="library" class="screen">
-  <div class="card">
-   <h2>📚 世界樹図書館</h2>
-
-<p class="muted">
-  魂から受け継いだ知識が眠る場所
-</p>
-
-<!-- ステータス -->
-<div class="libraryStatus">
-
-  <div class="libraryStat">
-    <span id="libraryBooksRead">--</span>
-    <small>読了冊数</small>
-  </div>
-
-  <div class="libraryStat">
-    <span id="libraryVocabularyCount">--</span>
-    <small>登録単語</small>
-  </div>
-
-  <div class="libraryStat">
-    <span id="libraryQuestionCount">--</span>
-    <small>問題数</small>
-  </div>
-
-</div>
-
-<!-- ジャンル -->
-<div id="libraryGenreTabs" class="libraryTabs">
-  <!-- GASから自動生成 -->
-</div>
-
-<!-- 本棚 -->
-<div id="libraryBookList" class="libraryGrid">
-  <!-- GASから自動生成 -->
-</div>
-<!-- 本メニュー -->
-<div id="bookReaderMenu" class="screen">
+<!-- ==========================================================
+     世界樹図書館：本一覧
+========================================================== -->
+<section id="library" class="screen">
   <div class="card">
 
-    <h2 id="bookReaderTitle">📖 本</h2>
+    <h2>📚 世界樹図書館</h2>
 
     <p class="muted">
-      学び方を選んでください。
+      魂から受け継いだ知識が眠る場所
     </p>
 
+    <!-- 図書館ステータス -->
+    <div class="libraryStatus">
+
+      <div class="libraryStat">
+        <span id="libraryBooksRead">--</span>
+        <small>読了冊数</small>
+      </div>
+
+      <div class="libraryStat">
+        <span id="libraryVocabularyCount">--</span>
+        <small>登録単語</small>
+      </div>
+
+      <div class="libraryStat">
+        <span id="libraryQuestionCount">--</span>
+        <small>問題数</small>
+      </div>
+
+    </div>
+
+    <!-- ジャンルタブ -->
+    <div id="libraryGenreTabs" class="libraryTabs">
+      <!-- GASから自動生成 -->
+    </div>
+
+    <!-- 本棚 -->
+    <div id="libraryBookList" class="libraryGrid">
+      <div class="libraryVocabularyEmpty">
+        図書館を読み込んでいます。
+      </div>
+    </div>
+
     <div class="toolbar">
-      <button class="btn primary"
-              onclick="openBookKnowledge()">
-        📚 知識を得る
-      </button>
-
-      <button class="btn secondary"
-              onclick="openBookQuestions()">
-        🧠 記憶を強化する
-      </button>
-
-      <button class="btn ghost"
-              onclick="show('bookList')">
-        ← 戻る
+      <button
+        type="button"
+        class="btn ghost"
+        onclick="show('menu')"
+      >
+        ← メニューへ戻る
       </button>
     </div>
-<div id="bookKnowledge" class="screen">
 
-  <div class="card">
+  </div>
+</section>
 
-    <h2 id="knowledgeTitle"></h2>
 
-    <h3>🇯🇵 日本語</h3>
+<!-- ==========================================================
+     世界樹図書館：本を開いた後のメニュー
+========================================================== -->
+<section id="libraryBookMenu" class="screen">
+  <div class="card libraryReaderMenuCard">
 
-    <div id="summaryJaBox"
-         class="question"
-         style="font-size:18px;">
-    </div>
-
-    <br>
-
-    <h3>🇬🇧 English</h3>
-
-    <div id="summaryEnBox"
-         class="question"
-         style="font-size:18px;">
-    </div>
-
-    <br>
-
-    <h3>📖 Vocabulary</h3>
-
-    <div id="vocabularyList"></div>
-
-    <br>
-
-    <button class="btn ghost"
-            onclick="show('bookReaderMenu')">
-      ← 戻る
+    <button
+      type="button"
+      class="btn ghost libraryBackButton"
+      onclick="showLibrary()"
+    >
+      ← 本一覧へ戻る
     </button>
 
-  </div>
+    <div class="libraryReaderHeader">
 
-</div>
-  </div>
-</div>
-    <div class="toolbar">
-      <button class="btn ghost" onclick="show('menu')">
-        メニューへ戻る
+      <div class="libraryReaderIcon">
+        📖
+      </div>
+
+      <div>
+        <h2 id="libraryBookMenuTitle">
+          📖 本を読む
+        </h2>
+
+        <p
+          id="libraryBookMenuDescription"
+          class="muted"
+        >
+          学び方を選んでください。
+        </p>
+      </div>
+
+    </div>
+
+    <div class="libraryReaderChoices">
+
+      <button
+        type="button"
+        class="btn primary libraryReaderChoice"
+        onclick="openLibraryKnowledge()"
+      >
+        <span class="libraryReaderChoiceIcon">📚</span>
+
+        <span class="libraryReaderChoiceText">
+          <strong>知識を得る</strong>
+          <small>日本語・英語の要約と語彙を読む</small>
+        </span>
       </button>
+
+      <button
+        type="button"
+        class="btn secondary libraryReaderChoice"
+        onclick="openLibraryMemory()"
+      >
+        <span class="libraryReaderChoiceIcon">🧠</span>
+
+        <span class="libraryReaderChoiceText">
+          <strong>記憶を強化する</strong>
+          <small>本の内容を問題で復習する</small>
+        </span>
+      </button>
+
     </div>
 
   </div>
- </section>
- 
+</section>
+
+
+<!-- ==========================================================
+     世界樹図書館：知識を得る
+========================================================== -->
+<section id="libraryKnowledge" class="screen">
+  <div class="card libraryKnowledgeCard">
+
+    <div class="libraryKnowledgeTop">
+
+      <button
+        type="button"
+        class="btn ghost libraryBackButton"
+        onclick="show('libraryBookMenu')"
+      >
+        ← 学び方へ戻る
+      </button>
+
+      <button
+        type="button"
+        class="btn ghost libraryBackButton"
+        onclick="showLibrary()"
+      >
+        本一覧
+      </button>
+
+    </div>
+
+    <div class="libraryKnowledgeHeader">
+
+      <h2 id="libraryKnowledgeTitle">
+        📚 知識を得る
+      </h2>
+
+      <div
+        id="libraryKnowledgeDifficulty"
+        class="libraryDifficulty"
+      ></div>
+
+    </div>
+
+    <!-- 日本語・英語の要約 -->
+    <div class="librarySummaryGrid">
+
+      <article class="librarySummaryPage">
+
+        <div class="librarySummaryHeading">
+          <span>🇯🇵</span>
+          <h3>日本語</h3>
+        </div>
+
+        <div
+          id="librarySummaryJa"
+          class="librarySummaryText"
+        >
+          読み込み中...
+        </div>
+
+      </article>
+
+      <article class="librarySummaryPage">
+
+        <div class="librarySummaryHeading">
+          <span>🇬🇧</span>
+          <h3>English</h3>
+        </div>
+
+        <div
+          id="librarySummaryEn"
+          class="librarySummaryText"
+          lang="en"
+        >
+          Loading...
+        </div>
+
+      </article>
+
+    </div>
+
+    <!-- 語彙 -->
+    <section class="libraryVocabularySection">
+
+      <div class="libraryVocabularyHeader">
+        <h3>📖 Vocabulary</h3>
+
+        <p
+          id="libraryVocabularyMessage"
+          class="muted"
+        ></p>
+      </div>
+
+      <div id="libraryVocabularyList">
+        <!-- JavaScriptで自動生成 -->
+      </div>
+
+    </section>
+
+  </div>
+</section>
+
   <section id="story" class="screen">
     <div class="card">
       <h2>📖 ストーリー</h2>
@@ -5186,96 +5664,302 @@ function showTitles(){
 function showStory(){
  show("story");
 }
+/* ==========================================================
+   世界樹図書館
+========================================================== */
+
+let libraryData = null;
+let currentLibraryBook = null;
+
+
+/* ==========================================================
+   図書館トップを開く
+========================================================== */
 
 function showLibrary(){
-    show("library");
+
+  show("library");
+
+  /*
+   * すでに取得済みなら再描画します。
+   * 未取得の場合だけGASへ接続します。
+   */
+  if(
+    libraryData &&
+    Array.isArray(libraryData.books)
+  ){
+
+    renderLibraryHome(libraryData);
+
+  }else{
+
     loadLibraryHome();
+
+  }
+
 }
+
+
+/* ==========================================================
+   図書館トップデータを取得
+========================================================== */
+
 async function loadLibraryHome(){
 
-  console.log("世界樹図書館を読み込みます");
+  const list =
+    document.getElementById("libraryBookList");
+
+  if(list){
+
+    list.innerHTML = `
+      <div class="libraryVocabularyEmpty">
+        図書館を読み込んでいます。
+      </div>
+    `;
+
+  }
 
   try{
 
     const data = await libraryGasGet({
-     action:"library"
+      action:"library"
     });
 
-    console.log(data);
+    if(!data || data.ok === false){
+
+      throw new Error(
+        data && data.message ?
+        data.message :
+        "図書館データを取得できませんでした。"
+      );
+
+    }
 
     renderLibraryHome(data);
 
   }catch(error){
 
-    console.error(error);
-    alert("世界樹図書館の読み込みに失敗しました。");
+    console.error(
+      "世界樹図書館の読み込みエラー",
+      error
+    );
+
+    if(list){
+
+      list.innerHTML = `
+        <div class="libraryVocabularyEmpty">
+          世界樹図書館の読み込みに失敗しました。<br>
+          通信環境を確認して、もう一度お試しください。
+        </div>
+      `;
+
+    }
 
   }
 
 }
-let libraryData = null;
+
+
+/* ==========================================================
+   図書館トップを描画
+========================================================== */
 
 function renderLibraryHome(data){
 
-  libraryData = data;
+  libraryData = {
+    ...data,
+    genres:Array.isArray(data.genres) ?
+      data.genres :
+      [],
+    books:Array.isArray(data.books) ?
+      data.books :
+      [],
+    vocabulary:Array.isArray(data.vocabulary) ?
+      data.vocabulary :
+      [],
+    questions:Array.isArray(data.questions) ?
+      data.questions :
+      []
+  };
 
-  renderLibraryGenres(data.genres);
-  renderLibraryBooks(data.books);
+  renderLibraryGenres(libraryData.genres);
+  renderLibraryBooks(libraryData.books);
+  renderLibraryStatus(libraryData);
 
 }
+
+
+/* ==========================================================
+   図書館ステータス
+========================================================== */
+
+function renderLibraryStatus(data){
+
+  const booksRead =
+    document.getElementById("libraryBooksRead");
+
+  const vocabularyCount =
+    document.getElementById("libraryVocabularyCount");
+
+  const questionCount =
+    document.getElementById("libraryQuestionCount");
+
+  /*
+   * GASから集計値が返る場合はそれを優先し、
+   * 無ければ配列数を利用します。
+   */
+  const bookCountValue =
+    data.booksRead ??
+    data.readCount ??
+    data.bookCount ??
+    data.books.length;
+
+  const vocabularyCountValue =
+    data.vocabularyCount ??
+    data.wordCount ??
+    data.vocabulary.length;
+
+  const questionCountValue =
+    data.questionCount ??
+    data.questions.length;
+
+  if(booksRead){
+    booksRead.textContent =
+      String(bookCountValue ?? 0);
+  }
+
+  if(vocabularyCount){
+    vocabularyCount.textContent =
+      String(vocabularyCountValue ?? 0);
+  }
+
+  if(questionCount){
+    questionCount.textContent =
+      String(questionCountValue ?? 0);
+  }
+
+}
+
+
+/* ==========================================================
+   ジャンルタブ
+========================================================== */
+
 function renderLibraryGenres(genres){
 
-  const tabs = document.getElementById("libraryGenreTabs");
+  const tabs =
+    document.getElementById("libraryGenreTabs");
+
+  if(!tabs){
+    return;
+  }
 
   tabs.innerHTML = "";
 
+  const allButton =
+    document.createElement("button");
+
+  allButton.type = "button";
+  allButton.className = "libraryTab";
+  allButton.textContent = "📚 すべて";
+
+  allButton.addEventListener("click",function(){
+
+    renderLibraryBooks(
+      libraryData && Array.isArray(libraryData.books) ?
+      libraryData.books :
+      []
+    );
+
+  });
+
+  tabs.appendChild(allButton);
+
+  if(!Array.isArray(genres)){
+    return;
+  }
+
   genres.forEach(function(genre){
 
-    const button = document.createElement("button");
+    const button =
+      document.createElement("button");
 
+    button.type = "button";
     button.className = "libraryTab";
 
     button.textContent =
-      `${genre.icon} ${genre.genreName}`;
+      `${genre.icon || "📖"} ${genre.genreName || "ジャンル"}`;
 
-    button.dataset.genreId = genre.genreId;
+    button.dataset.genreId =
+      String(genre.genreId || "");
 
-    button.style.backgroundColor =
-      genre.backgroundColor;
+    if(genre.backgroundColor){
 
-    button.style.color =
-      genre.color;
+      button.style.backgroundColor =
+        genre.backgroundColor;
 
-    // ★追加
-    button.onclick = function(){
+    }
 
-      const books = libraryData.books.filter(function(book){
+    if(genre.color){
 
-        return book.genreId === genre.genreId;
+      button.style.color =
+        genre.color;
 
-      });
+    }
 
-      renderLibraryBooks(books);
+    button.addEventListener("click",function(){
 
-    };
+      const books =
+        libraryData &&
+        Array.isArray(libraryData.books) ?
+        libraryData.books :
+        [];
+
+      const genreId =
+        String(genre.genreId || "");
+
+      const filteredBooks =
+        books.filter(function(book){
+
+          return String(book.genreId || "") === genreId;
+
+        });
+
+      renderLibraryBooks(filteredBooks);
+
+    });
 
     tabs.appendChild(button);
 
   });
 
 }
+
+
+/* ==========================================================
+   本一覧
+========================================================== */
+
 function renderLibraryBooks(books){
 
-  const list = document.getElementById("libraryBookList");
+  const list =
+    document.getElementById("libraryBookList");
 
   if(!list){
-    console.warn("libraryBookList が見つかりません。");
+
+    console.warn(
+      "libraryBookList が見つかりません。"
+    );
+
     return;
   }
 
   list.innerHTML = "";
 
-  if(!Array.isArray(books) || books.length === 0){
+  if(
+    !Array.isArray(books) ||
+    books.length === 0
+  ){
 
     list.innerHTML = `
       <div class="libraryVocabularyEmpty">
@@ -5288,19 +5972,30 @@ function renderLibraryBooks(books){
 
   books.forEach(function(book){
 
-    const card = document.createElement("div");
+    const card =
+      document.createElement("article");
 
     card.className = "libraryBook";
 
-    /*
-     * innerHTMLへ直接入れる文字列を安全にするため、
-     * 既存のescapeHtml()を使用します。
-     */
-    const titleJa = escapeHtml(book.titleJa || "名称未設定");
+    const titleJa =
+      escapeHtml(
+        book.titleJa ||
+        book.titleEn ||
+        "名称未設定"
+      );
+
     const curiosityQuestion =
-      escapeHtml(book.curiosityQuestion || "");
+      escapeHtml(
+        book.curiosityQuestion ||
+        book.description ||
+        ""
+      );
+
     const difficultyLabel =
-      escapeHtml(book.difficultyLabel || "");
+      escapeHtml(
+        book.difficultyLabel ||
+        ""
+      );
 
     card.innerHTML = `
       <div class="libraryBookTop">
@@ -5309,9 +6004,11 @@ function renderLibraryBooks(books){
           📖
         </div>
 
-        <div class="libraryTag">
-          ${difficultyLabel}
-        </div>
+        ${
+          difficultyLabel ?
+          `<div class="libraryTag">${difficultyLabel}</div>` :
+          ""
+        }
 
       </div>
 
@@ -5327,42 +6024,41 @@ function renderLibraryBooks(books){
       </button>
     `;
 
-    /*
-     * 本そのものをonclick文字列へ埋め込まず、
-     * addEventListenerで安全に渡します。
-     */
     const openButton =
       card.querySelector(".libraryOpenBtn");
 
-    openButton.addEventListener("click",function(){
+    if(openButton){
 
-      openLibraryBook(book);
+      openButton.addEventListener(
+        "click",
+        function(){
 
-    });
+          openLibraryBook(book);
+
+        }
+      );
+
+    }
 
     list.appendChild(card);
 
   });
 
 }
-/* ==========================================================
-   世界樹図書館：選択中の本
-========================================================== */
 
-/*
- * 現在読んでいる本を一時的に保存します。
- * localStorageや既存stateの構造は変更しません。
- */
-let currentLibraryBook = null;
 
 /* ==========================================================
-   「読む」ボタンから読書メニューを開く
+   本を選択して読書メニューを開く
 ========================================================== */
 
 function openLibraryBook(book){
 
   if(!book){
-    alert("本の情報を取得できませんでした。");
+
+    alert(
+      "本の情報を取得できませんでした。"
+    );
+
     return;
   }
 
@@ -5374,13 +6070,20 @@ function openLibraryBook(book){
     "本を読む";
 
   const titleElement =
-    document.getElementById("libraryBookMenuTitle");
+    document.getElementById(
+      "libraryBookMenuTitle"
+    );
 
   const descriptionElement =
-    document.getElementById("libraryBookMenuDescription");
+    document.getElementById(
+      "libraryBookMenuDescription"
+    );
 
   if(titleElement){
-    titleElement.textContent = "📖 " + title;
+
+    titleElement.textContent =
+      "📖 " + title;
+
   }
 
   if(descriptionElement){
@@ -5390,22 +6093,36 @@ function openLibraryBook(book){
       `難易度：${book.difficultyLabel}` :
       "学び方を選んでください。";
 
-    descriptionElement.textContent = difficulty;
+    descriptionElement.textContent =
+      difficulty;
+
   }
 
   show("libraryBookMenu");
+
+  window.scrollTo({
+    top:0,
+    left:0,
+    behavior:"auto"
+  });
+
 }
 
 
 /* ==========================================================
-   「知識を得る」を開く
+   知識を得る
 ========================================================== */
 
 async function openLibraryKnowledge(){
 
   if(!currentLibraryBook){
-    alert("本を選び直してください。");
-    show("library");
+
+    alert(
+      "本を選び直してください。"
+    );
+
+    showLibrary();
+
     return;
   }
 
@@ -5413,16 +6130,25 @@ async function openLibraryKnowledge(){
 
   show("libraryKnowledge");
 
+  window.scrollTo({
+    top:0,
+    left:0,
+    behavior:"auto"
+  });
+
   /*
-   * 本一覧取得時点でsummaryJa・summaryEnが入っていれば、
-   * 先に表示します。
+   * 本一覧データに要約が含まれる場合は、
+   * GASの返答を待たず先に表示します。
    */
   renderLibraryKnowledge(
     currentLibraryBook,
-    []
+    findCachedLibraryVocabulary(
+      currentLibraryBook
+    )
   );
 
-  const bookId = getLibraryBookId(currentLibraryBook);
+  const bookId =
+    getLibraryBookId(currentLibraryBook);
 
   if(!bookId){
 
@@ -5435,19 +6161,11 @@ async function openLibraryKnowledge(){
 
   try{
 
-    /*
-     * 図書館GASへ本の詳細を要求します。
-     *
-     * GAS側では
-     * action: "libraryBook"
-     * bookId: 選択した本のID
-     *
-     * を受け取る形にします。
-     */
-    const data = await libraryGasGet({
-      action:"libraryBook",
-      bookId:bookId
-    });
+    const data =
+      await libraryGasGet({
+        action:"libraryBook",
+        bookId:bookId
+      });
 
     if(!data || data.ok === false){
 
@@ -5459,12 +6177,9 @@ async function openLibraryKnowledge(){
 
     }
 
-    /*
-     * GASの返却形式が多少違っても動くように、
-     * book / vocabulary / vocabularies を吸収します。
-     */
     const detailBook =
       data.book ||
+      data.libraryBook ||
       currentLibraryBook;
 
     const vocabulary =
@@ -5472,7 +6187,11 @@ async function openLibraryKnowledge(){
       data.vocabulary :
       Array.isArray(data.vocabularies) ?
       data.vocabularies :
-      [];
+      Array.isArray(data.words) ?
+      data.words :
+      findCachedLibraryVocabulary(
+        currentLibraryBook
+      );
 
     currentLibraryBook = {
       ...currentLibraryBook,
@@ -5491,13 +6210,25 @@ async function openLibraryKnowledge(){
       error
     );
 
-    /*
-     * summaryJa・summaryEnは本一覧データから表示したままにし、
-     * 語彙部分だけエラー表示にします。
-     */
-    renderLibraryVocabularyMessage(
-      "語彙リストの読み込みに失敗しました。"
-    );
+    const cachedVocabulary =
+      findCachedLibraryVocabulary(
+        currentLibraryBook
+      );
+
+    if(cachedVocabulary.length > 0){
+
+      renderLibraryKnowledge(
+        currentLibraryBook,
+        cachedVocabulary
+      );
+
+    }else{
+
+      renderLibraryVocabularyMessage(
+        "語彙リストの読み込みに失敗しました。"
+      );
+
+    }
 
   }
 
@@ -5514,15 +6245,46 @@ function getLibraryBookId(book){
     return "";
   }
 
-  /*
-   * 基本列名はbookId。
-   * 既存データの表記違いにも最低限対応します。
-   */
   return String(
     book.bookId ||
     book.id ||
     ""
   ).trim();
+
+}
+
+
+/* ==========================================================
+   キャッシュ済み語彙を検索
+========================================================== */
+
+function findCachedLibraryVocabulary(book){
+
+  if(
+    !libraryData ||
+    !Array.isArray(libraryData.vocabulary)
+  ){
+    return [];
+  }
+
+  const bookId =
+    getLibraryBookId(book);
+
+  if(!bookId){
+    return [];
+  }
+
+  return libraryData.vocabulary.filter(
+    function(item){
+
+      return String(
+        item.bookId ||
+        item.id ||
+        ""
+      ).trim() === bookId;
+
+    }
+  );
 
 }
 
@@ -5534,25 +6296,38 @@ function getLibraryBookId(book){
 function setLibraryKnowledgeLoading(){
 
   const title =
-    document.getElementById("libraryKnowledgeTitle");
+    document.getElementById(
+      "libraryKnowledgeTitle"
+    );
 
   const difficulty =
-    document.getElementById("libraryKnowledgeDifficulty");
+    document.getElementById(
+      "libraryKnowledgeDifficulty"
+    );
 
   const summaryJa =
-    document.getElementById("librarySummaryJa");
+    document.getElementById(
+      "librarySummaryJa"
+    );
 
   const summaryEn =
-    document.getElementById("librarySummaryEn");
+    document.getElementById(
+      "librarySummaryEn"
+    );
 
   const vocabularyList =
-    document.getElementById("libraryVocabularyList");
+    document.getElementById(
+      "libraryVocabularyList"
+    );
 
   const vocabularyMessage =
-    document.getElementById("libraryVocabularyMessage");
+    document.getElementById(
+      "libraryVocabularyMessage"
+    );
 
   if(title){
-    title.textContent = "📚 知識を得る";
+    title.textContent =
+      "📚 知識を得る";
   }
 
   if(difficulty){
@@ -5560,16 +6335,20 @@ function setLibraryKnowledgeLoading(){
   }
 
   if(summaryJa){
-    summaryJa.textContent = "読み込み中...";
+    summaryJa.textContent =
+      "読み込み中...";
   }
 
   if(summaryEn){
-    summaryEn.textContent = "Loading...";
+    summaryEn.textContent =
+      "Loading...";
   }
 
   if(vocabularyMessage){
+
     vocabularyMessage.textContent =
       "語彙リストを読み込んでいます。";
+
   }
 
   if(vocabularyList){
@@ -5583,27 +6362,46 @@ function setLibraryKnowledgeLoading(){
    本文と語彙を表示
 ========================================================== */
 
-function renderLibraryKnowledge(book, vocabulary){
+function renderLibraryKnowledge(
+  book,
+  vocabulary
+){
+
+  const safeBook =
+    book || {};
 
   const title =
-    document.getElementById("libraryKnowledgeTitle");
+    document.getElementById(
+      "libraryKnowledgeTitle"
+    );
 
   const difficulty =
-    document.getElementById("libraryKnowledgeDifficulty");
+    document.getElementById(
+      "libraryKnowledgeDifficulty"
+    );
 
   const summaryJa =
-    document.getElementById("librarySummaryJa");
+    document.getElementById(
+      "librarySummaryJa"
+    );
 
   const summaryEn =
-    document.getElementById("librarySummaryEn");
+    document.getElementById(
+      "librarySummaryEn"
+    );
+
+  const vocabularyMessage =
+    document.getElementById(
+      "libraryVocabularyMessage"
+    );
 
   if(title){
 
     title.textContent =
       "📚 " +
       (
-        book.titleJa ||
-        book.titleEn ||
+        safeBook.titleJa ||
+        safeBook.titleEn ||
         "知識を得る"
       );
 
@@ -5612,8 +6410,8 @@ function renderLibraryKnowledge(book, vocabulary){
   if(difficulty){
 
     difficulty.textContent =
-      book.difficultyLabel ?
-      `難易度：${book.difficultyLabel}` :
+      safeBook.difficultyLabel ?
+      `難易度：${safeBook.difficultyLabel}` :
       "";
 
   }
@@ -5621,7 +6419,7 @@ function renderLibraryKnowledge(book, vocabulary){
   if(summaryJa){
 
     summaryJa.textContent =
-      book.summaryJa ||
+      safeBook.summaryJa ||
       "日本語の説明はまだ登録されていません。";
 
   }
@@ -5629,118 +6427,178 @@ function renderLibraryKnowledge(book, vocabulary){
   if(summaryEn){
 
     summaryEn.textContent =
-      book.summaryEn ||
+      safeBook.summaryEn ||
       "English summary has not been registered yet.";
 
   }
 
-  renderLibraryVocabulary(vocabulary);
+  if(vocabularyMessage){
+    vocabularyMessage.textContent = "";
+  }
+
+  renderLibraryVocabulary(
+    Array.isArray(vocabulary) ?
+    vocabulary :
+    []
+  );
 
 }
 
 
 /* ==========================================================
-   語彙リストを表示
+   語彙一覧
 ========================================================== */
 
 function renderLibraryVocabulary(list){
 
-    const area = document.getElementById("libraryVocabularyList");
+  const area =
+    document.getElementById(
+      "libraryVocabularyList"
+    );
 
-    area.innerHTML = "";
+  if(!area){
+    return;
+  }
 
-    if(!list || list.length === 0){
+  area.innerHTML = "";
 
-        area.innerHTML =
-        "<p>語彙はありません。</p>";
+  if(
+    !Array.isArray(list) ||
+    list.length === 0
+  ){
 
-        return;
-    }
+    renderLibraryVocabularyMessage(
+      "この本には、まだ語彙が登録されていません。"
+    );
 
-    list.forEach(function(v){
+    return;
+  }
 
-        area.innerHTML += `
+  list.forEach(function(vocabulary){
 
-        <div class="libraryVocabularyItem">
+    const item =
+      document.createElement("article");
 
-            <div class="libraryVocabularyWord">
-                ${v.word}
-            </div>
+    item.className =
+      "libraryVocabularyItem";
 
-            <div class="libraryVocabularyMeaning">
+    const word =
+      vocabulary.word ||
+      vocabulary.vocabulary ||
+      vocabulary.term ||
+      "名称未設定";
 
-                <strong>品詞</strong><br>
-                ${v.partOfSpeech || "-"}
+    const partOfSpeech =
+      vocabulary.partOfSpeech ||
+      vocabulary.pos ||
+      "-";
 
-                <br><br>
+    const meaningJa =
+      vocabulary.meaningJa ||
+      vocabulary.meaning ||
+      vocabulary.definitionJa ||
+      "-";
 
-                <strong>意味</strong><br>
-                ${v.meaningJa || "-"}
+    const exampleEn =
+      vocabulary.exampleEn ||
+      vocabulary.englishExample ||
+      "-";
 
-                <br><br>
+    const exampleJa =
+      vocabulary.exampleJa ||
+      vocabulary.japaneseExample ||
+      "-";
 
-                <strong>例文（英語）</strong><br>
-                ${v.exampleEn || "-"}
+    item.innerHTML = `
+      <div class="libraryVocabularyWord">
+        ${escapeHtml(word)}
+      </div>
 
-                <br><br>
+      <div class="libraryVocabularyMeaning">
 
-                <strong>例文（日本語）</strong><br>
-                ${v.exampleJa || "-"}
+        <strong>品詞</strong><br>
+        ${escapeHtml(partOfSpeech)}
 
-            </div>
+        <br><br>
 
-        </div>
+        <strong>意味</strong><br>
+        ${escapeHtml(meaningJa)}
 
-        `;
+        <br><br>
 
-    });
+        <strong>例文（英語）</strong><br>
+        ${escapeHtml(exampleEn)}
+
+        <br><br>
+
+        <strong>例文（日本語）</strong><br>
+        ${escapeHtml(exampleJa)}
+
+      </div>
+    `;
+
+    area.appendChild(item);
+
+  });
 
 }
 
+
 /* ==========================================================
-   語彙エラー・案内表示
+   語彙の案内・エラー表示
 ========================================================== */
 
 function renderLibraryVocabularyMessage(text){
 
   const message =
-    document.getElementById("libraryVocabularyMessage");
+    document.getElementById(
+      "libraryVocabularyMessage"
+    );
 
   const list =
-    document.getElementById("libraryVocabularyList");
+    document.getElementById(
+      "libraryVocabularyList"
+    );
 
   if(message){
     message.textContent = "";
   }
 
-  if(list){
-
-    list.innerHTML = "";
-
-    const empty =
-      document.createElement("div");
-
-    empty.className =
-      "libraryVocabularyEmpty";
-
-    empty.textContent = text;
-
-    list.appendChild(empty);
+  if(!list){
+    return;
   }
+
+  list.innerHTML = "";
+
+  const empty =
+    document.createElement("div");
+
+  empty.className =
+    "libraryVocabularyEmpty";
+
+  empty.textContent =
+    String(text || "");
+
+  list.appendChild(empty);
 
 }
 
 
 /* ==========================================================
-   「記憶を強化する」
-   LibraryQuestions接続は後で実装
+   記憶を強化する
+   LibraryQuestions連携は次段階で実装
 ========================================================== */
 
 function openLibraryMemory(){
 
   if(!currentLibraryBook){
-    alert("本を選び直してください。");
-    show("library");
+
+    alert(
+      "本を選び直してください。"
+    );
+
+    showLibrary();
+
     return;
   }
 
@@ -5749,6 +6607,7 @@ function openLibraryMemory(){
   );
 
 }
+
 const END_STORY_PAGES=[
  {title:"世界樹の頂へ",text:`黄金竜アルボルは、光の粒となって静かに消えた。
 主人公は長い旅の終わりを感じながら、世界樹の根元へ歩いていく。`,img:"assets/story/endstory1.png"},
