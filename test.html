@@ -5353,7 +5353,42 @@ function renderLibraryBooks(books){
  * localStorageや既存stateの構造は変更しません。
  */
 let currentLibraryBook = null;
+function openLibraryBook(book){
 
+    currentLibraryBook = book;
+
+    document.getElementById("libraryBookMenuTitle").textContent =
+        "📖 " + book.titleJa;
+
+    show("libraryBookMenu");
+
+}
+
+function openLibraryKnowledge(){
+
+    if(!currentLibraryBook){
+        return;
+    }
+
+    document.getElementById("libraryKnowledgeTitle").textContent =
+        currentLibraryBook.titleJa;
+
+    document.getElementById("librarySummaryJa").textContent =
+        currentLibraryBook.summaryJa || "";
+
+    document.getElementById("librarySummaryEn").textContent =
+        currentLibraryBook.summaryEn || "";
+
+    const vocabulary = libraryData.vocabulary.filter(function(v){
+        return String(v.bookId).trim() ===
+               String(currentLibraryBook.bookId).trim();
+    });
+
+    renderLibraryVocabulary(vocabulary);
+
+    show("libraryKnowledge");
+
+}
 
 /* ==========================================================
    「読む」ボタンから読書メニューを開く
@@ -5643,154 +5678,59 @@ function renderLibraryKnowledge(book, vocabulary){
    語彙リストを表示
 ========================================================== */
 
-function renderLibraryVocabulary(vocabulary){
+function renderLibraryVocabulary(list){
 
-  const list =
-    document.getElementById("libraryVocabularyList");
+    const area = document.getElementById("libraryVocabularyList");
 
-  const message =
-    document.getElementById("libraryVocabularyMessage");
+    area.innerHTML = "";
 
-  if(!list){
-    return;
-  }
+    if(!list || list.length === 0){
 
-  list.innerHTML = "";
+        area.innerHTML =
+        "<p>語彙はありません。</p>";
 
-  if(!Array.isArray(vocabulary) || vocabulary.length === 0){
-
-    if(message){
-      message.textContent = "";
+        return;
     }
 
-    list.innerHTML = `
-      <div class="libraryVocabularyEmpty">
-        この本の語彙はまだ登録されていません。
-      </div>
-    `;
+    list.forEach(function(v){
 
-    return;
-  }
+        area.innerHTML += `
 
-  if(message){
+        <div class="libraryVocabularyItem">
 
-    message.textContent =
-      `${vocabulary.length}語を収録しています。`;
+            <div class="libraryVocabularyWord">
+                ${v.word}
+            </div>
 
-  }
+            <div class="libraryVocabularyMeaning">
 
-  vocabulary.forEach(function(item){
+                <strong>品詞</strong><br>
+                ${v.partOfSpeech || "-"}
 
-    const vocabularyItem =
-      document.createElement("div");
+                <br><br>
 
-    vocabularyItem.className =
-      "libraryVocabularyItem";
+                <strong>意味</strong><br>
+                ${v.meaningJa || "-"}
 
-    /*
-     * 想定列：
-     * word
-     * meaningJa
-     * meaningEn
-     * example
-     *
-     * meaning列だけの場合にも対応します。
-     */
-    const word =
-      item.word ||
-      item.vocabulary ||
-      item.term ||
-      "単語未設定";
+                <br><br>
 
-    const meaning =
-      item.meaningJa ||
-      item.meaning ||
-      item.definitionJa ||
-      "";
+                <strong>例文（英語）</strong><br>
+                ${v.exampleEn || "-"}
 
-    const meaningEn =
-      item.meaningEn ||
-      item.definitionEn ||
-      "";
+                <br><br>
 
-    const example =
-      item.example ||
-      item.exampleSentence ||
-      "";
+                <strong>例文（日本語）</strong><br>
+                ${v.exampleJa || "-"}
 
-    const wordElement =
-      document.createElement("div");
+            </div>
 
-    wordElement.className =
-      "libraryVocabularyWord";
+        </div>
 
-    wordElement.textContent = word;
+        `;
 
-    const meaningElement =
-      document.createElement("div");
-
-    meaningElement.className =
-      "libraryVocabularyMeaning";
-
-    meaningElement.textContent =
-      meaning ||
-      meaningEn ||
-      "意味未登録";
-
-    vocabularyItem.appendChild(
-      wordElement
-    );
-
-    vocabularyItem.appendChild(
-      meaningElement
-    );
-
-    const extraTexts = [];
-
-    if(meaning && meaningEn){
-
-      extraTexts.push(
-        `English: ${meaningEn}`
-      );
-
-    }
-
-    if(example){
-
-      extraTexts.push(
-        `例文：${example}`
-      );
-
-    }
-
-    if(extraTexts.length > 0){
-
-      const extraElement =
-        document.createElement("div");
-
-      extraElement.className =
-        "libraryVocabularyExtra";
-
-      extraElement.textContent =
-        extraTexts.join("\n");
-
-      extraElement.style.whiteSpace =
-        "pre-wrap";
-
-      vocabularyItem.appendChild(
-        extraElement
-      );
-
-    }
-
-    list.appendChild(
-      vocabularyItem
-    );
-
-  });
+    });
 
 }
-
 
 /* ==========================================================
    語彙エラー・案内表示
