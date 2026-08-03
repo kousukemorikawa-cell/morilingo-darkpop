@@ -4128,13 +4128,13 @@ scroll-margin-top:90px;
 
 .libraryNoteWord{
   position:relative;
-  display:inline;
+  display:inline-block;
 }
 
 .libraryNoteNumber{
   position:absolute;
-  left:-0.2em;
-  top:-0.9em;
+  left:-0.35em;
+  top:-0.55em;
   font-size:.58em;
   font-weight:bold;
   color:#d33;
@@ -6697,7 +6697,9 @@ function autoLinkVocabulary(
         regex,
         function(match){
 
-        return '<span class="libraryNoteWord"><span class="libraryNoteNumber">' +
+        return '<span class="libraryNoteWord libraryWordLink" data-word="' +
+  escapeHtml(word) +
+  '"><span class="libraryNoteNumber">' +
   escapeHtml(noteNo) +
   '</span>' +
   match +
