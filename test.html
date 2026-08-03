@@ -4122,6 +4122,80 @@ background:#fff7a8;
 scroll-margin-top:90px;
 
 }
+/* ==========================================
+   世界樹図書館 注表示
+========================================== */
+
+.libraryNoteWord{
+  position:relative;
+  display:inline;
+}
+
+.libraryNoteNumber{
+  position:absolute;
+  left:-0.2em;
+  top:-0.9em;
+  font-size:.58em;
+  font-weight:bold;
+  color:#d33;
+  line-height:1;
+  pointer-events:none;
+}
+
+.libraryNotesSection{
+  margin:16px 0;
+  padding:14px 16px;
+  border-radius:16px;
+  background:#fffdf2;
+  border:2px solid #e4d79c;
+}
+
+.libraryNotesSection[hidden]{
+  display:none;
+}
+
+.libraryNotesSection h3{
+  margin:0 0 10px;
+  color:#8b5e00;
+}
+
+#libraryNotesList{
+  display:grid;
+  gap:8px;
+}
+
+.libraryNoteItem{
+  display:grid;
+  grid-template-columns:32px 220px 1fr;
+  gap:8px;
+  align-items:start;
+}
+
+.libraryNoteListNumber{
+  font-weight:bold;
+  color:#c62828;
+  text-align:right;
+}
+
+.libraryNoteListWord{
+  font-weight:bold;
+}
+
+.libraryNoteListMeaning{
+  color:#444;
+}
+
+@media(max-width:600px){
+
+  .libraryNoteItem{
+    grid-template-columns:28px 1fr;
+  }
+
+  .libraryNoteListMeaning{
+    grid-column:2;
+  }
+
+}
 </style>
  
 </head>
@@ -4530,7 +4604,18 @@ scroll-margin-top:90px;
       </article>
 
     </div>
+　　<!-- 本文注 -->
+<section
+  id="libraryNotesSection"
+  class="libraryNotesSection"
+  hidden
+>
 
+  <h3>📝 注</h3>
+
+  <div id="libraryNotesList"></div>
+
+</section>
     <!-- 語彙 -->
     <section class="libraryVocabularySection">
 
