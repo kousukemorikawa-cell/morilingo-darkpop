@@ -6492,15 +6492,15 @@ function renderLibraryKnowledge(
       "libraryKnowledgeDifficulty"
     );
 
-  const summaryJa =
-    document.getElementById(
-      "librarySummaryJa"
-    );
+const contentJa =
+  document.getElementById(
+    "libraryContentJa"
+  );
 
-  const summaryEn =
-    document.getElementById(
-      "librarySummaryEn"
-    );
+const contentEn =
+  document.getElementById(
+    "libraryContentEn"
+  );
 
   const vocabularyMessage =
     document.getElementById(
@@ -6544,24 +6544,24 @@ function renderLibraryKnowledge(
 
   }
 
-  if(summaryJa){
+ if(contentJa){
 
-    summaryJa.textContent =
-      safeBook.summaryJa ||
-      "日本語の説明はまだ登録されていません。";
+  contentJa.textContent =
+    safeBook.contentJa ||
+    "日本語本文はまだ登録されていません。";
 
-  }
+}
 
-  if(summaryEn){
+if(contentEn){
 
-    summaryEn.innerHTML =
-      autoLinkVocabulary(
-        safeBook.summaryEn ||
-        "English summary has not been registered yet.",
-        noteVocabulary
-      );
+  contentEn.innerHTML =
+    autoLinkVocabulary(
+      safeBook.contentEn ||
+      "English text has not been registered yet.",
+      noteVocabulary
+    );
 
-  }
+}
 
   if(vocabularyMessage){
     vocabularyMessage.textContent = "";
