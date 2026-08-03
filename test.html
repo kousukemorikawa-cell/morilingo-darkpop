@@ -6492,12 +6492,12 @@ function renderLibraryKnowledge(
       "libraryKnowledgeDifficulty"
     );
 
-  const contentJa =
+  const summaryJa =
     document.getElementById(
       "librarySummaryJa"
     );
 
-  const contentEn =
+  const summaryEn =
     document.getElementById(
       "librarySummaryEn"
     );
@@ -6506,6 +6506,22 @@ function renderLibraryKnowledge(
     document.getElementById(
       "libraryVocabularyMessage"
     );
+
+  // ▼追加
+  const vocabularyList =
+    Array.isArray(vocabulary)
+      ? vocabulary
+      : [];
+
+  const noteVocabulary =
+    vocabularyList.filter(function(item){
+      return String(item.noteNo || "").trim();
+    });
+
+  const studyVocabulary =
+    vocabularyList.filter(function(item){
+      return !String(item.noteNo || "").trim();
+    });
 
   if(title){
 
@@ -6522,57 +6538,40 @@ function renderLibraryKnowledge(
   if(difficulty){
 
     difficulty.textContent =
-      safeBook.difficultyLabel
-        ? `難易度：${safeBook.difficultyLabel}`
-        : "";
+      safeBook.difficultyLabel ?
+      `難易度：${safeBook.difficultyLabel}` :
+      "";
 
   }
 
-  // ==========================
-  // 日本語本文
-  // ==========================
+  if(summaryJa){
 
-  if(contentJa){
-
-    contentJa.textContent =
-      safeBook.contentJa ||
-      "日本語本文はまだ登録されていません。";
+    summaryJa.textContent =
+      safeBook.summaryJa ||
+      "日本語の説明はまだ登録されていません。";
 
   }
 
-  // ==========================
-  // 英語本文
-  // ==========================
+  if(summaryEn){
 
-  if(contentEn){
-
-    const vocabularyList =
-      Array.isArray(vocabulary)
-        ? vocabulary
-        : [];
-
-    contentEn.innerHTML =
+    summaryEn.innerHTML =
       autoLinkVocabulary(
-        safeBook.contentEn ||
-        "English text has not been registered yet.",
-        vocabularyList
+        safeBook.summaryEn ||
+        "English summary has not been registered yet.",
+        noteVocabulary
       );
 
   }
 
   if(vocabularyMessage){
-
     vocabularyMessage.textContent = "";
-
   }
 
-  renderLibraryVocabulary(
-    Array.isArray(vocabulary)
-      ? vocabulary
-      : []
-  );
+  // ▼追加
+  renderLibraryNotes(noteVocabulary);
 
-  setupVocabularyLinks();
+  // ▼変更
+  renderLibraryVocabulary(studyVocabulary);
 
 }
 
