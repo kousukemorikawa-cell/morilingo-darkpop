@@ -4594,7 +4594,7 @@ scroll-margin-top:90px;
         </div>
 
         <div
-          id="librarySummaryEn"
+          id="librarycontentEn"
           class="librarySummaryText"
           lang="en"
         >
@@ -6417,14 +6417,14 @@ function setLibraryKnowledgeLoading(){
       "libraryKnowledgeDifficulty"
     );
 
-  const summaryJa =
+  const contentJa =
     document.getElementById(
-      "librarySummaryJa"
+      "libraryContentJa"
     );
 
-  const summaryEn =
+  const contentEn =
     document.getElementById(
-      "librarySummaryEn"
+      "librarycontentEn"
     );
 
   const vocabularyList =
@@ -6446,13 +6446,13 @@ function setLibraryKnowledgeLoading(){
     difficulty.textContent = "";
   }
 
-  if(summaryJa){
-    summaryJa.textContent =
+  if(contentJa){
+    contentJa.textContent =
       "読み込み中...";
   }
 
-  if(summaryEn){
-    summaryEn.textContent =
+  if(contentEn){
+    contentEn.textContent =
       "Loading...";
   }
 
