@@ -6697,9 +6697,11 @@ function autoLinkVocabulary(
         regex,
         function(match){
 
-          return `
-<span class="libraryNoteWord">
-<span class="libraryNoteNumber">${escapeHtml(noteNo)}</span>${match}</span>`;
+        return '<span class="libraryNoteWord"><span class="libraryNoteNumber">' +
+  escapeHtml(noteNo) +
+  '</span>' +
+  match +
+  '</span>';
 
         }
       );
