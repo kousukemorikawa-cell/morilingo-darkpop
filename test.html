@@ -6407,12 +6407,12 @@ function renderLibraryKnowledge(
       "libraryKnowledgeDifficulty"
     );
 
-  const summaryJa =
+  const contentJa =
     document.getElementById(
       "librarySummaryJa"
     );
 
-  const summaryEn =
+  const contentEn =
     document.getElementById(
       "librarySummaryEn"
     );
@@ -6437,44 +6437,58 @@ function renderLibraryKnowledge(
   if(difficulty){
 
     difficulty.textContent =
-      safeBook.difficultyLabel ?
-      `難易度：${safeBook.difficultyLabel}` :
-      "";
+      safeBook.difficultyLabel
+        ? `難易度：${safeBook.difficultyLabel}`
+        : "";
 
   }
 
-  if(summaryJa){
+  // ==========================
+  // 日本語本文
+  // ==========================
 
-    summaryJa.textContent =
-      safeBook.summaryJa ||
-      "日本語の説明はまだ登録されていません。";
+  if(contentJa){
+
+    contentJa.textContent =
+      safeBook.contentJa ||
+      "日本語本文はまだ登録されていません。";
 
   }
 
-  if(summaryEn){
+  // ==========================
+  // 英語本文
+  // ==========================
+
+  if(contentEn){
 
     const vocabularyList =
-    Array.isArray(vocabulary)
+      Array.isArray(vocabulary)
         ? vocabulary
         : [];
 
-    summaryEn.innerHTML =
-    autoLinkVocabulary(
-        safeBook.summaryEn ||
-        "English summary has not been registered yet.",
+    contentEn.innerHTML =
+      autoLinkVocabulary(
+        safeBook.contentEn ||
+        "English text has not been registered yet.",
         vocabularyList
-    );
-  } 
+      );
+
+  }
+
   if(vocabularyMessage){
+
     vocabularyMessage.textContent = "";
+
   }
 
   renderLibraryVocabulary(
-    Array.isArray(vocabulary) ?
-    vocabulary :
-    []
+    Array.isArray(vocabulary)
+      ? vocabulary
+      : []
   );
+
   setupVocabularyLinks();
+
 }
 
 function setupVocabularyLinks(){
