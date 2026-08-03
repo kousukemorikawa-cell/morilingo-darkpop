@@ -6607,39 +6607,229 @@ function setupVocabularyLinks(){
 // 本文中の単語を自動リンク
 // ============================
 
-function autoLinkVocabulary(text,vocabulary){
+function autoLinkVocabulary(
+  text,
+  vocabulary
+){
 
-    if(!text) return "";
+  if(!text){
+    return "";
+  }
 
-    let html=text;
+  let html =
+    escapeHtml(text);
 
-    vocabulary.forEach(v=>{
+  const notes =
+    (Array.isArray(vocabulary)
+      ? vocabulary
+      : []
+    )
+    .filter(function(item){
 
-        if(!v.word) return;
+      return (
+        String(
+          item.noteNo || ""
+        ).trim() &&
+        String(
+          item.word ||
+          item.vocabulary ||
+          item.term ||
+          ""
+        ).trim()
+      );
 
-        const word=v.word.trim();
+    })
+    .sort(function(a,b){
 
-        if(!word) return;
-
-        const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-
-        const regex=new RegExp(
-            "\\b"+escaped+"\\b",
-            "gi"
+      const wordA =
+        String(
+          a.word ||
+          a.vocabulary ||
+          a.term ||
+          ""
         );
 
-        html=html.replace(regex,match=>{
+      const wordB =
+        String(
+          b.word ||
+          b.vocabulary ||
+          b.term ||
+          ""
+        );
 
-        return `<span class="libraryWordLink" data-word="${word}">${match}</span>`;
-
-        });
+      return wordB.length - wordA.length;
 
     });
 
-    return html;
+  notes.forEach(function(item){
+
+    const word =
+      String(
+        item.word ||
+        item.vocabulary ||
+        item.term ||
+        ""
+      ).trim();
+
+    const noteNo =
+      String(
+        item.noteNo
+      ).trim();
+
+    if(!word){
+      return;
+    }
+
+    const escapedWord =
+      escapeHtml(word);
+
+    const regex =
+      new RegExp(
+        escapedWord.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          "\\$&"
+        ),
+        "gi"
+      );
+
+    html =
+      html.replace(
+        regex,
+        function(match){
+
+          return `
+<span class="libraryNoteWord">
+<span class="libraryNoteNumber">${escapeHtml(noteNo)}</span>${match}</span>`;
+
+        }
+      );
+
+  });
+
+  return html;
 
 }
+/* ==========================================================
+   本文の注一覧
+========================================================== */
 
+function renderLibraryNotes(list){
+
+  const section =
+    document.getElementById(
+      "libraryNotesSection"
+    );
+
+  const area =
+    document.getElementById(
+      "libraryNotesList"
+    );
+
+  if(!section || !area){
+    return;
+  }
+
+  area.innerHTML = "";
+
+  const notes =
+    (Array.isArray(list) ? list : [])
+    .filter(function(vocabulary){
+
+      const noteNo =
+        String(
+          vocabulary.noteNo || ""
+        ).trim();
+
+      const word =
+        String(
+          vocabulary.word ||
+          vocabulary.vocabulary ||
+          vocabulary.term ||
+          ""
+        ).trim();
+
+      return noteNo && word;
+
+    })
+    .sort(function(a,b){
+
+      const aNo =
+        Number(a.noteNo);
+
+      const bNo =
+        Number(b.noteNo);
+
+      if(
+        Number.isFinite(aNo) &&
+        Number.isFinite(bNo)
+      ){
+        return aNo - bNo;
+      }
+
+      return String(a.noteNo).localeCompare(
+        String(b.noteNo),
+        "ja",
+        {
+          numeric:true
+        }
+      );
+
+    });
+
+  if(notes.length === 0){
+
+    section.hidden = true;
+    return;
+
+  }
+
+  notes.forEach(function(vocabulary){
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "libraryNoteItem";
+
+    const noteNo =
+      String(
+        vocabulary.noteNo || ""
+      ).trim();
+
+    const word =
+      vocabulary.word ||
+      vocabulary.vocabulary ||
+      vocabulary.term ||
+      "名称未設定";
+
+    const meaningJa =
+      vocabulary.meaningJa ||
+      vocabulary.meaning ||
+      vocabulary.definitionJa ||
+      "-";
+
+    item.innerHTML = `
+      <span class="libraryNoteListNumber">
+        ${escapeHtml(noteNo)}
+      </span>
+
+      <span class="libraryNoteListWord">
+        ${escapeHtml(word)}
+      </span>
+
+      <span class="libraryNoteListMeaning">
+        ${escapeHtml(meaningJa)}
+      </span>
+    `;
+
+    area.appendChild(item);
+
+  });
+
+  section.hidden = false;
+
+}
+ 
 /* ==========================================================
    語彙一覧
 ========================================================== */
