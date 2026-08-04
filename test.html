@@ -6558,7 +6558,7 @@ if(contentEn){
     autoLinkVocabulary(
       safeBook.contentEn ||
       "English text has not been registered yet.",
-      noteVocabulary
+      vocabularyList
     );
 
 }
@@ -6620,24 +6620,19 @@ function autoLinkVocabulary(
   let html =
     escapeHtml(text);
 
-  const notes =
+  const words =
     (Array.isArray(vocabulary)
       ? vocabulary
       : []
     )
     .filter(function(item){
 
-      return (
-        String(
-          item.noteNo || ""
-        ).trim() &&
-        String(
-          item.word ||
-          item.vocabulary ||
-          item.term ||
-          ""
-        ).trim()
-      );
+      return String(
+        item.word ||
+        item.vocabulary ||
+        item.term ||
+        ""
+      ).trim();
 
     })
     .sort(function(a,b){
@@ -6662,7 +6657,7 @@ function autoLinkVocabulary(
 
     });
 
-  notes.forEach(function(item){
+  words.forEach(function(item){
 
     const word =
       String(
@@ -6672,14 +6667,14 @@ function autoLinkVocabulary(
         ""
       ).trim();
 
-    const noteNo =
-      String(
-        item.noteNo
-      ).trim();
-
     if(!word){
       return;
     }
+
+    const noteNo =
+      String(
+        item.noteNo || ""
+      ).trim();
 
     const escapedWord =
       escapeHtml(word);
@@ -6698,13 +6693,25 @@ function autoLinkVocabulary(
         regex,
         function(match){
 
-        return '<span class="libraryNoteWord libraryWordLink" data-word="' +
-  escapeHtml(word) +
-  '"><span class="libraryNoteNumber">' +
-  escapeHtml(noteNo) +
-  '</span>' +
-  match +
-  '</span>';
+          // 注付き単語
+          if(noteNo){
+
+            return '<span class="libraryNoteWord" data-word="' +
+              escapeHtml(word) +
+              '"><span class="libraryNoteNumber">' +
+              escapeHtml(noteNo) +
+              '</span>' +
+              match +
+              '</span>';
+
+          }
+
+          // Vocabularyのみ
+          return '<span class="libraryWordLink" data-word="' +
+            escapeHtml(word) +
+            '">' +
+            match +
+            '</span>';
 
         }
       );
@@ -6929,9 +6936,9 @@ function renderLibraryVocabulary(list){
     `;
 　　item.addEventListener("click",()=>{
 
-    const target=document.querySelector(
-        '.libraryWordLink[data-word="'+word+'"]'
-    );
+    const target = document.querySelector(
+  '.libraryNoteWord[data-word="' + CSS.escape(word) + '"]'
+);
 
     if(target){
 
