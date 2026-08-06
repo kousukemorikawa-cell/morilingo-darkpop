@@ -4196,6 +4196,52 @@ scroll-margin-top:90px;
   }
 
 }
+
+/* ===== ストーリーシステム追加 ===== */
+.storyLibrary{display:grid;gap:16px}
+.storyChapter{background:#ffffffc9;border:2px solid #fff;border-radius:20px;padding:14px}
+.storyChapterTitle{font-size:20px;font-weight:1000;margin:0 0 10px}
+.storyEntryList{display:grid;gap:8px}
+.storyEntry{width:100%;text-align:left;border:0;border-radius:16px;padding:13px 14px;font:inherit;font-weight:900;cursor:pointer;background:#fff;box-shadow:0 4px 0 #0002}
+.storyEntry.locked{cursor:default;filter:grayscale(1);opacity:.62}
+.storyViewer{display:none}
+.storyViewer.active{display:block}
+.storyViewerImage{display:block;width:100%;max-height:430px;object-fit:contain;border-radius:20px;background:#111}
+.storyViewerTitle{text-align:center;font-size:25px}
+.storyViewerContent{white-space:pre-wrap;line-height:2;font-weight:800}
+.storyUnlockModal{position:fixed;inset:0;z-index:100050;display:none;align-items:center;justify-content:center;padding:18px;background:#0009}
+.storyUnlockModal.active{display:flex}
+.storyUnlockCard{width:min(92vw,520px);background:#fff;border:4px solid #fff;border-radius:26px;padding:22px;text-align:center;box-shadow:0 24px 80px #0008}
+.storyUnlockTitle{font-size:23px;font-weight:1000}
+.storyUnlockName{font-size:21px;font-weight:1000;margin:14px 0}
+.storyToast{position:fixed;left:50%;bottom:24px;z-index:100100;transform:translateX(-50%);background:#111;color:#fff;border-radius:999px;padding:12px 18px;font-weight:1000;box-shadow:0 8px 28px #0005}
+
+
+
+/* ===== ストーリーシステム長期運用版 ===== */
+.storyLibraryHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.storyLibraryStatus{flex:none;background:#fff;border:2px solid #e7d9ff;border-radius:999px;padding:8px 12px;font-weight:1000;color:#7143a8}
+.storyLibraryTools{display:grid;grid-template-columns:1fr auto;gap:8px;margin:14px 0}
+.storySearchInput{width:100%;border:2px solid #ddd;border-radius:14px;padding:12px 14px;font:inherit;font-weight:800;background:#fff}
+.storyRefreshBtn{padding:10px 14px}
+.storyChapter{margin:12px 0;border:2px solid #eadfff;border-radius:18px;background:#ffffffb8;overflow:hidden}
+.storyChapterToggle{width:100%;border:0;background:linear-gradient(90deg,#f6efff,#fff);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:10px;font:inherit;font-weight:1000;text-align:left;cursor:pointer}
+.storyChapterToggle .storyChapterCount{font-size:12px;color:#765a91}
+.storyChapterBody{padding:10px;display:grid;gap:8px}
+.storyChapter.isCollapsed .storyChapterBody{display:none}
+.storyEntry{position:relative;width:100%;border:2px solid #eee;background:#fff;border-radius:14px;padding:12px 44px 12px 14px;text-align:left;font:inherit;font-weight:900;cursor:pointer}
+.storyEntry.locked{cursor:not-allowed;opacity:.58;filter:grayscale(.6)}
+.storyEntry.unread{border-color:#a86cff;box-shadow:0 0 0 3px #e9d8ff}
+.storyNewBadge{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:#ff3b30;color:#fff;border-radius:999px;padding:4px 7px;font-size:10px;letter-spacing:.05em}
+.storyViewerLoading{display:none;text-align:center;padding:20px;font-weight:900;color:#667085}
+.storyViewerLoading.active{display:block}
+.storyViewerNav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.storyViewerNav .btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:560px){
+ .storyLibraryHead{align-items:center}
+ .storyLibraryTools{grid-template-columns:1fr}
+ .storyViewerNav{grid-template-columns:1fr}
+}
 </style>
  
 </head>
@@ -4637,50 +4683,49 @@ scroll-margin-top:90px;
   </div>
 </section>
 
-  <section id="story" class="screen">
-    <div class="card">
-      <h2>📖 ストーリー</h2>
-      <p class="muted">失われた世界を取り戻す、育樹師の物語</p>
-
-      <div class="storyBox">
-        <div class="storyPage">
-          <img class="storyImage" src="assets/story/01_story.png" alt="かつて栄えていた世界樹の世界">
-          <div class="storyText">
-            <span class="storyNo">1</span>
-            <h3>豊かな世界</h3>
-            <p>かつて世界は「世界樹」の力によって、豊かな実りと文明を築いていた。</p>
-          </div>
+  
+<section id="story" class="screen">
+  <div class="card">
+    <div id="storyLibraryView">
+      <div class="storyLibraryHead">
+        <div>
+          <h2>📚 ストーリー図鑑</h2>
+          <p class="muted">復興で獲得した物語を読むことができます。</p>
         </div>
-
-        <div class="storyPage">
-          <img class="storyImage" src="assets/story/02_story.png" alt="災厄によって世界樹が枯れた世界">
-          <div class="storyText">
-            <span class="storyNo">2</span>
-            <h3>世界樹の枯死</h3>
-            <p>しかし、ある災厄によって世界樹は枯れ、人類の文明は滅びる。</p>
-            <p>大地は荒廃し、各地の恵みや資源も失われてしまった。</p>
-          </div>
-        </div>
-
-        <div class="storyPage">
-          <img class="storyImage" src="assets/story/03_story.png" alt="最後の育樹師が世界樹の復活を目指す場面">
-          <div class="storyText">
-            <span class="storyNo">3</span>
-            <h3>最後の育樹師</h3>
-            <p>プレイヤーは最後の「育樹師」。</p>
-            <p>知識の力、つまり問題を解く力を使い、各地を浄化しながら失われた実りや資源を取り戻し、世界樹の復活を目指す。</p>
-          </div>
-        </div>
+        <div id="storyLibraryStatus" class="storyLibraryStatus">0 / 0</div>
       </div>
 
+      <div class="storyLibraryTools">
+        <input id="storySearchInput" class="storySearchInput" type="search"
+          placeholder="タイトル・章を検索"
+          oninput="renderStoryLibrary()">
+        <button class="btn ghost storyRefreshBtn" onclick="refreshStoryData()">↻ 更新</button>
+      </div>
+
+      <div id="storyLibraryList" class="storyLibrary">
+        <div class="muted">ストーリーを読み込み中...</div>
+      </div>
 
       <div class="toolbar">
-        <button class="btn primary" onclick="openChallenge()">冒険へ進む</button>
         <button class="btn ghost" onclick="show('menu')">メニューへ戻る</button>
       </div>
     </div>
-  </section>
 
+    <div id="storyViewerView" class="storyViewer">
+      <div id="storyViewerLoading" class="storyViewerLoading">画像を読み込み中...</div>
+      <img id="storyViewerImage" class="storyViewerImage" alt="">
+      <h2 id="storyViewerTitle" class="storyViewerTitle"></h2>
+      <div id="storyViewerContent" class="storyViewerContent"></div>
+      <div class="storyViewerNav">
+        <button id="storyPrevBtn" class="btn ghost" onclick="openAdjacentStory(-1)">← 前の話</button>
+        <button id="storyNextBtn" class="btn ghost" onclick="openAdjacentStory(1)">次の話 →</button>
+      </div>
+      <div class="toolbar">
+        <button id="storyViewerBackBtn" class="btn primary" onclick="closeStoryViewer()">ストーリー図鑑へ戻る</button>
+      </div>
+    </div>
+  </div>
+</section>
 
   <section id="endStory" class="screen">
     <div class="card endStoryCard">
@@ -4944,6 +4989,18 @@ scroll-margin-top:90px;
     </div>
   </section>
 </div>
+<div id="storyUnlockModal" class="storyUnlockModal" aria-hidden="true">
+  <div class="storyUnlockCard">
+    <div class="storyUnlockTitle">🌱 新しいストーリーを獲得しました！</div>
+    <div id="storyUnlockName" class="storyUnlockName"></div>
+    <div class="toolbar">
+      <button class="btn storyBtn" onclick="readUnlockedStoryNow()">📖 今読む</button>
+      <button class="btn secondary" onclick="saveUnlockedStoryForLater()">📚 あとで読む</button>
+    </div>
+  </div>
+</div>
+
+
 <div id="answerPanel" class="answerPanel" style="display:none"><div id="answers" class="answers"></div></div>
 <div id="questAnswerPanel" class="answerPanel" style="display:none"><div id="questAnswers" class="answers"></div></div>
 <div id="questItemModal" class="questModal"><div class="questModalCard"><h2>🎒 アイテムを使う</h2><p class="muted">問題画面を隠して、所持アイテムから選べます。</p><div id="questModalItems"></div><div class="toolbar"><button class="btn ghost" onclick="closeQuestItemModal()">閉じる</button></div></div></div>
@@ -5489,6 +5546,9 @@ state.items??={};
 state.questClears??={};
 state.questUnlocked??={};
 state.timeAttackBests??={};
+state.storyUnlockedIds??=[];
+state.storyReadIds??=[];
+state.storyNewIds??=[];
 state.zukanTab??="items";
 state.skin??={me:DEFAULT_PLAYER_CHARACTER,effect:DEFAULT_PLAYER_EFFECT};
 state.skins??={};
@@ -5773,9 +5833,331 @@ function showTitles(){
  show("titles");
 }
 
-function showStory(){
- show("story");
+
+/* ==========================================================
+   ストーリーシステム（長期運用版）
+   Storyシートを正本とし、保存データには取得・既読・NEWのIDだけを保持する。
+========================================================== */
+const STORY_CACHE_KEY="morilingoStoryMasterCacheV2";
+const STORY_CACHE_TTL=6*60*60*1000;
+let storyMaster=[];
+let storyDataLoading=null;
+let pendingUnlockedStory=null;
+let storyViewerReturn="library";
+let currentStoryId="";
+const storyCollapsedChapters=new Set();
+
+function normalizeStoryItem(row){
+  return {
+    storyId:String(row.storyId||"").trim(),
+    stageId:String(row.stageId||"").trim(),
+    orderNo:Number(row.orderNo||0),
+    chapterId:String(row.chapterId||row.stageId||"").trim(),
+    chapterTitle:String(row.chapterTitle||"").trim(),
+    chapterOrder:Number(row.chapterOrder||row.stageOrder||0),
+    title:String(row.title||"").trim(),
+    image:String(row.image||"").trim(),
+    content:String(row.content||""),
+    isVisible:row.isVisible!==false
+  };
 }
+function readStoryCache(){
+  try{
+    const cache=JSON.parse(localStorage.getItem(STORY_CACHE_KEY)||"null");
+    if(!cache || !Array.isArray(cache.stories))return null;
+    if(Date.now()-Number(cache.savedAt||0)>STORY_CACHE_TTL)return null;
+    return cache.stories.map(normalizeStoryItem).filter(x=>x.storyId&&x.title&&x.isVisible);
+  }catch(error){
+    console.warn("Story cache read error",error);
+    return null;
+  }
+}
+function writeStoryCache(stories){
+  try{
+    localStorage.setItem(STORY_CACHE_KEY,JSON.stringify({
+      savedAt:Date.now(),
+      stories:stories
+    }));
+  }catch(error){
+    console.warn("Story cache write error",error);
+  }
+}
+function preloadStoryImages(stories){
+  (stories||[])
+    .filter(story=>storyIsUnlocked(story.storyId)&&story.image)
+    .slice(0,12)
+    .forEach(story=>{
+      const image=new Image();
+      image.src=story.image;
+    });
+}
+function setStoryMaster(rows){
+  storyMaster=(Array.isArray(rows)?rows:[])
+    .map(normalizeStoryItem)
+    .filter(x=>x.storyId&&x.title&&x.isVisible)
+    .sort((a,b)=>(a.chapterOrder-b.chapterOrder)||(a.orderNo-b.orderNo)||a.storyId.localeCompare(b.storyId));
+  preloadStoryImages(storyMaster);
+  renderStoryLibrary();
+  return storyMaster;
+}
+function loadStoryData(force=false){
+  if(storyMaster.length&&!force)return Promise.resolve(storyMaster);
+  if(storyDataLoading&&!force)return storyDataLoading;
+
+  if(!force){
+    const cached=readStoryCache();
+    if(cached&&cached.length){
+      setStoryMaster(cached);
+      /* キャッシュ表示後、通信はバックグラウンド更新する */
+      setTimeout(()=>loadStoryData(true),0);
+      return Promise.resolve(storyMaster);
+    }
+  }
+
+  storyDataLoading=gasGet({action:"stories"},{timeoutMs:9000})
+    .then(data=>{
+      if(!data||data.ok===false)throw new Error(data?.message||"ストーリーを取得できませんでした。");
+      const stories=setStoryMaster(Array.isArray(data.stories)?data.stories:[]);
+      writeStoryCache(stories);
+      return stories;
+    })
+    .catch(error=>{
+      console.error("Story load error",error);
+      if(!storyMaster.length){
+        const box=$("storyLibraryList");
+        if(box)box.innerHTML='<div class="muted">ストーリーの読み込みに失敗しました。更新ボタンを押してください。</div>';
+      }
+      return storyMaster;
+    })
+    .finally(()=>{storyDataLoading=null;});
+  return storyDataLoading;
+}
+function refreshStoryData(){
+  localStorage.removeItem(STORY_CACHE_KEY);
+  storyMaster=[];
+  const box=$("storyLibraryList");
+  if(box)box.innerHTML='<div class="muted">ストーリーを更新中...</div>';
+  loadStoryData(true).then(()=>{
+    showStoryToast("📚 ストーリーデータを更新しました。");
+  });
+}
+function showStory(){
+  show("story");
+  $("storyLibraryView").style.display="block";
+  $("storyViewerView").classList.remove("active");
+  loadStoryData().then(renderStoryLibrary);
+}
+function storyIsUnlocked(storyId){
+  return (state.storyUnlockedIds||[]).includes(String(storyId));
+}
+function storyIsRead(storyId){
+  return (state.storyReadIds||[]).includes(String(storyId));
+}
+function storyIsNew(storyId){
+  return (state.storyNewIds||[]).includes(String(storyId));
+}
+function toggleStoryChapter(chapterId){
+  const key=String(chapterId);
+  if(storyCollapsedChapters.has(key))storyCollapsedChapters.delete(key);
+  else storyCollapsedChapters.add(key);
+  renderStoryLibrary();
+}
+function renderStoryLibrary(){
+  const box=$("storyLibraryList");
+  if(!box)return;
+  if(!storyMaster.length){
+    box.innerHTML='<div class="muted">ストーリーデータがありません。</div>';
+    return;
+  }
+
+  const search=String($("storySearchInput")?.value||"").trim().toLowerCase();
+  const groups=new Map();
+  storyMaster.forEach(story=>{
+    const searchable=`${story.chapterTitle} ${story.title} ${story.stageId}`.toLowerCase();
+    if(search&&!searchable.includes(search))return;
+    const key=story.chapterId||story.stageId||"chapter";
+    if(!groups.has(key)){
+      groups.set(key,{
+        id:key,
+        title:story.chapterTitle||`第${story.chapterOrder||groups.size+1}章`,
+        items:[]
+      });
+    }
+    groups.get(key).items.push(story);
+  });
+
+  const unlockedCount=storyMaster.filter(story=>storyIsUnlocked(story.storyId)).length;
+  const status=$("storyLibraryStatus");
+  if(status)status.textContent=`${unlockedCount} / ${storyMaster.length}`;
+
+  if(!groups.size){
+    box.innerHTML='<div class="muted">該当するストーリーはありません。</div>';
+    return;
+  }
+
+  box.innerHTML=[...groups.values()].map(group=>{
+    const collapsed=storyCollapsedChapters.has(group.id)&&!search;
+    const unlockedInGroup=group.items.filter(story=>storyIsUnlocked(story.storyId)).length;
+    return `
+      <section class="storyChapter ${collapsed?"isCollapsed":""}">
+        <button class="storyChapterToggle" onclick="toggleStoryChapter('${escapeHtml(group.id)}')">
+          <span>${escapeHtml(group.title)}</span>
+          <span class="storyChapterCount">${unlockedInGroup} / ${group.items.length} ${collapsed?"▼":"▲"}</span>
+        </button>
+        <div class="storyChapterBody">
+          ${group.items.map((story,index)=>{
+            const unlocked=storyIsUnlocked(story.storyId);
+            const unread=unlocked&&!storyIsRead(story.storyId);
+            const isNew=unlocked&&storyIsNew(story.storyId);
+            return `<button class="storyEntry ${unlocked?"":"locked"} ${unread?"unread":""}"
+              ${unlocked?`onclick="openStoryViewer('${escapeHtml(story.storyId)}','library')"`:"disabled"}>
+              ${Number(story.orderNo||index+1)}. ${unlocked?escapeHtml(story.title):"？？？"}
+              ${isNew?'<span class="storyNewBadge">NEW</span>':""}
+            </button>`;
+          }).join("")}
+        </div>
+      </section>`;
+  }).join("");
+}
+function setStoryRead(storyId){
+  const id=String(storyId);
+  state.storyReadIds=[...new Set([...(state.storyReadIds||[]),id])];
+  state.storyNewIds=(state.storyNewIds||[]).filter(x=>String(x)!==id);
+  save();
+  savePlayerDataNow(true);
+}
+function openStoryViewer(storyId,returnMode="library"){
+  const story=storyMaster.find(x=>x.storyId===String(storyId));
+  if(!story||!storyIsUnlocked(story.storyId))return;
+  storyViewerReturn=returnMode;
+  currentStoryId=story.storyId;
+  setStoryRead(story.storyId);
+
+  $("storyLibraryView").style.display="none";
+  $("storyViewerView").classList.add("active");
+  $("storyViewerTitle").textContent=story.title;
+  $("storyViewerContent").textContent=story.content;
+  $("storyViewerBackBtn").textContent=returnMode==="recovery"?"復興画面へ戻る":"ストーリー図鑑へ戻る";
+
+  const image=$("storyViewerImage");
+  const loading=$("storyViewerLoading");
+  image.style.display="none";
+  loading.classList.add("active");
+  image.alt=story.title;
+  image.onload=()=>{
+    loading.classList.remove("active");
+    image.style.display="block";
+  };
+  image.onerror=()=>{
+    loading.classList.remove("active");
+    image.style.display="none";
+    loading.textContent="画像を表示できませんでした。";
+    loading.classList.add("active");
+  };
+  image.src=story.image||"";
+  updateStoryViewerNavigation();
+  renderStoryLibrary();
+  show("story");
+}
+function unlockedStorySequence(){
+  return storyMaster.filter(story=>storyIsUnlocked(story.storyId));
+}
+function updateStoryViewerNavigation(){
+  const list=unlockedStorySequence();
+  const index=list.findIndex(story=>story.storyId===currentStoryId);
+  const prevBtn=$("storyPrevBtn");
+  const nextBtn=$("storyNextBtn");
+  if(prevBtn)prevBtn.disabled=index<=0;
+  if(nextBtn)nextBtn.disabled=index<0||index>=list.length-1;
+}
+function openAdjacentStory(direction){
+  const list=unlockedStorySequence();
+  const index=list.findIndex(story=>story.storyId===currentStoryId);
+  const next=list[index+Number(direction||0)];
+  if(next)openStoryViewer(next.storyId,storyViewerReturn);
+}
+function closeStoryViewer(){
+  currentStoryId="";
+  if(storyViewerReturn==="recovery"){
+    game=null;
+    setScoreHud(currentTodayScore());
+    openChallenge();
+    return;
+  }
+  $("storyViewerView").classList.remove("active");
+  $("storyLibraryView").style.display="block";
+  renderStoryLibrary();
+}
+function findRecoveryStory(stage,clearCount){
+  const stageKeys=[String(stage?.id||""),String(stage?.index??""),String(Number(stage?.index||0)+1)];
+  return storyMaster.find(story=>
+    stageKeys.includes(String(story.stageId))&&
+    Number(story.orderNo)===Number(clearCount)
+  )||null;
+}
+function unlockStoryForRecovery(stage,clearCount){
+  const story=findRecoveryStory(stage,clearCount);
+  if(!story||storyIsUnlocked(story.storyId))return null;
+  state.storyUnlockedIds=[...new Set([...(state.storyUnlockedIds||[]),story.storyId])];
+  state.storyNewIds=[...new Set([...(state.storyNewIds||[]),story.storyId])];
+  save();
+  savePlayerDataNow(true);
+  preloadStoryImages([story]);
+  return story;
+}
+function showStoryUnlockDialog(story){
+  pendingUnlockedStory=story;
+  $("storyUnlockName").textContent=`「${story.title}」`;
+  $("storyUnlockModal").classList.add("active");
+  $("storyUnlockModal").setAttribute("aria-hidden","false");
+}
+function closeStoryUnlockDialog(){
+  $("storyUnlockModal").classList.remove("active");
+  $("storyUnlockModal").setAttribute("aria-hidden","true");
+}
+function readUnlockedStoryNow(){
+  const story=pendingUnlockedStory;
+  pendingUnlockedStory=null;
+  closeStoryUnlockDialog();
+  game=null;
+  setScoreHud(currentTodayScore());
+  if(story)openStoryViewer(story.storyId,"recovery");
+}
+function saveUnlockedStoryForLater(){
+  pendingUnlockedStory=null;
+  closeStoryUnlockDialog();
+  game=null;
+  setScoreHud(currentTodayScore());
+  showStoryToast("📚 ストーリー図鑑に保存しました。");
+  openChallenge();
+}
+function showStoryToast(message){
+  const old=document.querySelector(".storyToast");
+  if(old)old.remove();
+  const el=document.createElement("div");
+  el.className="storyToast";
+  el.textContent=String(message||"");
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>el.classList.remove("show"),2200);
+  setTimeout(()=>el.remove(),2600);
+}
+function finishRecoveryClearWithStory(stage,clearCount,resultMessage){
+  loadStoryData()
+    .then(()=>{
+      const story=unlockStoryForRecovery(stage,clearCount);
+      if(story){
+        showStoryUnlockDialog(story);
+      }else{
+        showGameClearResult(
+          "STAGE CLEAR!",
+          resultMessage,
+          "challenge"
+        );
+      }
+    });
+}
+
 /* ==========================================================
    世界樹図書館
 ========================================================== */
@@ -7808,6 +8190,10 @@ function makeSaveData(){
   questUnlocked:state.questUnlocked||{},
   timeAttackBests:state.timeAttackBests||{},
 
+  storyUnlockedIds:state.storyUnlockedIds||[],
+  storyReadIds:state.storyReadIds||[],
+  storyNewIds:state.storyNewIds||[],
+
   original:state.original||[],
   originalDraft:state.originalDraft||[],
   originalQuiz:state.originalQuiz||{},
@@ -7883,6 +8269,9 @@ function mergeSaveDataClient(localData={},remoteData={}){
  merged.unlocked=maxSaveNumber(localData.unlocked,calcUnlockedFromCloudData(remoteData),1);
 
  merged.badges=mergeSaveArrayUnique(localData.badges,remoteData.badges);
+ merged.storyUnlockedIds=mergeSaveArrayUnique(localData.storyUnlockedIds,remoteData.storyUnlockedIds);
+ merged.storyReadIds=mergeSaveArrayUnique(localData.storyReadIds,remoteData.storyReadIds);
+ merged.storyNewIds=mergeSaveArrayUnique(localData.storyNewIds,remoteData.storyNewIds);
 // 装備中の称号は「最新の保存内容」を優先する
  merged.selectedMenuTitles =
     Array.isArray(localData.selectedMenuTitles)
@@ -7936,6 +8325,9 @@ function applySaveData(saveData){
  state.questClears=saveData.questClears || state.questClears || {};
  state.questUnlocked=saveData.questUnlocked || state.questUnlocked || {};
  state.timeAttackBests=saveData.timeAttackBests || state.timeAttackBests || {};
+ state.storyUnlockedIds=Array.isArray(saveData.storyUnlockedIds)?saveData.storyUnlockedIds:(state.storyUnlockedIds||[]);
+ state.storyReadIds=Array.isArray(saveData.storyReadIds)?saveData.storyReadIds:(state.storyReadIds||[]);
+ state.storyNewIds=Array.isArray(saveData.storyNewIds)?saveData.storyNewIds:(state.storyNewIds||[]);
 
  state.original=Array.isArray(saveData.original)?saveData.original:(state.original||[]);
  state.originalDraft=Array.isArray(saveData.originalDraft)?saveData.originalDraft:(state.originalDraft||[]);
@@ -9115,7 +9507,11 @@ function checkClear(){
  const funnyMsg=funnyTitle ? ` 面白称号『${funnyTitle.name}』もドロップ！` : "";
  const clearMsg=`${game.stage.name}クリア！ ${itemDisplayName(game.stage)}を1つ獲得！${questMsg}${funnyMsg}`;
  $("feedback").textContent=clearMsg;
- showGameClearResult("STAGE CLEAR!",`${escapeHtml(clearMsg)}<br>獲得PT：${Number(game.score||0)}PT`,"challenge");
+ finishRecoveryClearWithStory(
+  game.stage,
+  state.challengeClears[game.stage.id],
+  `${escapeHtml(clearMsg)}<br>獲得PT：${Number(game.score||0)}PT`
+ );
  return true;
 }
 function updateStats(){
