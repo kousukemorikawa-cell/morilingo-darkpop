@@ -6088,21 +6088,64 @@ function closeStoryViewer(){
   $("storyLibraryView").style.display="block";
   renderStoryLibrary();
 }
+/**
+ * 復興クリアに対応する未取得ストーリーを探す。
+ *
+ * 通常は clearCount と orderNo を一致させる。
+ * ストーリー機能追加前から復興済みのセーブデータでは
+ * clearCount が4以上になっている場合があるため、その場合も
+ * 対象ステージの未取得ストーリーを1話ずつ順番に返す。
+ */
 function findRecoveryStory(stage,clearCount){
-  const stageKeys=[String(stage?.id||""),String(stage?.index??""),String(Number(stage?.index||0)+1)];
-  return storyMaster.find(story=>
-    stageKeys.includes(String(story.stageId))&&
-    Number(story.orderNo)===Number(clearCount)
-  )||null;
+  const stageKeys=[
+    String(stage?.id||"").trim(),
+    String(stage?.index??"").trim(),
+    String(Number(stage?.index||0)+1).trim()
+  ].filter(Boolean);
+
+  const stageStories=storyMaster
+    .filter(story=>stageKeys.includes(String(story.stageId||"").trim()))
+    .sort((a,b)=>
+      Number(a.orderNo||0)-Number(b.orderNo||0) ||
+      String(a.storyId||"").localeCompare(String(b.storyId||""))
+    );
+
+  if(!stageStories.length)return null;
+
+  const count=Number(clearCount||0);
+
+  // 新規セーブでは、復興回数と話数をそのまま対応させる。
+  const exactStory=stageStories.find(story=>
+    Number(story.orderNo||0)===count &&
+    !storyIsUnlocked(story.storyId)
+  );
+  if(exactStory)return exactStory;
+
+  // 旧セーブ互換：すでに復興3回以上でも未取得話を順番に解放する。
+  return stageStories.find(story=>!storyIsUnlocked(story.storyId))||null;
 }
+
 function unlockStoryForRecovery(stage,clearCount){
   const story=findRecoveryStory(stage,clearCount);
-  if(!story||storyIsUnlocked(story.storyId))return null;
-  state.storyUnlockedIds=[...new Set([...(state.storyUnlockedIds||[]),story.storyId])];
-  state.storyNewIds=[...new Set([...(state.storyNewIds||[]),story.storyId])];
+  if(!story)return null;
+
+  const storyId=String(story.storyId||"").trim();
+  if(!storyId||storyIsUnlocked(storyId))return null;
+
+  state.storyUnlockedIds=[
+    ...new Set([...(state.storyUnlockedIds||[]).map(String),storyId])
+  ];
+  state.storyNewIds=[
+    ...new Set([...(state.storyNewIds||[]).map(String),storyId])
+  ];
+
   save();
   savePlayerDataNow(true);
   preloadStoryImages([story]);
+
+  // 図鑑を開いたままデバッグした場合も即時反映する。
+  renderStoryLibrary();
+
   return story;
 }
 function showStoryUnlockDialog(story){
