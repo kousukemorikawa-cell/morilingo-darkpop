@@ -6088,49 +6088,39 @@ function closeStoryViewer(){
   $("storyLibraryView").style.display="block";
   renderStoryLibrary();
 }
-/**
- * 復興クリアに対応する未取得ストーリーを探す。
- *
- * 通常は clearCount と orderNo を一致させる。
- * ストーリー機能追加前から復興済みのセーブデータでは
- * clearCount が4以上になっている場合があるため、その場合も
- * 対象ステージの未取得ストーリーを1話ずつ順番に返す。
- */
 function findRecoveryStory(stage,clearCount){
-  const stageKeys=[
-    String(stage?.id||"").trim(),
-    String(stage?.index??"").trim(),
-    String(Number(stage?.index||0)+1).trim()
-  ].filter(Boolean);
+  const stageId=String(stage&&stage.id||"").trim();
+  if(!stageId)return null;
 
   const stageStories=storyMaster
-    .filter(story=>stageKeys.includes(String(story.stageId||"").trim()))
-    .sort((a,b)=>
-      Number(a.orderNo||0)-Number(b.orderNo||0) ||
-      String(a.storyId||"").localeCompare(String(b.storyId||""))
-    );
+    .filter(story=>String(story.stageId||"").trim()===stageId)
+    .sort((a,b)=>Number(a.orderNo||0)-Number(b.orderNo||0));
 
   if(!stageStories.length)return null;
 
-  const count=Number(clearCount||0);
+  /*
+   * 旧セーブ互換：
+   * ストーリー機能追加前に復興回数が3回を超えている場合でも、
+   * そのステージでまだ取得していない話を1→2→3の順に返す。
+   */
+  const firstLocked=stageStories.find(story=>!storyIsUnlocked(story.storyId));
+  if(firstLocked)return firstLocked;
 
-  // 新規セーブでは、復興回数と話数をそのまま対応させる。
-  const exactStory=stageStories.find(story=>
-    Number(story.orderNo||0)===count &&
+  /*
+   * 通常時は復興回数とorderNoが一致する話を返す。
+   * すべて取得済みならnull。
+   */
+  return stageStories.find(story=>
+    Number(story.orderNo||0)===Number(clearCount||0)&&
     !storyIsUnlocked(story.storyId)
-  );
-  if(exactStory)return exactStory;
-
-  // 旧セーブ互換：すでに復興3回以上でも未取得話を順番に解放する。
-  return stageStories.find(story=>!storyIsUnlocked(story.storyId))||null;
+  )||null;
 }
-
 function unlockStoryForRecovery(stage,clearCount){
   const story=findRecoveryStory(stage,clearCount);
   if(!story)return null;
 
   const storyId=String(story.storyId||"").trim();
-  if(!storyId||storyIsUnlocked(storyId))return null;
+  if(!storyId)return null;
 
   state.storyUnlockedIds=[
     ...new Set([...(state.storyUnlockedIds||[]).map(String),storyId])
@@ -6142,8 +6132,6 @@ function unlockStoryForRecovery(stage,clearCount){
   save();
   savePlayerDataNow(true);
   preloadStoryImages([story]);
-
-  // 図鑑を開いたままデバッグした場合も即時反映する。
   renderStoryLibrary();
 
   return story;
@@ -6186,18 +6174,32 @@ function showStoryToast(message){
   setTimeout(()=>el.remove(),2600);
 }
 function finishRecoveryClearWithStory(stage,clearCount,resultMessage){
-  loadStoryData()
+  /*
+   * 復興クリア時はキャッシュではなく最新のStoryシートを確認する。
+   * 通信失敗時も通常のクリア画面へ戻し、ゲーム進行を止めない。
+   */
+  loadStoryData(true)
     .then(()=>{
       const story=unlockStoryForRecovery(stage,clearCount);
+
       if(story){
         showStoryUnlockDialog(story);
-      }else{
-        showGameClearResult(
-          "STAGE CLEAR!",
-          resultMessage,
-          "challenge"
-        );
+        return;
       }
+
+      showGameClearResult(
+        "STAGE CLEAR!",
+        resultMessage,
+        "challenge"
+      );
+    })
+    .catch(error=>{
+      console.error("Story unlock error",error);
+      showGameClearResult(
+        "STAGE CLEAR!",
+        resultMessage,
+        "challenge"
+      );
     });
 }
 
