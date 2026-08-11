@@ -5102,9 +5102,16 @@ const ASSET_VERSION="2";
 function assetUrl(src){
   if(!src) return src;
 
-  const separator = src.includes("?") ? "&" : "?";
+  // test.htmlでは assets/ → assets_v2/ に切り替える
+  let testSrc = src.replace(
+    /^\.?\/?assets\//,
+    "assets_v2/"
+  );
 
-  return `${src}${separator}v=${ASSET_VERSION}`;
+  const separator =
+    testSrc.includes("?") ? "&" : "?";
+
+  return `${testSrc}${separator}v=${ASSET_VERSION}`;
 }
  // ==========================================================
 // HTMLに直接書かれている画像にも
