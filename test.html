@@ -5098,8 +5098,42 @@ function libraryGasJsonp(params, timeoutMs = 9000){
 // クエストの自キャラ・技・ホーム背景設定。スキン画面から保存します。
 const DEFAULT_PLAYER_CHARACTER="magician";
 const DEFAULT_PLAYER_EFFECT="magician";
-const ASSET_VERSION="20260627-clear-bgm-v1";
+const ASSET_VERSION="2";
+function assetUrl(src){
+  if(!src) return src;
 
+  const separator = src.includes("?") ? "&" : "?";
+
+  return `${src}${separator}v=${ASSET_VERSION}`;
+}
+ // ==========================================================
+// HTMLに直接書かれている画像にも
+// ASSET_VERSIONを自動適用
+// ==========================================================
+
+function applyAssetVersionToStaticImages(){
+
+  document
+    .querySelectorAll('img[src^="assets/"], img[src^="./assets/"]')
+    .forEach(function(img){
+
+      const src = img.getAttribute("src");
+
+      if(!src) return;
+
+      // すでにバージョン付与済みなら何もしない
+      if(
+        src.includes("?v=") ||
+        src.includes("&v=")
+      ){
+        return;
+      }
+
+      img.src = assetUrl(src);
+
+    });
+
+}
 /* ==========================================================
    BGM設定
    assets/bgm/ に7曲を置く
@@ -9049,7 +9083,7 @@ function renderStages(){
    </div>
 <button class="imgBtn"
  ${open?`onclick="openStageMenu(${i})"`:"disabled"}>
- <img src="assets/btn/btn_nextstage.png" alt="このステージへ">
+ <img src="${assetUrl('assets/btn/btn_nextstage.png')}" alt="このステージへ">
 </button>
   </div>`;
  }).join("");
@@ -9227,7 +9261,7 @@ function setupWorld(cls,sun,label,image,enemyImage){
  $("stageCap").textContent=label;
 
  if(image){
-   $("world").style.backgroundImage = `url('${image}')`;
+   $("world").style.backgroundImage = `url('${assetUrl(image)}')`;
    $("world").style.backgroundSize = "cover";
    $("world").style.backgroundPosition = "center bottom";
    $("world").style.backgroundRepeat = "no-repeat";
@@ -9237,15 +9271,17 @@ function setupWorld(cls,sun,label,image,enemyImage){
 
  // ステージごとの敵画像。未アップロードなら共通ゴブリンへ自動で戻す。
  if($("ninja")){
-   $("ninja").src = enemyImage || "assets/enemies/gobelyn.png";
+   $("ninja").src = assetUrl(
+    enemyImage || "assets/enemies/gobelyn.png"
+   );
    $("ninja").dataset.fieldEnemy = String(label).includes("田園") ? "1" : "0";
    $("ninja").onerror = function(){
      this.onerror = null;
-     this.src = "assets/enemies/gobelyn.png";
+     this.src = assetUrl("assets/enemies/gobelyn.png");
    };
  }
  if($("dragon")){
-   $("dragon").src = "assets/enemies/dragon.png";
+   $("dragon").src = assetUrl("assets/enemies/dragon.png");
  }
 }
 function startGame(){startResearchSession(game,game?.mode||"challenge");show("game");addBadge("first");renderObjects();updateStats();nextQuestion();}
@@ -9594,7 +9630,7 @@ function renderObjects(){
 }
 function assetImg(src, className, alt, extra=""){
  const safeAlt=String(alt||"").replace(/"/g,"&quot;");
- return `<img src="${src}" class="${className}" alt="${safeAlt}" ${extra} onerror="this.style.display='none'">`;
+ return `<img src="${assetUrl(src)}" class="${className}" alt="${safeAlt}" ${extra} onerror="this.style.display='none'">`;
 }
 
 function renderObject(n,idx){
@@ -9944,7 +9980,7 @@ function showZukan(){
  show("zukan");
 }
 function zukanImage(src,alt){
- return `<img src="${src}" alt="${String(alt||"").replace(/"/g,"&quot;")}" onerror="this.style.display='none';this.parentElement.textContent='？';">`;
+ return `<img src="${assetUrl(src)}" alt="${String(alt||"").replace(/"/g,"&quot;")}" onerror="this.style.display='none';this.parentElement.textContent='？';">`;
 }
 function renderZukan(tab="items"){
  state.zukanTab=tab;
@@ -9982,7 +10018,7 @@ function renderItems(){
   const name=owned?info.name:"？？？？？";
   const effect=owned?info.effect:"未入手：効果は入手すると見られます";
   const icon=owned
-   ? `<img src="${info.img||s.itemImage}" alt="${info.name}" onerror="this.style.display='none';this.parentElement.textContent='${info.icon||"🎒"}';">`
+   ? `<img src="${assetUrl(info.img||s.itemImage)}" alt="${info.name}" onerror="this.style.display='none';this.parentElement.textContent='${info.icon||"🎒"}';">`
    : "🔒";
   return `<div class="itemCard ${owned?"":"locked"}"><div class="itemIcon">${icon}</div><div><div class="itemName">${name}</div><div class="itemType">${type.label}：${effect}</div></div><div class="itemCount">×${count}</div></div>`;
  }).join("");
@@ -10470,7 +10506,7 @@ function renderQuestModalItems(){
   const name=count>0?info.name:"？？？？？";
   const effect=count>0?info.effect:"未入手：効果は入手すると見られます";
   const icon=count>0
-   ? `<img src="${info.img||s.itemImage}" alt="${info.name}" onerror="this.style.display='none';this.parentElement.textContent='${info.icon||"🎒"}';">`
+   ? `<img src="${assetUrl(info.img||s.itemImage)}" alt="${info.name}" onerror="this.style.display='none';this.parentElement.textContent='${info.icon||"🎒"}';">`
    : "🔒";
   return `<div class="questUseRow"><div class="itemIcon">${icon}</div><div><b>${name} ×${count}</b><div class="itemType">${type.label}：${effect}</div></div><button class="questUseBtn" ${usable?`onclick="useQuestItem('${s.id}')"`:"disabled"}>使用</button></div>`;
  }).join("");
@@ -10486,7 +10522,7 @@ function centerFx(src,ms=1800,cls="",text=""){
  if(!wrap||!img)return Promise.resolve();
  wrap.className=`questCenterFx show ${cls||""}`.trim();
  img.style.display="block";
- img.src=src;
+ img.src=assetUrl(src);
  if(label){
   label.textContent=text||"";
   label.style.display=text?"block":"none";
@@ -11050,6 +11086,39 @@ if(state.player?.name){
 }
 updateBgmHud();
 playBgm(bgmTrackForScreen("home"));
+
+
+// ==========================================================
+// HTMLに直接書かれている画像のキャッシュバージョン更新
+// ==========================================================
+
+applyAssetVersionToStaticImages();
+
+
+// favicon
+const favicon =
+  document.querySelector('link[rel="icon"]');
+
+if(favicon){
+  const href = favicon.getAttribute("href");
+
+  if(href){
+    favicon.href = assetUrl(href);
+  }
+}
+
+
+// Appleホーム画面アイコン
+const appleIcon =
+  document.querySelector('link[rel="apple-touch-icon"]');
+
+if(appleIcon){
+  const href = appleIcon.getAttribute("href");
+
+  if(href){
+    appleIcon.href = assetUrl(href);
+  }
+}
 </script>
 </body>
 </html>
