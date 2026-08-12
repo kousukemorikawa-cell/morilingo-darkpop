@@ -237,7 +237,100 @@ button{font-family:inherit}.btn{border:0;border-radius:18px;padding:14px 16px;fo
 .world{position:relative;height:66vh;min-height:360px;border-radius:28px;overflow:hidden;margin:10px 0;border:3px solid #fff;box-shadow:inset 0 -12px 0 #0001;background:linear-gradient(#9ee8ff 0 45%,#bdf2a1 45% 76%,#85d069 76%);background-size:cover;background-position:center bottom;background-repeat:no-repeat}
 .world.tropical{background:linear-gradient(#8ce9ff 0 40%,#b9f271 40% 72%,#54c96d 72%)}.world.snow{background:linear-gradient(#cfeeff 0 42%,#fbfeff 42% 74%,#e3f4ff 74%)}.world.volcano{background:linear-gradient(#5b5465 0 42%,#8b5d43 42% 74%,#3d3037 74%)}.world.mars{background:linear-gradient(#f6a56d 0 42%,#d76b45 42% 76%,#b94835 76%)}.world.school{background:linear-gradient(#bcecff 0 42%,#99d874 42% 66%,#c4834c 66% 100%)}
 .stageCap{position:absolute;left:12px;top:12px;background:#ffffffb8;border-radius:999px;padding:7px 12px;font-weight:1000;z-index:4}.sun{position:absolute;right:24px;top:18px;font-size:42px}.cloud{position:absolute;font-size:36px;top:20px;left:12%;animation:float 8s infinite ease-in-out}.cloud.c2{left:70%;top:38px;animation-delay:-3s}.track{display:none;position:absolute;left:0;right:0;bottom:0;height:92px;background:repeating-linear-gradient(0deg,#bf6e44 0 18px,#c9784b 18px 22px)}.world.school .track{display:block}
-.treeArea{position:absolute;left:20px;right:20px;bottom:80px;display:flex;gap:14px;align-items:flex-end;min-height:230px;overflow:hidden}.obj{position:relative;width:160px;height:230px;flex:0 0 auto}.chestObj{height:190px}.chestImg{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:160px;z-index:2}.dropItemImg{position:absolute;left:50%;bottom:105px;transform:translateX(-50%);width:72px;height:72px;object-fit:contain;z-index:3;filter:drop-shadow(0 5px 2px #0003);animation:itemDropPop .45s ease-out}.chestProgress{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);background:#111;color:#fff;border:3px solid #fff;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:1000;z-index:5;white-space:nowrap}.chestLabel{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#fff9;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:1000;z-index:4;white-space:nowrap}@keyframes itemDropPop{from{transform:translateX(-50%) translateY(28px) scale(.35);opacity:0}to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}.sapling{position:absolute;left:40px;bottom:90px;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}.saplingImg{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:110px;z-index:5}.treeImg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:190px;z-index:1}.fruitImg{position:absolute;width:45px;height:45px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0003);animation:pop .25s;z-index:3}.fruitEmoji{position:absolute;font-size:28px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s;z-index:3}
+.treeArea{position:absolute;left:20px;right:20px;bottom:80px;display:flex;gap:14px;align-items:flex-end;min-height:230px;overflow:hidden}.obj{position:relative;width:160px;height:230px;flex:0 0 auto}.chestObj{height:190px}.chestImg{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:160px;z-index:2}.dropItemImg{position:absolute;left:50%;bottom:105px;transform:translateX(-50%);width:72px;height:72px;object-fit:contain;z-index:3;filter:drop-shadow(0 5px 2px #0003);animation:itemDropPop .45s ease-out}.chestProgress{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);background:#111;color:#fff;border:3px solid #fff;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:1000;z-index:5;white-space:nowrap}.chestLabel{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#fff9;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:1000;z-index:4;white-space:nowrap}@keyframes itemDropPop{from{transform:translateX(-50%) translateY(28px) scale(.35);opacity:0}to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}/* ===== 復興・魔本システム ===== */
+
+.magicBookStage{
+ position:relative;
+ width:100%;
+ height:230px;
+}
+
+/* 魔本は中央固定 */
+.magicBookMain{
+ position:absolute;
+ left:50%;
+ bottom:0;
+ transform:translateX(-50%);
+ width:180px;
+ text-align:center;
+ z-index:2;
+}
+
+.magicBookImg{
+ display:block;
+ width:180px;
+ max-width:100%;
+ height:auto;
+ margin:0 auto;
+}
+
+/* チャージ数 */
+.magicBookCharge{
+ margin-top:-4px;
+ display:inline-block;
+ padding:5px 12px;
+ border-radius:999px;
+ background:rgba(255,255,255,.9);
+ font-weight:1000;
+ font-size:14px;
+ box-shadow:0 3px 10px rgba(0,0,0,.18);
+}
+
+/* 完成した特産品 */
+.magicBookDrops{
+ position:absolute;
+ left:50%;
+ top:0;
+ transform:translateX(-50%);
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:28px;
+ width:100%;
+ z-index:3;
+}
+
+.magicBookDrop{
+ width:76px;
+ height:76px;
+ object-fit:contain;
+ filter:drop-shadow(0 5px 5px rgba(0,0,0,.28));
+ animation:magicBookDropIn .45s ease-out;
+}
+
+@keyframes magicBookDropIn{
+ from{
+  opacity:0;
+  transform:translateY(25px) scale(.4);
+ }
+ to{
+  opacity:1;
+  transform:translateY(0) scale(1);
+ }
+}
+
+@media(max-width:560px){
+ .magicBookStage{
+  height:190px;
+ }
+
+ .magicBookMain{
+  width:145px;
+ }
+
+ .magicBookImg{
+  width:145px;
+ }
+
+ .magicBookDrop{
+  width:60px;
+  height:60px;
+ }
+
+ .magicBookDrops{
+  gap:20px;
+ }
+}.sapling{position:absolute;left:40px;bottom:90px;font-size:64px}.trunk{position:absolute;left:57px;bottom:0;width:28px;height:78px;background:#8b552d;border-radius:12px}.crown{position:absolute;left:5px;bottom:54px;width:130px;height:130px;background:#4fb95e;border-radius:54% 46% 52% 48%;box-shadow:inset -12px -10px #0001,0 8px 0 #0001}.banana .crown{background:linear-gradient(145deg,#4fbd65,#2c9651);border-radius:56% 44% 45% 55%;transform:skewX(-5deg)}.fruit{position:absolute;font-size:23px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s}.saplingImg{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:110px;z-index:5}.treeImg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:190px;z-index:1}.fruitImg{position:absolute;width:45px;height:45px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0003);animation:pop .25s;z-index:3}.fruitEmoji{position:absolute;font-size:28px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 1px #0002);animation:pop .25s;z-index:3}
 .snowBase,.snowHead{position:absolute;left:50%;transform:translateX(-50%);background:#fff;border:4px solid #dbeefd;border-radius:50%;box-shadow:inset -10px -10px #aadaf047,0 8px 0 #0001}.snowBase{bottom:0;width:92px;height:92px}.snowHead{bottom:75px;width:62px;height:62px}.snowArm{position:absolute;width:52px;height:8px;background:#8b552d;border-radius:999px;bottom:91px}.snowArm.r{left:96px;transform:rotate(-25deg)}.snowArm.l{left:5px;transform:rotate(25deg)}.snowFace{position:absolute;left:50%;bottom:103px;transform:translateX(-50%);font-size:20px;font-weight:900;letter-spacing:5px}.snowNose{position:absolute;left:78px;bottom:102px;font-size:21px}.snowStick{position:absolute;left:122px;bottom:80px;font-size:45px;transform:rotate(18deg)}
 .char{
  position:absolute;
@@ -9853,18 +9946,157 @@ function objectSlotClass(idx){
  const order=["slotCenter","slotLeft","slotRight"];
  return order[idx] || "slotRight";
 }
+// ===== 復興・旧宝箱ステージ用 魔本表示 =====
+function renderMagicBookStage(){
+ const stage=game.stage||{};
+
+ const itemImage=
+  stage.itemImage ||
+  "assets/items/01_field_item.png";
+
+ const itemName=
+  stage.growName ||
+  "アイテム";
+
+ /*
+  * game.objects の既存構造をそのまま利用
+  *
+  * [3]   → 0個完成・3/6
+  * [6]   → 1個完成
+  * [6,2] → 1個完成・2/6
+  * [6,6] → 2個完成
+  */
+ const completed=
+  game.objects.filter(n=>n>=6).length;
+
+ const current=
+  game.objects[game.objects.length-1]||0;
+
+ /*
+  * 最後のオブジェクトが6なら
+  * ちょうどチャージ完了状態。
+  */
+ const charged=current>=6;
+
+ /*
+  * 完成時だけ発光版。
+  * それ以外は通常魔本。
+  */
+ const bookImage=charged
+  ? "assets/items/magicbook_charged.png"
+  : "assets/items/magicbook.png";
+
+ /*
+  * 完成した特産品だけ表示。
+  * 最大2個。
+  */
+ const drops=Array
+  .from({length:Math.min(completed,2)})
+  .map(()=>{
+   return assetImg(
+    itemImage,
+    "magicBookDrop",
+    itemName
+   );
+  })
+  .join("");
+
+ /*
+  * [6]の場合は次のチャージ前なので0/6表示。
+  * [6,3]なら3/6。
+  * [6,6]なら6/6。
+  */
+ let charge=current;
+
+ if(
+  completed===1 &&
+  game.objects.length===1
+ ){
+  charge=6;
+ }
+
+ return `
+ <div class="magicBookStage">
+
+   <div class="magicBookDrops">
+    ${drops}
+   </div>
+
+   <div class="magicBookMain">
+
+    ${assetImg(
+     bookImage,
+     "magicBookImg",
+     charged
+      ? "力が宿った魔本"
+      : "魔本"
+    )}
+
+    <div class="magicBookCharge">
+     ${charge}/6
+    </div>
+
+   </div>
+
+ </div>`;
+}
 function renderObjects(){
  const area=$("treeArea");
- if(!game){area.innerHTML="";return;}
- const worldtree=isWorldTreeStage(game.stage);
- area.classList.toggle("worldtreeMode",worldtree);
- if(worldtree){
-  area.innerHTML=`<div class="objSlot slotCenter">${renderObject(game.objects[0]||0,0)}</div>`;
+
+ if(!game){
+  area.innerHTML="";
   return;
  }
- area.innerHTML=game.objects.slice(0,3).map((n,idx)=>{
-  return `<div class="objSlot ${objectSlotClass(idx)}">${renderObject(n,idx)}</div>`;
- }).join("");
+
+ const stage=game.stage||{};
+ const worldtree=isWorldTreeStage(stage);
+
+ area.classList.toggle(
+  "worldtreeMode",
+  worldtree
+ );
+
+ // ==============================
+ // 世界樹
+ // 従来仕様そのまま
+ // ==============================
+ if(worldtree){
+  area.innerHTML=
+   `<div class="objSlot slotCenter">
+    ${renderObject(game.objects[0]||0,0)}
+   </div>`;
+
+  return;
+ }
+
+ // ==============================
+ // 旧宝箱ステージ
+ // → 魔本1冊＋完成アイテム最大2個
+ // ==============================
+ if(!isTreeStage(stage)){
+
+  area.innerHTML=
+   `<div class="objSlot slotCenter">
+    ${renderMagicBookStage()}
+   </div>`;
+
+  return;
+ }
+
+ // ==============================
+ // 木ステージ
+ // 従来仕様そのまま
+ // ==============================
+ area.innerHTML=
+  game.objects
+   .slice(0,3)
+   .map((n,idx)=>{
+    return `
+     <div class="objSlot ${objectSlotClass(idx)}">
+      ${renderObject(n,idx)}
+     </div>`;
+   })
+   .join("");
 }
 function assetImg(src, className, alt, extra=""){
  const safeAlt=String(alt||"").replace(/"/g,"&quot;");
@@ -9925,17 +10157,37 @@ function renderWorldTreeObject(){
 }
 function renderChestObject(n,idx){
  const stage=game.stage||{};
+
+ // ステージ固有アイテム
  const itemImage=stage.itemImage || "assets/items/01_field_item.png";
  const itemName=stage.growName || "アイテム";
- const opened=n>=6;
- const chestImage=opened ? CHEST_OPEN_IMAGE : CHEST_CLOSED_IMAGE;
+
+ // 魔本は6チャージで1個生成
+ const charged=n>=6;
  const progress=Math.min(n,6);
- const label=opened ? `${itemName}ゲット！` : `${progress}/6`;
- const drop=opened ? assetImg(itemImage,"dropItemImg",itemName) : "";
- const itemLabel=opened ? `<div class="chestLabel">${itemName}</div>` : "";
+
+ // 魔本画像
+ const bookImage=charged
+  ? "assets/items/magicbook_charged.png"
+  : "assets/items/magicbook.png";
+
+ // 6チャージされたらステージ固有アイテムを出現
+ const drop=charged
+  ? assetImg(itemImage,"dropItemImg",itemName)
+  : "";
+
+ // アイテム名
+ const itemLabel=charged
+  ? `<div class="chestLabel">${itemName}</div>`
+  : `<div class="chestLabel">${progress}/6</div>`;
+
  return `
  <div class="obj chestObj">
-   ${assetImg(chestImage,"chestImg",opened?"開いた宝箱":"閉じた宝箱")}
+   ${assetImg(
+    bookImage,
+    "chestImg",
+    charged ? "力が宿った魔本" : "魔本"
+   )}
    ${drop}
    ${itemLabel}
  </div>`;
@@ -9979,9 +10231,8 @@ function growObject(){
    : `正解！ ${stage.growName||"アイテム"}が出現した！`;
  }
  return now>=6
-  ? `正解！ 宝箱が開いた！ ${stage.growName||"アイテム"}を手に入れた！`
-  : `正解！ 宝箱に力がたまった！（${now}/6）`;
-}
+ ? `正解！ 魔本に力が宿った！ ${stage.growName||"アイテム"}が出現した！`
+ : `正解！ 魔本に力がたまった！（${now}/6）`;
 function hasAnyObject(){
  if(isWorldTreeStage(game?.stage))return (game.worldtreeItems||0)>0 || !!game.finalWorldtreeDropped;
  return game.objects.some(n=>n>0);
@@ -10014,13 +10265,13 @@ function stealMessage(){
  if(isWorldTreeStage(game.stage))return `${enemy}が復活の力を1つ奪っていった！`;
  return isTreeStage(game.stage)
   ? `${enemy}が${game.stage.growName||"アイテム"}を1つ奪っていった！`
-  : `${enemy}が宝箱の力を1つ奪っていった！`;
+  : `${enemy}が魔本の力を1つ奪っていった！`;
 }
 function dragonMessage(){
- if(isWorldTreeStage(game.stage))return `ドラゴン襲来！集めた復活アイテムが全没収！`;
+ if(isWorldTreeStage(game.stage))return `謎のドラゴン襲来！集めた復活アイテムが全没収！`;
  return isTreeStage(game.stage)
-  ? `ドラゴン襲来！${game.stage.growName||"アイテム"}が全没収！`
-  : `ドラゴン襲来！宝箱とドロップが全没収！`;
+  ? `謎のドラゴン襲来！${game.stage.growName||"アイテム"}が全没収！`
+  : `謎のドラゴン襲来！魔本に宿った力とアイテムが全没収！`;
 }
 function ninjaEvent(){
  const has=hasAnyObject();
