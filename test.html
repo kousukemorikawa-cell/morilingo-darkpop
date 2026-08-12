@@ -5973,13 +5973,146 @@ function loadStoryData(force=false){
     .finally(()=>{storyDataLoading=null;});
   return storyDataLoading;
 }
+/**
+ * 既存プレイヤー救済用
+ * 過去の復興クリア回数からストーリー解放状態を復元する。
+ *
+ * Storyシートの
+ * stageId + orderNo
+ * と
+ * state.challengeClears
+ * を照合する。
+ */
+function syncStoryUnlocksFromRecoveryProgress(){
+
+  state.storyUnlockedIds ??= [];
+  state.storyNewIds ??= [];
+  state.challengeClears ??= {};
+
+  const unlocked = new Set(
+    (state.storyUnlockedIds || []).map(String)
+  );
+
+  const newIds = new Set(
+    (state.storyNewIds || []).map(String)
+  );
+
+  let addedCount = 0;
+
+  STAGES.forEach(stage => {
+
+    const stageId = String(stage?.id || "").trim();
+    if(!stageId) return;
+
+    // このステージを過去に何回復興したか
+    const clearCount = Math.min(
+      RECOVERY_ROUNDS,
+      Math.max(
+        0,
+        Number(state.challengeClears?.[stageId] || 0)
+      )
+    );
+
+    if(clearCount <= 0) return;
+
+    // そのステージに属するストーリーを取得
+    const stageStories = storyMaster.filter(story =>
+      String(story.stageId || "").trim() === stageId
+    );
+
+    stageStories.forEach(story => {
+
+      const orderNo = Number(story.orderNo || 0);
+      const storyId = String(story.storyId || "").trim();
+
+      if(!storyId) return;
+      if(orderNo <= 0) return;
+
+      /*
+       * 復興回数以上のストーリーはまだ解放しない。
+       *
+       * 例：
+       * clearCount = 2
+       *
+       * orderNo 1 → 解放
+       * orderNo 2 → 解放
+       * orderNo 3 → 未解放
+       */
+      if(orderNo > clearCount) return;
+
+      // すでに取得済みなら何もしない
+      if(unlocked.has(storyId)) return;
+
+      unlocked.add(storyId);
+      newIds.add(storyId);
+
+      addedCount++;
+    });
+
+  });
+
+  state.storyUnlockedIds = [...unlocked];
+  state.storyNewIds = [...newIds];
+
+  if(addedCount > 0){
+    save();
+
+    // PlayerDataにも即時保存
+    savePlayerDataNow(true);
+  }
+
+  return addedCount;
+}
 function refreshStoryData(){
+
+  // ストーリーキャッシュを削除
   localStorage.removeItem(STORY_CACHE_KEY);
+
   storyMaster=[];
+
   const box=$("storyLibraryList");
-  if(box)box.innerHTML='<div class="muted">ストーリーを更新中...</div>';
+
+  if(box){
+    box.innerHTML=
+      '<div class="muted">ストーリーを更新中...</div>';
+  }
+
+  // GASから最新Storyデータを取得
   loadStoryData(true).then(()=>{
-    showStoryToast("📚 ストーリーデータを更新しました。");
+
+    /*
+     * 既存プレイヤー救済
+     *
+     * 過去の復興進捗
+     * state.challengeClears
+     *
+     * と
+     *
+     * Storyシートの
+     * stageId + orderNo
+     *
+     * を照合してストーリーを復元する。
+     */
+    const addedCount =
+      syncStoryUnlocksFromRecoveryProgress();
+
+    // 解放状態を反映して再描画
+    renderStoryLibrary();
+
+    if(addedCount > 0){
+
+      showStoryToast(
+        `📚 過去の復興記録から${addedCount}話を解放しました！`
+      );
+
+    }else{
+
+      showStoryToast(
+        "📚 ストーリーデータを更新しました。"
+      );
+
+    }
+
   });
 }
 function showStory(){
