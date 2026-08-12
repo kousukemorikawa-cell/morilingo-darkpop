@@ -9599,35 +9599,133 @@ function markAnswer(selectedIndex){
 }
 function answer(i){
  if(!canAnswer)return;
+
  canAnswer=false;
  stopTimer();
  markAnswer(i);
+
  const ok=i===game.current.c;
- recordResearchQuestion(game,game.current,i,ok);
+
+ recordResearchQuestion(
+  game,
+  game.current,
+  i,
+  ok
+ );
+
  if(ok){
+
+  // ==============================
+  // 正解
+  // ==============================
+
   if(game.mode==="timeAttack"){
-   game.elapsedSec=(performance.now()-(game.startMs||performance.now()))/1000;
+
+   // タイムアタックは従来仕様を維持
+   game.elapsedSec=
+    (performance.now()-(game.startMs||performance.now()))/1000;
+
    game.score=0;
+
   }else{
-   game.score+=game.time>=15?15:10;
+
+   /*
+    * 復興は「現在の復興カウント × 15PT」に統一。
+    *
+    * このあと correctCount++ するため、
+    * ここではまだ点数を変更しない。
+    *
+    * オリジナル復興も同じルールになる。
+    */
+
   }
+
   game.streak++;
+
+  // 復興カウントを1増やす
   game.correctCount++;
-  if(game.correctCount>=10)addBadge("correct_10");
+
+  /*
+   * 通常復興・オリジナル復興は
+   * 現在の復興カウント × 15PT。
+   *
+   * 最大12なら180PT。
+   */
+  if(game.mode!=="timeAttack"){
+   game.score=game.correctCount*15;
+  }
+
+  if(game.correctCount>=10){
+   addBadge("correct_10");
+  }
+
+  // 連続ミス数は正解でリセット
   game.miss=0;
+
+  // 木・宝箱・魔本などを1段階進める
   const resultMessage=growObject();
+
   $("feedback").textContent=resultMessage;
+
   updateStats();
+
+  // correctCountが12になったらクリア
   if(checkClear())return;
+
   scheduleNext(850);
+
  }else{
-  game.score=Math.max(0,game.score-5);
+
+  // ==============================
+  // 不正解
+  // ==============================
+
+  /*
+   * 復興カウントを1減らす。
+   * 0より下にはしない。
+   *
+   * タイムアタックは既存仕様を守るため
+   * カウントを減らさない。
+   */
+  if(game.mode!=="timeAttack"){
+   game.correctCount=Math.max(
+    0,
+    game.correctCount-1
+   );
+
+   /*
+    * PTは現在の復興カウント × 15。
+    *
+    * 「不正解だから-5PT」ではなく、
+    * 復興状況に合わせて表示する。
+    */
+   game.score=game.correctCount*15;
+  }
+
   game.streak=0;
   game.miss++;
-  $("feedback").textContent=i<0?"時間切れ！":"おしい！";
+
+  $("feedback").textContent=
+   i<0
+    ? "時間切れ！"
+    : "おしい！";
+
   updateStats();
-  if(game.miss>=3) setTimeout(dragonEvent,400);
-  else setTimeout(ninjaEvent,400);
+
+  /*
+   * 既存処理を維持。
+   *
+   * 忍者：
+   * 木・宝箱などを1段階奪う。
+   *
+   * 3連続ミス：
+   * ドラゴンイベント。
+   */
+  if(game.miss>=3){
+   setTimeout(dragonEvent,400);
+  }else{
+   setTimeout(ninjaEvent,400);
+  }
  }
 }
 function randomDropTitlesForReward(place="rebuild"){
